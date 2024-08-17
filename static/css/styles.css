@@ -1,5 +1,13 @@
 
-.navbar {
+.navigationbar {
     background-color: aqua;
     list-style-type: none;
+}
+
+ul.navigationbar {
+    list-style-type: none;
+}
+
+li.navigationbar {
+    display: inline;
 }
