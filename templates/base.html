@@ -1,8 +1,22 @@
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>{% block title %}FCI Map{% endblock %}</title>
-    </head>
-    {% block content %}
-    {% endblock %}
-    </html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}FCI Map{% endblock %}</title>
+    {% block head %}{% endblock %}
+    <link rel="stylesheet" href="styles.css">
+<style>
+    
+</style>
+</head>
+<div class="navbar">
+    <ul>
+        <li>Link one</li>
+        <li>link two</li>
+        <li>yes</li>
+        <li>yes2</li>
+    </ul>
+</div>
+
+{% block content %}
+{% endblock %}
+</html>
