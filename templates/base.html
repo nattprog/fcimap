@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-{% block head %}{% endblock %}
 <title>{% block title %}FCI Map{% endblock %}</title>
-
-<link rel="stylesheet" href="styles.css">
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% block head %}{% endblock %}
 </head>
 
 <div class="navbar">
     <ul class="navbar">
-        <li>Link one</li>
+        <li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Link one</a></li>
         <li>link two</li>
         <li>yes</li>
         <li>yes2</li>
