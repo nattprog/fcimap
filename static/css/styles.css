@@ -1,8 +1,17 @@
-.NavigationBar
 
-.NavigationBar ul
+/*Top Navigation Bar, with specific elements */
+.TopNavigationBar
 
-.NavigationBar li {
-    display: inline;
+.TopNavigationBar ul {
+    list-style-type: none;
 }
 
+.TopNavigationBar li {
+    display: inline-block;
+}
+
+.TopNavigationBar a {
+    display: block;
+    padding: 20px;
+    background-color: aliceblue;
+}
