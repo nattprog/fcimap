@@ -1,6 +1,8 @@
 
 /*Top Navigation Bar, with specific elements */
-.TopNavigationBar
+.TopNavigationBar {
+    background-color: rgb(49, 116, 175);
+}
 
 .TopNavigationBar ul {
     list-style-type: none;
@@ -11,7 +13,16 @@
 }
 
 .TopNavigationBar a {
+    font-family: Arial, Helvetica, sans-serif;
+    color: aliceblue;
     display: block;
     padding: 20px;
-    background-color: aliceblue;
+}
+
+.TopNavigationBar a:hover {
+    background-color: rgb(37, 94, 145);
+}
+
+.NavigationActive {
+    background-color: aqua;
 }
