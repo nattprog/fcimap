@@ -10,11 +10,11 @@ FCI Map - Home
 <body><h1>FCI Map</h1>
 <nav class="FloorNavigationBar">
 <ul>
-    <li><a href="">4th floor</a></li>
-    <li><a href="">3rd floor</a></li>
-    <li><a href="">2nd floor</a></li>
-    <li><a href="">1st floor</a></li>
-    <li><a href="">Ground floor</a></li>
+    <li><a href="4thFloor" {% if ActiveFloor == "4thFloor" %}class="NavigationActive"{% endif %}>4th Floor</a></li>
+    <li><a href="3rdFloor" {% if ActiveFloor == "3rdFloor" %}class="NavigationActive"{% endif %}>3rd Floor</a></li>
+    <li><a href="2ndFloor" {% if ActiveFloor == "2ndFloor" %}class="NavigationActive"{% endif %}>2nd Floor</a></li>
+    <li><a href="1stFloor" {% if ActiveFloor == "1stFloor" %}class="NavigationActive"{% endif %}>1st Floor</a></li>
+    <li><a href="GFloor" {% if ActiveFloor == "GFloor" %}class="NavigationActive"{% endif %}>Ground Floor</a></li>
 </ul>
 </nav>
 

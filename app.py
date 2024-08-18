@@ -3,12 +3,16 @@ from flask import Flask, redirect, url_for, render_template
 app = Flask(__name__)
 
 @app.route("/")
-def homepage():
-    return redirect(url_for("index"))
+def RedirectHome():
+    return redirect(url_for("home"))
 
-@app.route("/index/")
-def index():
+@app.route("/home/")
+def home():
     return render_template("index.html", ActivePage="index")
+
+@app.route("/home/<path>")
+def floor(path):
+    return render_template("index.html", ActivePage="index", ActiveFloor = path)
 
 @app.route("/map/")
 def map():
