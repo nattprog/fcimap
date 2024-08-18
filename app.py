@@ -2,8 +2,12 @@ from flask import Flask, redirect, url_for, render_template
 
 app = Flask(__name__)
 
+@app.route("/")
+def homepage():
+    return redirect("/index/")
+
 @app.route("/index/")
-def home():
+def index():
     return render_template("index.html", CurrentPage="index")
 
 @app.route("/map/")
