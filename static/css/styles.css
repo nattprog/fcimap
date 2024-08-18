@@ -26,6 +26,7 @@ html, body {
 
 .TopNavigationBar a {
     font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
     color: aliceblue;
     display: block;
     margin: 0;
@@ -37,5 +38,5 @@ html, body {
 }
 
 .NavigationActive {
-    background-color: aqua;
+    background-color: rgb(8, 49, 90);
 }

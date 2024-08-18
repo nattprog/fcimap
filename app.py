@@ -4,20 +4,19 @@ app = Flask(__name__)
 
 @app.route("/")
 def homepage():
-    return redirect("/index/")
+    return redirect(url_for("index"))
 
 @app.route("/index/")
 def index():
-    return render_template("index.html", CurrentPage="index", Meow = False)
+    return render_template("index.html", ActivePage="index")
 
 @app.route("/map/")
 def map():
-    return render_template("mmu.html", CurrentPage="map")
+    return render_template("mmu.html", ActivePage="map")
 
 @app.route("/meow/")
-def rick():
-    Meow = True
-    return render_template("index.html", Meow = True)
+def meow():
+    return render_template("index.html", ActivePage ="meow", Meow = True)
 
 if __name__ == "__main__":
     app.run(debug=True)
