@@ -8,15 +8,16 @@ def homepage():
 
 @app.route("/index/")
 def index():
-    return render_template("index.html", CurrentPage="index")
+    return render_template("index.html", CurrentPage="index", Meow = False)
 
 @app.route("/map/")
 def map():
     return render_template("mmu.html", CurrentPage="map")
 
-@app.route("/rick/")
+@app.route("/meow/")
 def rick():
-    return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    Meow = True
+    return render_template("index.html", Meow = True)
 
 if __name__ == "__main__":
     app.run(debug=True)
