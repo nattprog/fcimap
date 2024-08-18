@@ -14,5 +14,9 @@ def index():
 def map():
     return render_template("mmu.html", CurrentPage="map")
 
+@app.route("/rick/")
+def rick():
+    return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
 if __name__ == "__main__":
     app.run(debug=True)
