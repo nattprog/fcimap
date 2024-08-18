@@ -22,5 +22,9 @@ def map():
 def meow():
     return render_template("index.html", ActivePage ="meow", Meow = True)
 
+@app.route("/account/")
+def account():
+    return render_template("account.html", ActivePage = "account")
+
 if __name__ == "__main__":
     app.run(debug=True)
