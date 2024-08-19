@@ -1,0 +1,79 @@
+/*The Whole page html element*/
+
+
+html, body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+/*Top Navigation Bar, with specific elements */
+.TopNavigationBar {
+    background-color: rgb(49, 116, 175);
+}
+
+.TopNavigationBar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.TopNavigationBar li {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.TopNavigationBar a {
+    text-decoration: none;
+    text-align: center;
+    color: white;
+    display: block;
+    margin: 0;
+    padding: 20px;
+}
+
+.TopNavigationBar a:hover {
+    background-color: rgb(37, 94, 145);
+}
+
+.NavigationActive {
+    background-color: rgb(8, 49, 90);
+}
+
+#account {
+    float: right;
+}
+
+/*Floor navigation bar*/
+
+.FloorNavigationBar {
+    background-color: rgb(49, 116, 175);
+    width: 150px
+}
+
+.FloorNavigationBar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.FloorNavigationBar li {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.FloorNavigationBar a {
+    text-decoration: none;
+    text-align: right;
+    color: white;
+    display: block;
+    margin: 0;
+    padding: 20px;
+}
+
+.FloorNavigationBar a:hover {
+    background-color: rgb(37, 94, 145);
+}
