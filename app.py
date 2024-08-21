@@ -1,6 +1,13 @@
 from flask import Flask, redirect, url_for, render_template
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+app.config["SECRET_KEY"] = 'passcodesecretkey'
+
+
+
 
 @app.route("/")
 def RedirectHome():
