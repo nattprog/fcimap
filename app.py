@@ -18,14 +18,6 @@ def home():
 def floor(path):
     return render_template("index.html", ActivePage="index", ActiveFloor = path)
 
-@app.route("/map/")
-def map():
-    return render_template("mmu.html", ActivePage="map")
-
-@app.route("/meow/")
-def meow():
-    return render_template("index.html", ActivePage ="meow", Meow = True)
-
 @app.route("/account/")
 def account():
     return render_template("account.html", ActivePage = "account")
