@@ -6,6 +6,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'passcodesecretkey'
 
+class FCIRoom(db.Model):
+        BuildingBlock = db.Column(db.String(50), primary_key =True, nullable=False)
+        RoomFloor = db.Column(db.Integer, nullable=False)
+        RoomNumber = db.Column(db.Integer, nullable=False)
+
 @app.route("/")
 def RedirectHome():
     return redirect(url_for("home"))
@@ -17,6 +22,11 @@ def home():
 @app.route("/home/<path>")
 def floor(path):
     return render_template("index.html", ActivePage="index", ActiveFloor = path)
+
+@app.route("/home/<path>/<room>")
+def room(path, room):
+    roomID = FCIRoom.query.filter_by(BuildingBlock="CQAR")
+    return render_template("index.html", ActivePage="index", ActiveFloor = path, roomID = roomID)
 
 @app.route("/account/")
 def account():
