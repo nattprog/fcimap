@@ -6,9 +6,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'passcodesecretkey'
 
-
-
-
 @app.route("/")
 def RedirectHome():
     return redirect(url_for("home"))
