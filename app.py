@@ -6,7 +6,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'passcodesecretkey'
 
-class FCIRoom(db.Model):
+class fci_room(db.Model):
+        __tablename__ = "fci_room"
+        id = db.Column(db.Integer, primary_key=True, nullable=False)
         BuildingBlock = db.Column(db.String(50), primary_key =True, nullable=False)
         RoomFloor = db.Column(db.Integer, nullable=False)
         RoomNumber = db.Column(db.Integer, nullable=False)
@@ -25,8 +27,9 @@ def floor(path):
 
 @app.route("/home/<path>/<room>")
 def room(path, room):
-    roomID = FCIRoom.query.filter_by(BuildingBlock="CQAR")
-    return render_template("index.html", ActivePage="index", ActiveFloor = path, roomID = roomID)
+    roomID = fci_room.query.filter_by(BuildingBlock = "CQAR")
+     
+    return render_template("index.html", ActivePage="index", ActiveFloor = path, roomID = roomID.id)
 
 @app.route("/account/")
 def account():
