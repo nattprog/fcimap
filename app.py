@@ -1,17 +1,30 @@
 from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
+
+
+class Base(DeclarativeBase):
+  pass
+
+db = SQLAlchemy(model_class=Base)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db = SQLAlchemy(app)
+db.init_app(app)
+
 app.config["SECRET_KEY"] = 'passcodesecretkey'
 
 class fci_room(db.Model):
         __tablename__ = "fci_room"
         id = db.Column(db.Integer, primary_key=True, nullable=False)
-        BuildingBlock = db.Column(db.String(50), primary_key =True, nullable=False)
-        RoomFloor = db.Column(db.Integer, nullable=False)
-        RoomNumber = db.Column(db.Integer, nullable=False)
+        building_block = db.Column(db.String(50), primary_key =True, nullable=False)
+        room_floor = db.Column(db.Integer, nullable=False)
+        room_number = db.Column(db.Integer, nullable=False)
+        def __repr__(self, id, building_block, room_floor, room_number):
+             self.id = id
+             self.building_block = building_block
+             self.room_floor = room_floor
+             self.room_number = room_number
 
 @app.route("/")
 def RedirectHome():
