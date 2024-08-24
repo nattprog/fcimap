@@ -8,10 +8,17 @@ html, body {
 }
 
 #TopLogo {
+    display: block;
     padding: 10px;
     margin: 0px;
     background-color: white;
     align-items: center;
+    font-size: 30px;
+}
+
+#WebsiteName {
+    font-size: 30px;
+    float: top;
 }
 
 /*Top Navigation Bar, with specific elements */
@@ -52,6 +59,22 @@ html, body {
 #account {
     float: right;
 }
+
+#TopLogo {
+    display: block;
+    padding: 10px;
+    margin: 0px;
+    background-color: white;
+    text-align: left;
+    font-size: 30px;
+}
+#TopLogo li {
+    font-size: 30px;
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: 10px;
+}
+
 
 /*Floor navigation bar*/
 

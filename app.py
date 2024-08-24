@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, session
+from flask import Flask, redirect, url_for, render_template, session, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ class fci_room(db.Model):
 def RedirectHome():
     return redirect("/map/0")
 
-@app.route("/map/<floor>/")
+@app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
     return render_template("index.html", ActivePage="index", ActiveFloor = floor)
 
