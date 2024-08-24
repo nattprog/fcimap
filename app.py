@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 
@@ -13,7 +13,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db.init_app(app)
 
 app.config["SECRET_KEY"] = 'passcodesecretkey'
-
 class fci_room(db.Model):
         __tablename__ = "fci_room"
         id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -28,23 +27,17 @@ class fci_room(db.Model):
 
 @app.route("/")
 def RedirectHome():
-    return redirect(url_for("home"))
+    return redirect("/home/map/0/")
 
-@app.route("/home/")
-def home():
-    return render_template("index.html", ActivePage="index")
+@app.route("/home/map/<floor>/")
+def home(floor):
+    return render_template("index.html", ActivePage="index", ActiveFloor = floor)
 
-@app.route("/home/<path>")
-def floor(path):
-    return render_template("index.html", ActivePage="index", ActiveFloor = path)
-
-@app.route("/home/<block>/<room>")
-def room(block, room):
+@app.route("/roompage/<block>/<room>")
+def roompage(block, room):
     roomID = fci_room.query.filter_by(building_block = block, room_number = int(room)).first_or_404()
     if roomID:
         return render_template("roompage.html", ActivePage="index", ActiveFloor = floor, roomID = f"{roomID.building_block}{roomID.room_number}")
-    else:
-        return render_template("Error finding room")
 
 @app.route("/account/")
 def account():
