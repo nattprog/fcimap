@@ -1,16 +1,9 @@
 from flask import Flask, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
-
-
-class Base(DeclarativeBase):
-  pass
-
-db = SQLAlchemy(model_class=Base)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db.init_app(app)
+db = SQLAlchemy(app)
 
 app.config["SECRET_KEY"] = 'passcodesecretkey'
 class fci_room(db.Model):
@@ -27,9 +20,9 @@ class fci_room(db.Model):
 
 @app.route("/")
 def RedirectHome():
-    return redirect("/home/map/0/")
+    return redirect("/map/0")
 
-@app.route("/home/map/<floor>/")
+@app.route("/map/<floor>/")
 def home(floor):
     return render_template("index.html", ActivePage="index", ActiveFloor = floor)
 
@@ -37,7 +30,7 @@ def home(floor):
 def roompage(block, room):
     roomID = fci_room.query.filter_by(building_block = block, room_number = int(room)).first_or_404()
     if roomID:
-        return render_template("roompage.html", ActivePage="index", ActiveFloor = floor, roomID = f"{roomID.building_block}{roomID.room_number}")
+        return render_template("roompage.html", ActivePage="index", ActiveFloor = None, roomID = f"{roomID.building_block}{roomID.room_number}")
 
 @app.route("/account/")
 def account():
