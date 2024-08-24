@@ -2,7 +2,7 @@ from flask import Flask, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'passcodesecretkey'
 
