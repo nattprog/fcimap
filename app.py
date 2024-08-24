@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
-
 app.config["SECRET_KEY"] = 'passcodesecretkey'
 class fci_room(db.Model):
         __tablename__ = "fci_room"
