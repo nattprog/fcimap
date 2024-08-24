@@ -28,6 +28,7 @@ html, body {
 .TopNavigationBar a {
     text-decoration: none;
     text-align: center;
+    align-content: center;
     color: white;
     display: block;
     margin: 0;

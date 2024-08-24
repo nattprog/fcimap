@@ -5,6 +5,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'passcodesecretkey'
+
+# Database for block, floor and number of rooms.
 class fci_room(db.Model):
         __tablename__ = "fci_room"
         id = db.Column(db.Integer, primary_key=True, nullable=False)
