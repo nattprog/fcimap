@@ -38,12 +38,6 @@ FCI Map
 {% block content%}
 <body>
 
-<form action="#" method="POST">
-    <label for="search">Search Room:</label>
-  <input type="search" id="search" name="search" placeholder="Enter Search" value="{{search if allsearch}}">
-  <input type="submit">
-</form>
-
 <nav class="FloorNavigationBar">
 <ul>
     <li><a href="../4" {% if ActiveFloor == "4" %}class="NavigationActive"{% endif %}>4th Floor</a></li>

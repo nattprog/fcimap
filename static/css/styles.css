@@ -24,6 +24,7 @@ html, body {
 /*Top Navigation Bar, with specific elements */
 .TopNavigationBar {
     background-color: rgb(49, 116, 175);
+    color: white;
 }
 
 .TopNavigationBar ul {

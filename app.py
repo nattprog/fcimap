@@ -25,17 +25,34 @@ def RedirectHome():
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor)
+    search = None
+    if request.method == "POST":
+        search = request.form["search"]
+        session["search"] = search
+        return redirect(f"/search/{search}")
+    else:
+        return render_template("index.html", ActivePage="index", ActiveFloor = floor, search = search)
 
 @app.route("/roompage/<block>/<floor>/<room>")
 def roompage(block, floor, room):
     roomID = fci_room.query.filter_by(building_block = block, room_floor = floor, room_number = room).first_or_404()
     if roomID:
-        return render_template("roompage.html", ActivePage="index", ActiveFloor = "Rooms", building_block = roomID.building_block, room_floor = roomID.room_floor, room_number = roomID.room_number)
+        return render_template("roompage.html", building_block = roomID.building_block, room_floor = roomID.room_floor, room_number = roomID.room_number)
+    
 
 @app.route("/account/")
 def account():
     return render_template("account.html", ActivePage = "account")
+
+@app.route("/search/<search>")
+def search(search):
+    search = session["search"]
+    search = list(search)
+    building_block = search[2]
+    room_floor = search[4]
+    room_number = search[7]
+    roomID = fci_room.query.filter_by(building_block = building_block, room_floor = room_floor, room_number = room_number).first_or_404
+    return render_template("search", roomID = roomID.room_number)
 
 if __name__ == "__main__":
     with app.app_context():

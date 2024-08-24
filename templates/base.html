@@ -22,6 +22,13 @@
     <ul>
         <li><a href="/" {% if ActivePage == "index" %}class="NavigationActive"{% endif %}>Home</a></li>
         <li id="account"><a href="/account" {% if ActivePage == "account"%}class="NavigationActive"{% endif %}>Account</a></li>
+        <li>
+            <form action="#" method="POST">
+                <label for="search">Search Room:</label>
+              <input type="search" id="search" name="search" placeholder="Enter Search" value="{{search if search}}">
+              <input type="submit">
+            </form>
+        </li>
     </ul>
 </nav>
 </header>
