@@ -26,11 +26,11 @@ def RedirectHome():
 def home(floor):
     return render_template("index.html", ActivePage="index", ActiveFloor = floor)
 
-@app.route("/roompage/<block>/<room>")
-def roompage(block, room):
-    roomID = fci_room.query.filter_by(building_block = block, room_number = int(room)).first_or_404()
+@app.route("/roompage/<block>/<floor>/<room>")
+def roompage(block, floor, room):
+    roomID = fci_room.query.filter_by(building_block = block, room_floor = floor, room_number = room).first_or_404()
     if roomID:
-        return render_template("roompage.html", ActivePage="index", ActiveFloor = None, roomID = f"{roomID.building_block}{roomID.room_number}")
+        return render_template("roompage.html", ActivePage="index", ActiveFloor = None, roomID = f"CQ{roomID.building_block}R{roomID.room_number}")
 
 @app.route("/account/")
 def account():
