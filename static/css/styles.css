@@ -7,6 +7,12 @@ html, body {
     padding: 0;
 }
 
+#TopLogo {
+    padding: 10px;
+    margin: 0px;
+    background-color: white;
+    align-items: center;
+}
 
 /*Top Navigation Bar, with specific elements */
 .TopNavigationBar {
