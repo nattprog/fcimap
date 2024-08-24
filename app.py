@@ -38,11 +38,13 @@ def home():
 def floor(path):
     return render_template("index.html", ActivePage="index", ActiveFloor = path)
 
-@app.route("/home/<path>/<room>")
-def room(path, room):
-    roomID = fci_room.query.filter_by(BuildingBlock = "CQAR")
-     
-    return render_template("index.html", ActivePage="index", ActiveFloor = path, roomID = roomID.id)
+@app.route("/home/<block>/<floor>/<room>")
+def room(block, floor, room):
+    roomID = fci_room.query.filter_by(building_block = block, room_floor = int(floor), room_number = room).first_or_404()
+    if roomID:
+        return render_template("index.html", ActivePage="index", ActiveFloor = floor, roomID = f"{roomID.building_block}{roomID.room_floor}{roomID.room_number}")
+    else:
+        return render_template("Error finding room")
 
 @app.route("/account/")
 def account():
