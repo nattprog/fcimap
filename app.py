@@ -5,6 +5,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'passcodesecretkey'
+search = None
 
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
@@ -21,8 +22,11 @@ class fci_room(db.Model):
             self.room_floor = room_floor
             self.room_number = room_number
 
+
+    
+
 @app.route("/")
-def RedirectHome():
+def redirect_home():
     return redirect("/map/0")
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
@@ -30,31 +34,33 @@ def home(floor):
     search = None
     if request.method == "POST":
         search = request.form["search"]
-        session["search"] = search
-        return redirect(f"/search/{search}")
-    else:
-        return render_template("index.html", ActivePage="index", ActiveFloor = floor, search = search)
+        if search:
+            return redirect(f"/search/{search}")
+    return render_template("index.html", ActivePage="index", ActiveFloor = floor)
 
-@app.route("/roompage/<room_code>")
-def roompage(room_code):
-
-    if roomID:
-        return render_template("roompage.html", building_block = roomID.building_block, room_floor = roomID.room_floor, room_number = roomID.room_number)
+@app.route("/roompage/<room_code>", methods=["GET", "POST"])
+def room_page(room_code):
+    search = None
+    if request.method == "POST":
+        search = request.form["search"]
+        if search:
+            return redirect(f"/search/{search}")
+    return render_template("roompage.html")
     
 
-@app.route("/account/")
+@app.route("/account/", methods=["GET", "POST"])
 def account():
     return render_template("account.html", ActivePage = "account")
 
-@app.route("/search/<search>")
+@app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
-    search = session["search"]
-    search = list(search)
-    building_block = search[2]
-    room_floor = search[4]
-    room_number = search[7]
-    roomID = db.session.execute(db.select(fci_room).filter_by(building_block=building_block, room_floor=room_floor, room_number=room_number)).scalar_one()
-    return render_template("search", roomID = roomID.room_number)
+    session["search"] = search
+    search = None
+    if request.method == "POST":
+        search = request.form["search"]
+        if search:
+            return redirect(f"/search/{search}")    
+    return render_template("search.html", roomID = session["search"])
 
 if __name__ == "__main__":
     with app.app_context():
