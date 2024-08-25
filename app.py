@@ -10,14 +10,16 @@ app.config["SECRET_KEY"] = 'passcodesecretkey'
 class fci_room(db.Model):
         __tablename__ = "fci_room"
         id = db.Column(db.Integer, primary_key=True, nullable=False)
-        building_block = db.Column(db.String(50), primary_key =True, nullable=False)
+        room_code = db.Column(db.String(50), nullable=False)
+        room_block = db.Column(db.String(1), nullable=False)
         room_floor = db.Column(db.Integer, nullable=False)
         room_number = db.Column(db.Integer, nullable=False)
-        def __repr__(self, id, building_block, room_floor, room_number):
-             self.id = id
-             self.building_block = building_block
-             self.room_floor = room_floor
-             self.room_number = room_number
+        def __repr__(self, id, room_code, room_block, room_floor, room_number):
+            self.id = id
+            self.room_code = room_code
+            self.room_block = room_block
+            self.room_floor = room_floor
+            self.room_number = room_number
 
 @app.route("/")
 def RedirectHome():
@@ -33,9 +35,9 @@ def home(floor):
     else:
         return render_template("index.html", ActivePage="index", ActiveFloor = floor, search = search)
 
-@app.route("/roompage/<block>/<floor>/<room>")
-def roompage(block, floor, room):
-    roomID = fci_room.query.filter_by(building_block = block, room_floor = floor, room_number = room).first_or_404()
+@app.route("/roompage/<room_code>")
+def roompage(room_code):
+
     if roomID:
         return render_template("roompage.html", building_block = roomID.building_block, room_floor = roomID.room_floor, room_number = roomID.room_number)
     
@@ -51,7 +53,7 @@ def search(search):
     building_block = search[2]
     room_floor = search[4]
     room_number = search[7]
-    roomID = fci_room.query.filter_by(building_block = building_block, room_floor = room_floor, room_number = room_number).first_or_404
+    roomID = db.session.execute(db.select(fci_room).filter_by(building_block=building_block, room_floor=room_floor, room_number=room_number)).scalar_one()
     return render_template("search", roomID = roomID.room_number)
 
 if __name__ == "__main__":
