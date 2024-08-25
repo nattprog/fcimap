@@ -22,11 +22,11 @@
     <ul>
         <li><a href="/" {% if ActivePage == "index" %}class="NavigationActive"{% endif %}>Home</a></li>
         <li id="account"><a href="/account" {% if ActivePage == "account"%}class="NavigationActive"{% endif %}>Account</a></li>
-        <li>
+        <li {% if ActivePage == "search"%}class="NavigationActive"{% endif %}>
             <form method="POST">
                 <label for="search">Search Room:</label>
               <input type="search" id="search" name="search" placeholder="Enter Search" value="{{session["search"]}}">
-              <input type="submit">
+              <input type="submit" value="Enter">
             </form>
         </li>
     </ul>

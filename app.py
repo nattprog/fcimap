@@ -55,12 +55,13 @@ def account():
 @app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
     session["search"] = search
+
     search = None
     if request.method == "POST":
         search = request.form["search"]
         if search:
             return redirect(f"/search/{search}")    
-    return render_template("search.html", roomID = session["search"])
+    return render_template("search.html", ActivePage = "search", search_result = session["search"])
 
 if __name__ == "__main__":
     with app.app_context():
