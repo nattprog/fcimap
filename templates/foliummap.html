@@ -75,13 +75,10 @@
 
     tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
 
-    var movela = 0.00001;
-    var movelo = 0.0001;
+    var movela= 0.0001;
+    var movelo= 0.00011;
 
-    var image_bounds = [
-    [2.9283 + movela, 101.6403 + movelo]
-    [2.9292 + movela, 101.6417 + movelo]  
-    ];
+    var image_bounds = [[2.9283 - movela, 101.6403 + movelo],[2.9292 - movela, 101.6417 + movelo]];
 
     L.imageOverlay('layout.png', image_bounds, {
     opacity: 0.7,
