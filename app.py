@@ -40,12 +40,13 @@ def home(floor):
 
 @app.route("/roompage/<room_code>", methods=["GET", "POST"])
 def room_page(room_code):
+    room = db.session.execute(db.select(fci_room).filter_by(room_code = room_code)).scalar()
     search = None
     if request.method == "POST":
         search = request.form["search"]
         if search:
             return redirect(f"/search/{search}")
-    return render_template("roompage.html")
+    return render_template("roompage.html", room_code = room.room_code, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number)
     
 
 @app.route("/account/", methods=["GET", "POST"])
@@ -55,13 +56,18 @@ def account():
 @app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
     session["search"] = search
+    search_results = db.session.execute(db.select(fci_room).filter_by(room_code = search)).all()
 
-    search = None
+    results_list = []
+    for i in range(len(search_results)):
+        for ii in range(len(search_results[i])):
+            results_list.append(search_results[i][ii].room_code)
+    
     if request.method == "POST":
         search = request.form["search"]
         if search:
-            return redirect(f"/search/{search}")    
-    return render_template("search.html", ActivePage = "search", search_result = session["search"])
+            return redirect(f"/search/{search}")
+    return render_template("search.html", ActivePage = "search", search = session["search"], results_list = results_list)
 
 if __name__ == "__main__":
     with app.app_context():
