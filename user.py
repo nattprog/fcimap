@@ -1,7 +1,8 @@
-from flask import Flask, request, redirect, url_for, render_template
+from flask import Flask, request, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Required to use sessions
 
 # Configuring the database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -30,10 +31,13 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
-        # Check if the email already exists
-        existing_user = User.query.filter_by(email=email).first()
+        # Check if the username or email already exists
+        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
         if existing_user:
-            return "Email address already registered."
+            if existing_user.username == username:
+                return render_template('signup.html', error="Username already registered.", login_link=True)
+            elif existing_user.email == email:
+                return render_template('signup.html', error="Email address already registered.", login_link=True)
 
         new_user = User(username=username, email=email, password=password)
 
@@ -43,6 +47,22 @@ def signup():
         return redirect(url_for('signup_success'))
 
     return render_template('signup.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        user = User.query.filter_by(email=email, password=password).first()
+
+        if user:
+            session['user_id'] = user.id
+            return "Logged in successfully!"
+        else:
+            return render_template('login.html', error="Invalid email or password.")
+
+    return render_template('login.html')
 
 if __name__ == '__main__':
     with app.app_context():

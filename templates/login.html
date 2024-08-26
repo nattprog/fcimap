@@ -3,27 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Login</title>
 </head>
 <body>
-    <h1>Sign Up</h1>
+    <h1>Login</h1>
     {% if error %}
         <p style="color:red;">{{ error }}</p>
     {% endif %}
-    <form action="/signup" method="POST">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" required><br><br>
-
+    <form action="/login" method="POST">
         <label for="email">Email:</label><br>
         <input type="email" id="email" name="email" required><br><br>
 
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br><br>
 
-        <input type="submit" value="Sign Up">
+        <input type="submit" value="Login">
     </form>
-    {% if login_link %}
-        <p>Already have an account? <a href="/login">Log in here</a>.</p>
-    {% endif %}
 </body>
 </html>
