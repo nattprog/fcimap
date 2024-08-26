@@ -19,7 +19,9 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
-from sqlalchemy.exc import IntegrityError
+@app.route('/signup_success')
+def signup_success():
+    return render_template('signup_success.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -28,21 +30,21 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
-        new_user = User(username=username, email=email, password=password)
-
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()  # Rollback the session if an error occurs
+        # Check if the email already exists
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
             return "Email address already registered."
 
-        return redirect(url_for('signup'))
+        new_user = User(username=username, email=email, password=password)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect(url_for('signup_success'))
 
     return render_template('signup.html')
-
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # This will create the database and the tables
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
