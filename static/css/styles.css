@@ -7,10 +7,24 @@ html, body {
     padding: 0;
 }
 
+#TopLogo {
+    display: block;
+    padding: 10px;
+    margin: 0px;
+    background-color: white;
+    align-items: center;
+    font-size: 30px;
+}
+
+#WebsiteName {
+    font-size: 30px;
+    float: top;
+}
 
 /*Top Navigation Bar, with specific elements */
 .TopNavigationBar {
     background-color: rgb(49, 116, 175);
+    color: white;
 }
 
 .TopNavigationBar ul {
@@ -25,9 +39,10 @@ html, body {
     padding: 0;
 }
 
-.TopNavigationBar a {
+.TopNavigationBar a, form {
     text-decoration: none;
     text-align: center;
+    align-content: center;
     color: white;
     display: block;
     margin: 0;
@@ -45,6 +60,23 @@ html, body {
 #account {
     float: right;
 }
+
+#TopLogo {
+    display: block;
+    padding: 10px;
+    margin: 0px;
+    background-color: white;
+    text-align: left;
+    font-size: 30px;
+}
+#TopLogo li {
+    font-size: 30px;
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: 10px;
+    color: black;
+}
+
 
 /*Floor navigation bar*/
 

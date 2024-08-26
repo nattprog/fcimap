@@ -8,12 +8,27 @@
 </head>
 
 <header>
+<div class="TopNavigationBar"id="TopLogo">
+    <ul>
+        <li>
+            <img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px">
+        </li>
+        <li>
+            <b>FCI Map</b>
+        </li>
+    </ul>
+</div>
 <nav class="TopNavigationBar">
     <ul>
-        <li><a href="/home" {% if ActivePage == "index" %}class="NavigationActive"{% endif %}>Home</a></li>
-        <li><a href="/map" {% if ActivePage == "map" %}class="NavigationActive"{% endif %}>FCI Map</a></li>
-        <li><a href="/meow" {% if ActivePage == "meow"%}class="NavigationActive"{% endif %}>Meow</a></li>
+        <li><a href="/" {% if ActivePage == "index" %}class="NavigationActive"{% endif %}>Home</a></li>
         <li id="account"><a href="/account" {% if ActivePage == "account"%}class="NavigationActive"{% endif %}>Account</a></li>
+        <li {% if ActivePage == "search"%}class="NavigationActive"{% endif %}>
+            <form method="POST">
+                <label for="search">Search Room:</label>
+              <input type="search" id="search" name="search" placeholder="Enter Search" value="{{session["search"]}}">
+              <input type="submit" value="Enter">
+            </form>
+        </li>
     </ul>
 </nav>
 </header>
