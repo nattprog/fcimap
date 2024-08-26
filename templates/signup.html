@@ -23,7 +23,7 @@
         <input type="submit" value="Sign Up">
     </form>
     {% if login_link %}
-        <p>Already have an account? <a href="/login">Log in here</a>.</p>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a>.</p>
     {% endif %}
 </body>
 </html>
