@@ -66,5 +66,5 @@ def login():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # This will create the database and the tables
+        db.create_all()  # This will create the data base and the tables
     app.run(debug=True, port=5001)
