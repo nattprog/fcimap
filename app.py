@@ -16,12 +16,14 @@ class fci_room(db.Model):
         room_block = db.Column(db.String(1), nullable=False)
         room_floor = db.Column(db.Integer, nullable=False)
         room_number = db.Column(db.Integer, nullable=False)
-        def __repr__(self, id, room_name, room_block, room_floor, room_number):
+        room_status = db.Column(db.Integer, nullable=False)
+        def __repr__(self, id, room_name, room_block, room_floor, room_number, room_status):
             self.id = id
             self.room_name = room_name
             self.room_block = room_block
             self.room_floor = room_floor
             self.room_number = room_number
+            self.room_status = room_status
 
 class room_aliases(db.Model):
     __tablename__ = "room_aliases"
@@ -58,6 +60,7 @@ def home(floor):
 def room_page(room_name):
     room = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalar()
     search = None
+    room_status = int(request.form["room_status"])
     if request.method == "POST":
         try:
             request.form["search"]
@@ -71,10 +74,31 @@ def room_page(room_name):
         except:
             pass
         else:
-            room_status = request.form["room_status"]
-            session["room_status"] = room_status
+            room_status = int(request.form["room_status"])
+            if (int(room.room_status) < 5) and (room_status > 0):
+                room.room_status = int(room.room_status) + int(room_status)
+            elif (int(room.room_status) > -5) and (room_status < 0):
+                room.room_status = int(room.room_status) + int(room_status)
+            db.session.commit()
+
+    room_status = room.room_status
+    if abs(room_status) == 0:
+        room_status_modifier = ""
+    if 1 <= abs(room_status) <= 2:
+        room_status_modifier = "Likely"
+    elif 3 <= abs(room_status) <= 4:
+        room_status_modifier = "Probably"
+    elif abs(room_status) == 5:
+        room_status_modifier = "Definitely"
     
-    return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = session["room_status"])
+    if room_status == 0:
+        room_status = "Unknown"
+    elif room_status > 0:
+        room_status = "Empty"
+    elif room_status < 0:
+        room_status = "Occupied"
+    
+    return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier)
     
 
 @app.route("/account/", methods=["GET", "POST"])
