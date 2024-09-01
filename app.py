@@ -60,7 +60,6 @@ def home(floor):
 def room_page(room_name):
     room = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalar()
     search = None
-    room_status = int(request.form["room_status"])
     if request.method == "POST":
         try:
             request.form["search"]
