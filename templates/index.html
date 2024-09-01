@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}
-FCI Map - Home
+FCI Map
 {% endblock %}
 
 {% block head %}
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    
 <script>
     L_NO_TOUCH = false;
     L_DISABLE_3D = false;
 </script>
-
 <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
 <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
@@ -19,9 +17,6 @@ FCI Map - Home
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/> -->
-<!-- <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/> -->
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
 
@@ -29,9 +24,10 @@ FCI Map - Home
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <style>
     #map_fc842e841ad4e3d1b8937629f1f9ec04 {
+        display: block;
         position: relative;
-        width: 75.0%;
-        height: 75.0%;
+        width: 50%;
+        height: 50%;
         left: 0.0%;
         top: 0.0%;
     }
@@ -40,18 +36,19 @@ FCI Map - Home
 {% endblock %}
 
 {% block content%}
-<body><h1>FCI Map</h1>
+<body>
+
 <nav class="FloorNavigationBar">
 <ul>
-    <li><a href="4thFloor" {% if ActiveFloor == "4thFloor" %}class="NavigationActive"{% endif %}>4th Floor</a></li>
-    <li><a href="3rdFloor" {% if ActiveFloor == "3rdFloor" %}class="NavigationActive"{% endif %}>3rd Floor</a></li>
-    <li><a href="2ndFloor" {% if ActiveFloor == "2ndFloor" %}class="NavigationActive"{% endif %}>2nd Floor</a></li>
-    <li><a href="1stFloor" {% if ActiveFloor == "1stFloor" %}class="NavigationActive"{% endif %}>1st Floor</a></li>
-    <li><a href="GFloor" {% if ActiveFloor == "GFloor" %}class="NavigationActive"{% endif %}>Ground Floor</a></li>
+    <li><a href="../4" {% if ActiveFloor == "4" %}class="NavigationActive"{% endif %}>4th Floor</a></li>
+    <li><a href="../3" {% if ActiveFloor == "3" %}class="NavigationActive"{% endif %}>3rd Floor</a></li>
+    <li><a href="../2" {% if ActiveFloor == "2" %}class="NavigationActive"{% endif %}>2nd Floor</a></li>
+    <li><a href="../1" {% if ActiveFloor == "1" %}class="NavigationActive"{% endif %}>1st Floor</a></li>
+    <li><a href="../0" {% if ActiveFloor == "0" %}class="NavigationActive"{% endif %}>Ground Floor</a></li>
 </ul>
 </nav>
 
-<div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
+<div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04"></div>
 
 <script>
 var map_fc842e841ad4e3d1b8937629f1f9ec04 = L.map(
@@ -72,11 +69,5 @@ var tile_layer_83dec95f1ac1e96879a56d6b9ff972a2 = L.tileLayer(
 
 tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
 </script>
-
-{% if Meow == True %}
-<div>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/mGQ7lrpUCrM?si=q0YqSt3NPMdvfK9G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
-{% endif %}
 </body>
 {% endblock %}
