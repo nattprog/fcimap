@@ -12,7 +12,7 @@ search = None
 class fci_room(db.Model):
         __tablename__ = "fci_room"
         id = db.Column(db.Integer, primary_key=True, nullable=False)
-        room_code = db.Column(db.String(50), nullable=False)
+        room_name = db.Column(db.String(50), nullable=False)
         room_block = db.Column(db.String(1), nullable=False)
         room_floor = db.Column(db.Integer, nullable=False)
         room_number = db.Column(db.Integer, nullable=False)
@@ -22,6 +22,12 @@ class fci_room(db.Model):
             self.room_block = room_block
             self.room_floor = room_floor
             self.room_number = room_number
+
+class room_aliases(db.Model):
+    __tablename__ = "room_aliases"
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
+    room_name_aliases = db.Column(db.String(50), nullable=False)
 
 # Database for user info
 class User(db.Model):

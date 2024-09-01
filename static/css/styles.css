@@ -106,6 +106,7 @@ html, body {
 
 #RoomPageMainDiv {
     display: flex;
+    margin: 1%;
 }
 
 .RoomPageInfo {
@@ -113,7 +114,7 @@ html, body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin: 2%;
+    margin: 1%;
 }
 
 .RoomPageAliases {
@@ -122,5 +123,5 @@ html, body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin: 2%;
+    margin: 1%;
 }
