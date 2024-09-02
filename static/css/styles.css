@@ -109,3 +109,8 @@ html, body {
 .FloorNavigationBar a:hover {
     background-color: rgb(37, 94, 145);
 }
+
+.container {
+    display: flex;
+    height: 100%;
+}
