@@ -101,10 +101,48 @@ html, body {
 }
 
 .FloorNavigationBar a:hover {
+    background-color: #004489;
     background-color: rgb(37, 94, 145);
 }
 
-.container {
+#RoomPageMainDiv {
     display: flex;
+    margin: 1%;
+}
+
+.RoomPageInfo {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
+
+.RoomPageAliases {
+    display: inline-block;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
+
+.RoomPageStatus {
+    display: inline-block;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
+
+.RoomPageStatus form {
+    color: black;
+    text-align: left;
+    padding: 0%;
+    margin: 0%;
+}
+
+.container {
     height: 100%;
 }
