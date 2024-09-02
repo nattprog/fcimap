@@ -125,7 +125,7 @@ def login():
 
         if user:
             session['user_id'] = user.id
-            return redirect("/home")
+            return redirect("/")
         else:
             return render_template('login.html', error="Invalid email or password.")
 
