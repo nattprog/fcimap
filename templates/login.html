@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Login</title>
     <style>
         body {
             background-color: #f0f0f0;
@@ -14,17 +14,17 @@
             height: 100vh;
             margin: 0;
         }
-        .signup-container {
+        .login-container {
             background-color: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             width: 300px;
             text-align: center;
-            border-top: 5px solid red;
+            border-top: 5px solid blue;
         }
         h1 {
-            color: blue;
+            color: red;
             margin-bottom: 20px;
         }
         label {
@@ -33,24 +33,22 @@
             margin-bottom: 5px;
             text-align: left;
         }
-        input[type="text"],
         input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 2px solid blue;
+            border: 2px solid red;
             border-radius: 5px;
             box-sizing: border-box;
             outline: none;
         }
-        input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus {
-            border-color: red;
+            border-color: blue;
         }
         input[type="submit"] {
-            background-color: blue;
+            background-color: red;
             color: white;
             padding: 10px;
             border: none;
@@ -59,42 +57,29 @@
             width: 100%;
         }
         input[type="submit"]:hover {
-            background-color: red;
+            background-color: blue;
         }
         p {
             color: #333;
             margin-top: 10px;
         }
-        a {
-            color: blue;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
-    <div class="signup-container">
-        <h1>Sign Up</h1>
+    <div class="login-container">
+        <h1>Login</h1>
         {% if error %}
             <p style="color:red;">{{ error }}</p>
         {% endif %}
-        <form action="/signup" method="POST">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
+        <form action="/login" method="POST">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
 
-            <input type="submit" value="Sign Up">
+            <input type="submit" value="Login">
         </form>
-        {% if login_link %}
-            <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a>.</p>
-        {% endif %}
     </div>
 </body>
 </html>

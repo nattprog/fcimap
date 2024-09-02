@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}FCI Map{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
@@ -8,7 +10,7 @@
 </head>
 
 <header>
-<div class="TopNavigationBar"id="TopLogo">
+<div class="TopNavigationBar" id="TopLogo">
     <ul>
         <li>
             <img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px">
@@ -25,8 +27,8 @@
         <li {% if ActivePage == "search"%}class="NavigationActive"{% endif %}>
             <form method="POST">
                 <label for="search">Search Room:</label>
-              <input type="search" id="search" name="search" placeholder="Enter Search" value="{{session["search"]}}">
-              <input type="submit" value="Enter">
+                <input type="search" id="search" name="search" placeholder="Enter Search" value="{{session["search"]}}">
+                <input type="submit" value="Enter">
             </form>
         </li>
     </ul>

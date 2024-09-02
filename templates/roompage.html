@@ -3,12 +3,28 @@
 {{roomID}}
 {% endblock %}
 {% block content %}
-<h1>{{room_code}}</h1>
-<p>Block: {{room_block}}</p>
-<p>Floor: {{room_floor}}</p>
-<p>Room: {{room_number}}</p>
-
-
-
+<div id="RoomPageMainDiv">
+    <div class="RoomPageInfo">
+        <h1>{{room_name}}</h1>
+        <p>Block: {{room_block}}</p>
+        <p>Floor: {{room_floor}}</p>
+        <p>Room: {{room_number}}</p>
+    </div>
+    <div class="RoomPageAliases">
+        <p>Aliases:</p>
+    </div>
+    <div class="RoomPageStatus">
+        <div>
+            <p>Status: {{room_status_modifier}} {{room_status}}</p>
+        </div>
+        <form method="POST">
+            <input type="radio" id="empty" name="room_status" value="+1" required>
+            <label for="empty">Empty</label></br>
+            <input type="radio" id="occupied" name="room_status" value="-1" required>
+            <label for="occupied">Occupied</label></br></br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</div>
 
 {% endblock %}
