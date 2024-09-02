@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, session, request
 from flask_sqlalchemy import SQLAlchemy
+import re
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -61,7 +62,8 @@ def room_page(room_code):
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
-    return render_template("account.html", ActivePage = "account")
+    return redirect("/signup")
+    # return render_template("account.html", ActivePage = "account")
 
 @app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
@@ -83,7 +85,8 @@ def search(search):
 
 @app.route('/signup_success')
 def signup_success():
-    return render_template('signup_success.html')
+    return redirect(url_for(home))
+    # return render_template('signup_success.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -91,6 +94,10 @@ def signup():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+
+        # Password validation
+        if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            return render_template('signup.html', error="Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
 
         # Check if the username or email already exists
         existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
@@ -124,7 +131,6 @@ def login():
             return render_template('login.html', error="Invalid email or password.")
 
     return render_template('login.html')
-
 
 
 
