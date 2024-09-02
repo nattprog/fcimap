@@ -85,8 +85,7 @@ def search(search):
 
 @app.route('/signup_success')
 def signup_success():
-    return redirect(url_for(home))
-    # return render_template('signup_success.html')
+    return render_template('signup_success.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -126,7 +125,7 @@ def login():
 
         if user:
             session['user_id'] = user.id
-            return "Logged in successfully!"
+            return redirect("/home")
         else:
             return render_template('login.html', error="Invalid email or password.")
 
