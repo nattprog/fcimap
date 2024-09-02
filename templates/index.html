@@ -11,7 +11,6 @@ FCI Map
     L_DISABLE_3D = false;
 </script>
 <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
-<style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -26,18 +25,19 @@ FCI Map
     #map_fc842e841ad4e3d1b8937629f1f9ec04 {
         display: block;
         position: relative;
-        width: 50%;
-        height: 50%;
+        width: 100%;
+        height: 100%;
         left: 0.0%;
         top: 0.0%;
     }
-    .leaflet-container { font-size: 1rem; }
+    
 </style>
 {% endblock %}
 
 {% block content%}
 <body>
 
+<div class="container">
 <nav class="FloorNavigationBar">
 <ul>
     <li><a href="../4" {% if ActiveFloor == "4" %}class="NavigationActive"{% endif %}>4th Floor</a></li>
@@ -48,26 +48,51 @@ FCI Map
 </ul>
 </nav>
 
-<div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04"></div>
+<div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
 
-<script>
-var map_fc842e841ad4e3d1b8937629f1f9ec04 = L.map(
-    "map_fc842e841ad4e3d1b8937629f1f9ec04",
-    {
-        center: [2.928776511671839, 101.64101799060593],
-        crs: L.CRS.EPSG3857,
-        zoom: 20,
-        zoomControl: true,
-        preferCanvas: false,
-    }
-);
-
-var tile_layer_83dec95f1ac1e96879a56d6b9ff972a2 = L.tileLayer(
-    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 22, "minZoom": 20, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-);
-
-tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
-</script>
 </body>
+<script>
+    var bounds = [[2.929198, 101.641659], [2.928153, 101.640517]];
+
+    var map_fc842e841ad4e3d1b8937629f1f9ec04 = L.map("map_fc842e841ad4e3d1b8937629f1f9ec04", {
+        center: [2.9287237444877112, 101.64111369303583],  
+        zoom: 20,                       
+        zoomControl: true,              
+        scrollWheelZoom: true,          
+        doubleClickZoom: true,          
+        boxZoom: true,                  
+        maxBounds: bounds,              
+        maxBoundsViscosity: 1.0         
+    });
+
+    var tile_layer_83dec95f1ac1e96879a56d6b9ff972a2 = L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+            "detectRetina": false,
+            "maxNativeZoom": 19,
+            "maxZoom": 22,
+            "minZoom": 20,
+            "noWrap": false,
+            "opacity": 1,
+            "subdomains": "abc",
+            "tms": false
+        }
+    );
+
+    tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
+    var movela= 0.00004;
+    var movelo= 0.00012;
+
+    var enlargeLat = 0.00007;
+    var enlargeLng = 0.00007;
+
+    var image_bounds = [[2.9283 - movela - enlargeLat, 101.6403 + movelo - enlargeLng],[2.9292 - movela, 101.6417 + movelo]];
+
+    L.imageOverlay('C:\Users\cheng\OneDrive\桌面\FcimapS\itproject\fcimap\templates\floor2.png', image_bounds, {
+    opacity: 0.7,
+    }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04)
+
+</script>
 {% endblock %}
