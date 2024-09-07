@@ -31,6 +31,7 @@ class room_availability_schedule(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     room_name = db.Column(db.String(50), nullable=False)
     date_M_D_Y = db.Column(db.String(50), nullable=False)
+    weekday_iso = room_floor = db.Column(db.Integer, nullable=False)
     time_class_start = db.Column(db.String(50), nullable=False)
     time_class_end = db.Column(db.String(50), nullable=False)
     class_subject_code = db.Column(db.String(50), nullable=False)
