@@ -22,11 +22,16 @@ October 6, 2024
 3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FCM1)
 3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FC01)
 """)
-# months = "(January\s\d{1,2},.*\d{4})|(February\s\d{1,2},.*\d{4})|(March\s\d{1,2},.*\d{4})|(April\s\d{1,2},.*\d{4})|(May\s\d{1,2},.*\d{4})|(June\s\d{1,2},.*\d{4})|(July\s\d{1,2},.*\d{4})|(Auguest\s\d{1,2},.*\d{4})|(September\s\d{1,2},.*\d{4})|(October\s\d{1,2},.*\d{4})|(November\s\d{1,2},.*\d{4})|(December\s\d{1,2},.*\d{4})"
-#pattern = re.compile(r'^January|^February|^March|^April|^May|^June|^July|^Auguest|^September|^October|^November|^December.*,.*', re.MULTILINE)
-pattern = re.compile(r"(January\s\d{1,2},.*\d{4})|(February\s\d{1,2},.*\d{4})|(March\s\d{1,2},.*\d{4})|(April\s\d{1,2},.*\d{4})|(May\s\d{1,2},.*\d{4})|(June\s\d{1,2},.*\d{4})|(July\s\d{1,2},.*\d{4})|(Auguest\s\d{1,2},.*\d{4})|(September\s\d{1,2},.*\d{4})|(October\s\d{1,2},.*\d{4})|(November\s\d{1,2},.*\d{4})|(December\s\d{1,2},.*\d{4})")
+months = r"(January.*\d{1,2},.*\d{4})|(February.*\d{1,2},.*\d{4})|(March.*\d{1,2},.*\d{4})|(April.*\d{1,2},.*\d{4})|(May.*\d{1,2},.*\d{4})|(June.*\d{1,2},.*\d{4})|(July.*\d{1,2},.*\d{4})|(Auguest.*\d{1,2},.*\d{4})|(September.*\d{1,2},.*\d{4})|(October.*\d{1,2},.*\d{4})|(November.*\d{1,2},.*\d{4})|(December.*\d{1,2},.*\d{4})"
 
-matches = pattern.finditer(sentence)
+pattern_date = re.compile(r"(January\s*\d{1,2},.*\d{4})|(February\s*\d{1,2},.*\d{4})|(March\s*\d{1,2},.*\d{4})|(April\s*\d{1,2},.*\d{4})|(May\s*\d{1,2},.*\d{4})|(June\s*\d{1,2},.*\d{4})|(July\s*\d{1,2},.*\d{4})|(August\s*\d{1,2},.*\d{4})|(September\s*\d{1,2},.*\d{4})|(October\s*\d{1,2},.*\d{4})|(November\s*\d{1,2},.*\d{4})|(December\s*\d{1,2},.*\d{4})")
+pattern_time = re.compile(r"(\d{1,2}:\d{2})[AaPp][Mm].*(\d{1,2}:\d{2})[AaPp][Mm].*(\w{4}\d{4})\s*:")
 
-for match in matches:
-    print(match)
+match_dates = pattern_date.finditer(sentence)
+match_times = pattern_time.finditer(sentence)
+
+for match_date in match_dates:
+    print(match_date)
+
+for match_time in match_times:
+    print(match_time)
