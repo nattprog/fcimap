@@ -16,15 +16,15 @@ September 5, 2024
 12:00pm - 2:00pm		CQAR4005 : CDS1114 - TUT (TT2L)
 2:00pm - 4:00pm		CQAR4005 : CIT4132 - TUT (TT2L)
 4:00pm - 6:00pm		CQAR4005 : CMT1114 - TUT (TT3L)
-September 6, 2024
+October 6, 2024
 8:00am - 10:00am		CQAR4005 : CMT1114 - TUT (TT7L)
 10:00am - 12:00pm		CQAR4005 : CMT1124 - TUT (TT1L)
 3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FCM1)
 3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FC01)
 """)
-months = "January|February|March|April|May|June|July|Auguest|September|October|November|December"
+# months = "(January\s\d{1,2},.*\d{4})|(February\s\d{1,2},.*\d{4})|(March\s\d{1,2},.*\d{4})|(April\s\d{1,2},.*\d{4})|(May\s\d{1,2},.*\d{4})|(June\s\d{1,2},.*\d{4})|(July\s\d{1,2},.*\d{4})|(Auguest\s\d{1,2},.*\d{4})|(September\s\d{1,2},.*\d{4})|(October\s\d{1,2},.*\d{4})|(November\s\d{1,2},.*\d{4})|(December\s\d{1,2},.*\d{4})"
 #pattern = re.compile(r'^January|^February|^March|^April|^May|^June|^July|^Auguest|^September|^October|^November|^December.*,.*', re.MULTILINE)
-pattern = re.compile(r'(September\s\d{1,2},.*\d{4})')
+pattern = re.compile(r"(January\s\d{1,2},.*\d{4})|(February\s\d{1,2},.*\d{4})|(March\s\d{1,2},.*\d{4})|(April\s\d{1,2},.*\d{4})|(May\s\d{1,2},.*\d{4})|(June\s\d{1,2},.*\d{4})|(July\s\d{1,2},.*\d{4})|(Auguest\s\d{1,2},.*\d{4})|(September\s\d{1,2},.*\d{4})|(October\s\d{1,2},.*\d{4})|(November\s\d{1,2},.*\d{4})|(December\s\d{1,2},.*\d{4})")
 
 matches = pattern.finditer(sentence)
 
