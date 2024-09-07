@@ -26,8 +26,8 @@ class fci_room(db.Model):
         self.room_status = room_status
 
 # Database table for room availability, from CLiC schedule
-class room_availability_schedule(db.Model):
-    __tablename__ = "room_availability_schedule"
+class class_availability_schedule(db.Model):
+    __tablename__ = "class_availability_schedule"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     room_name = db.Column(db.String(50), nullable=False)
     class_start = db.Column(db.String(50), nullable=False)
