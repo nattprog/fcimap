@@ -23,62 +23,39 @@ October 6, 2024
 3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FC01)
 """)
 
+
 schedule_input = schedule_input.replace("\n", " ")
-months = r"(January.*\d{1,2},.*\d{4})|(February.*\d{1,2},.*\d{4})|(March.*\d{1,2},.*\d{4})|(April.*\d{1,2},.*\d{4})|(May.*\d{1,2},.*\d{4})|(June.*\d{1,2},.*\d{4})|(July.*\d{1,2},.*\d{4})|(Auguest.*\d{1,2},.*\d{4})|(September.*\d{1,2},.*\d{4})|(October.*\d{1,2},.*\d{4})|(November.*\d{1,2},.*\d{4})|(December.*\d{1,2},.*\d{4})"
 
-pattern_date = re.compile(r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})")
-pattern_time = re.compile(r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*(\w{4}\d{4})\s*:")
 
-match_dates = pattern_date.finditer(schedule_input)
-match_times = pattern_time.finditer(schedule_input)
+dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
+times = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Za-z]{4}\d{4})\s*:\s*([A-Za-z]*\d*)\s*-\s*\w*\s*(\(\w*\))"
+# regex string to find in the input. 
+
+# months = string to match the dates
+# group(1) = ([month] [day], [year])
+
+# times = string to match the dates
+# group(1) = ([start time][AM/PM])
+# group(2) = ([end time][AM/PM])
+# group(3) = ([room code])
+# group(4) = ([subject code])
+# group(5) = ([class section])
+
+
+pattern_date = re.compile(dates)
+pattern_time = re.compile(times)
 
 dates_list = []
-for i in match_dates:
+for i in pattern_date.finditer(schedule_input):
     dates_list.append(i)
-
-len_dates_list = len(dates_list)
-for i in range(len_dates_list):
-    print(dates_list[i])
+for i in range(len(dates_list)):
+    print(dates_list[i].group(0))
     try:
-        schedule_day = schedule_input[dates_list[i].end():dates_list[i+1].start()]
+        schedule_day = schedule_input[dates_list[i].end():(dates_list[i+1].start() or -1)]
     except:
         schedule_day = schedule_input[dates_list[i].end():-1]
-    match_times = pattern_time.finditer(schedule_day)
-    for match_time in match_times:
-        print(match_time)
-    
-
-
-for match_date in match_dates:
-    print(match_date)
-    
-
-
-
-# times_list = []
-# for i in match_times:
-#     times_list.append(i)
-
-# times_list = []
-# for i in match_times:
-#     times_list.append(i)
-
-# for dates_i in range(len(dates_list)):
-#     date = dates_list[dates_i]
-#     schedule_day = schedule_input[dates_list[i]:]
-
-#     for times_i in range(len(times_list)):
-#         time = times_list[times_i]
-#         try:
-#             if dates_list[dates_i].end() < time.start() < dates_list[dates_i+1].start():
-#                 day_obj.append(times_list[times_i])
-#         except:
-#             if dates_list[dates_i].end() < time.start():
-#                 day_obj.append(times_list[times_i])
-#     for i in day_obj:
-#         print(i.group(0))
-
-
-
-# for i in range(0, 10):
-#     print(sentence[i], end="")
+    times_list = []
+    for i in pattern_time.finditer(schedule_day):
+        times_list.append(i)
+    for i in times_list:
+        print(i.group(0))
