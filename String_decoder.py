@@ -1,5 +1,6 @@
 import re
 import datetime
+import pytz
 schedule_input = ("""September 2, 2024
 10:00am - 12:00pm		FIRS4001 : CMF1114 - LEC (TC1L)
 2:00pm - 4:00pm		CQAR4002 : CMT1114 - TUT (TT4L)
@@ -24,6 +25,15 @@ October 6, 2024
 """)
 
 
+
+
+
+
+
+
+
+
+malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
 schedule_input = schedule_input.replace("\n", " ")
 
 
@@ -46,16 +56,22 @@ pattern_date = re.compile(dates)
 pattern_time = re.compile(times)
 
 dates_list = []
-for i in pattern_date.finditer(schedule_input):
+for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
     dates_list.append(i)
-for i in range(len(dates_list)):
-    print(dates_list[i].group(0))
-    if i < len(dates_list) - 1:
-        schedule_day = schedule_input[dates_list[i].end():(dates_list[i+1].start() or -1)]
-    elif i == len(dates_list) - 1:
-        schedule_day = schedule_input[dates_list[i].end():-1]
-    times_list = []
-    for i in pattern_time.finditer(schedule_day):
-        times_list.append(i)
-    for i in times_list:
-        print(i.group(0))
+for date_iter in range(len(dates_list)): # iterates through dates
+    print(dates_list[date_iter].group(0))
+    if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
+        schedule_day = schedule_input[dates_list[date_iter].end():(dates_list[date_iter+1].start() or -1)]
+    elif date_iter == len(dates_list) - 1: # to fix list out of bounds
+        schedule_day = schedule_input[dates_list[date_iter].end():-1]
+    
+    for time_iter in pattern_time.finditer(schedule_day):
+        class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
+        class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p"))
+        class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
+        class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p"))
+        print(str(class_start)+"\n"+str(class_end))
+        
+    # for i in times_list:
+    #     print(i.group(0))
+    
