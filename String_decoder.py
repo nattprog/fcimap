@@ -67,10 +67,10 @@ for date_iter in range(len(dates_list)): # iterates through dates
     
     for time_iter in pattern_time.finditer(schedule_day):
         class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
-        class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p"))
+        class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()
         class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
-        class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p"))
-        print(str(class_start)+"\n"+str(class_end))
+        class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
+        print(str(malaysiaTZ.localize(datetime.datetime.fromtimestamp(class_start)))+"\n"+str(malaysiaTZ.localize(datetime.datetime.fromtimestamp(class_end))))
         
     # for i in times_list:
     #     print(i.group(0))
