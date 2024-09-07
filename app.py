@@ -25,6 +25,27 @@ class fci_room(db.Model):
         self.room_number = room_number
         self.room_status = room_status
 
+# Database table for room availability, from CLiC schedule
+class room_availability_schedule(db.Model):
+    __tablename__ = "room_availability_schedule"
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    room_name = db.Column(db.String(50), nullable=False)
+    date_M_D_Y = db.Column(db.String(50), nullable=False)
+    time_class_start = db.Column(db.String(50), nullable=False)
+    time_class_end = db.Column(db.String(50), nullable=False)
+    class_subject_code = db.Column(db.String(50), nullable=False)
+    class_section = db.Column(db.String(50), nullable=False)
+    def __repr__(self, id, room_name, date_M_D_Y, time_class_start, time_class_end, class_subject_code, class_section):
+        self.id = id
+        self.room_name = room_name
+        self.date_M_D_Y = date_M_D_Y
+        self.time_class_start = time_class_start
+        self.time_class_end = time_class_end
+        self.class_subject_code = class_subject_code
+        self.class_section = class_section
+    
+    
+
 class room_aliases(db.Model):
     __tablename__ = "room_aliases"
     id = db.Column(db.Integer, primary_key=True, nullable=False)

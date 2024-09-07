@@ -1,7 +1,7 @@
 import re
 import datetime
 schedule_input = ("""September 2, 2024
-10:00am - 12:00pm		CQAR4001 : CMF1114 - LEC (TC1L)
+10:00am - 12:00pm		FIRS4001 : CMF1114 - LEC (TC1L)
 2:00pm - 4:00pm		CQAR4002 : CMT1114 - TUT (TT4L)
 September 3, 2024
 1:00pm - 4:00pm		CQAR4003 : LAE1113 - LEC (FC03)
@@ -20,7 +20,7 @@ October 6, 2024
 8:00am - 10:00am		CQAR4005 : CMT1114 - TUT (TT7L)
 10:00am - 12:00pm		CQAR4005 : CMT1124 - TUT (TT1L)
 3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FCM1)
-3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FC01)
+3:00pm - 6:00pm		LAST4005 : LMPU2223 - LEC (FC01)
 """)
 
 
@@ -35,9 +35,9 @@ times = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Za-z]{
 # group(1) = ([month] [day], [year])
 
 # times = string to match the dates
-# group(1) = ([start time][AM/PM])
-# group(2) = ([end time][AM/PM])
-# group(3) = ([room code])
+# group(1) = ([start time][am/pm])
+# group(2) = ([end time][am/pm])
+# group(3) = ([room name])
 # group(4) = ([subject code])
 # group(5) = ([class section])
 
@@ -50,9 +50,9 @@ for i in pattern_date.finditer(schedule_input):
     dates_list.append(i)
 for i in range(len(dates_list)):
     print(dates_list[i].group(0))
-    try:
+    if i < len(dates_list) - 1:
         schedule_day = schedule_input[dates_list[i].end():(dates_list[i+1].start() or -1)]
-    except:
+    elif i == len(dates_list) - 1:
         schedule_day = schedule_input[dates_list[i].end():-1]
     times_list = []
     for i in pattern_time.finditer(schedule_day):
