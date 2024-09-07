@@ -90,7 +90,8 @@ FCI Map
 
     var image_bounds = [[2.9283 - movela - enlargeLat, 101.6403 + movelo - enlargeLng],[2.9292 - movela, 101.6417 + movelo]];
 
-    L.imageOverlay('floor2.png', image_bounds, {
+    var floorImage = "{{ url_for('static', filename='images/floor' + ActiveFloor + '.png') }}";
+    L.imageOverlay(floorImage, image_bounds, {
     opacity: 0.7,
     }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04)
 
