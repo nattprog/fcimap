@@ -37,8 +37,10 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
 
     pattern_date = re.compile(dates)
     pattern_time = re.compile(times)
-
-    first_occurence_room_name = pattern_time.search(schedule_input).group(3)
+    try:
+        first_occurence_room_name = pattern_time.search(schedule_input).group(3)
+    except:
+        first_occurence_room_name = None
     with app.app_context():
         search_results = db.session.execute(db.select(class_availability_schedule).filter_by(fci_room_id = first_occurence_room_name)).all()
         for i in range(len(search_results)):
@@ -234,7 +236,7 @@ def schedule_input():
             schedule_input = str(request.form["schedule_input"])
             user_input_new_delete_old_schedule_decoder(schedule_input)
             if schedule_input_success_bool:
-                pass # Show popup that "Input has entered the database" or give user a reward
+                pass # Show popup that "Input has entered the database" or give user a reward, etc.
             return redirect("/schedule_input")
 
 
