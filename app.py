@@ -194,12 +194,23 @@ def room_page(room_name):
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
             schedule_list.append(room_obj[i][ii])
-
-    # Schedule input section
-    current_time_epoch = datetime.datetime.now(tz=malaysiaTZ)
     
-    return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list)
-    
+    # current class checker
+    class_in_session = None
+    current_time = datetime.datetime.now(tz=malaysiaTZ)
+    for schedule_single in schedule_list:
+        check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_class_start).astimezone(malaysiaTZ)
+        check_class_end = datetime.datetime.fromtimestamp(schedule_single.epoch_class_end).astimezone(malaysiaTZ)
+        if check_class_start.weekday() == current_time.weekday():
+            if check_class_start.hour <= current_time.hour < check_class_end.hour:
+                class_in_session = schedule_single
+                current_class_start = check_class_start
+                current_class_end = check_class_end
+                break
+    if class_in_session:
+        return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, class_in_session = class_in_session, current_class_start = current_class_start, current_class_end = current_class_end)
+    else: 
+        return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():

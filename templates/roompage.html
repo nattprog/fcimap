@@ -24,8 +24,16 @@
             <label for="occupied">Occupied</label></br></br>
             <input type="submit" value="Submit">
         </form>
+        <div>
+            <p>Class in session:</p>
+            {% if class_in_session %}
+            <p>{{class_in_session.class_subject_code}} {{class_in_session.class_section}}</p>
+            <p>{{current_class_start.strftime("%A")}}, {{current_class_start.strftime("%I:%M%p")}} - {{current_class_end.strftime("%I:%M%p")}}</p>
+            {% endif %}
+        </div>
     </div>
     <div class="RoomClassSchedule">
+        <p>Classes in this room:</p>
         {% for schedule_single in schedule_list %}
         <p>{{schedule_single.id}}
         {{ schedule_single.fci_room_id }}
