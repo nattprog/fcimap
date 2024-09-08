@@ -146,3 +146,13 @@ html, body {
     height: 100%;
     display: flex;
 }
+
+.schedule_input_form {
+
+    color: black;
+}
+
+.custum_schedule_form {
+
+    color: black;
+}

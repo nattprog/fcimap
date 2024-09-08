@@ -222,7 +222,7 @@ def room_page(room_name):
         check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_class_start).astimezone(malaysiaTZ)
         check_class_end = datetime.datetime.fromtimestamp(schedule_single.epoch_class_end).astimezone(malaysiaTZ)
         if check_class_start.weekday() == current_time.weekday():
-            if check_class_start.hour <= current_time.hour < check_class_end.hour:
+            if check_class_start <= current_time < check_class_end:
                 class_in_session = schedule_single
                 current_class_start = check_class_start
                 current_class_end = check_class_end
