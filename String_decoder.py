@@ -56,7 +56,9 @@ October 6, 2024
 
 
 
-def user_input_schedule_decoder(schedule_input):
+def user_input_new_delete_old_schedule_decoder(schedule_input):
+    
+
     malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
     schedule_input = schedule_input.replace("\n", " ")
 
@@ -78,6 +80,9 @@ def user_input_schedule_decoder(schedule_input):
 
     pattern_date = re.compile(dates)
     pattern_time = re.compile(times)
+
+    # clear_room_history = pattern_time.finditer(schedule_input)
+    # search_results = db.session.execute(db.select(class_availability_schedule).filter_by(room_name = clear_room_history)).all()
 
     dates_list = []
     for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
@@ -108,7 +113,7 @@ def user_input_schedule_decoder(schedule_input):
             print(str(malaysiaTZ.localize(datetime.datetime.fromtimestamp(class_start)).time())+" - "+str(malaysiaTZ.localize(datetime.datetime.fromtimestamp(class_end)).time()))
 
 
-user_input_schedule_decoder(schedule_input)
+user_input_new_delete_old_schedule_decoder(schedule_input)
 
 
 
