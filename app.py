@@ -32,23 +32,24 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     # group(2) = ([end time][am/pm])
     # group(3) = ([room name])
     # group(4) = ([subject code])
-    # group(5) = ([class section])
+    # group(5) = ([description])
+    # group(6) = ([class section])
 
 
     pattern_date = re.compile(dates)
     pattern_time = re.compile(times)
     try:
-        first_occurence_room_name = pattern_time.search(schedule_input).group(3)
+        first_occurence_room_name = pattern_time.search(schedule_input).group(3) # gets room name, to weed out old outdated schedules to be deleted
     except:
         first_occurence_room_name = None
     with app.app_context():
-        search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = first_occurence_room_name)).all()
+        search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = first_occurence_room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
         for i in range(len(search_results)):
             for ii in range(len(search_results[i])):
                 db.session.delete(search_results[i][ii])
                 db.session.commit()
 
-    dates_list = []
+    dates_list = [] # first we find the dates, eg. September 6, 2024
     for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
         dates_list.append(i)
 
@@ -58,7 +59,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
         elif date_iter == len(dates_list) - 1: # to fix list out of bounds
             schedule_day = schedule_input[dates_list[date_iter].end():]
         
-        for time_iter in pattern_time.finditer(schedule_day):
+        for time_iter in pattern_time.finditer(schedule_day): # finds the time values of class in between the dates
             if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
                 class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
                 class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
@@ -67,19 +68,19 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 epoch_class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
                 verbose_weekday_class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).strftime("%A")
                 fci_room_id = time_iter.group(3)
-                class_subject_code = time_iter.group(4)
+                class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
                 class_section = time_iter.group(6)
                 schedule_description = time_iter.group(5)
                 persistence_weeks = 6
                 input_from_scheduleORcustomORbutton = "schedule"
                 incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton)
-                schedule_input_success_bool = True
+                schedule_input_success_bool = True # used to check if schedule input is successful, for rewards or score etc.
 
                 with app.app_context():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
 
-def room_status_func(room_status):
+def room_status_func(room_status): # TODO: delete this feature
     if abs(room_status) == 0:
         room_status_modifier = ""
     if 1 <= abs(room_status) <= 2:
@@ -203,13 +204,13 @@ def room_page(room_name):
     current_time = datetime.datetime.now(tz=malaysiaTZ) #find current time
 
     # room availability schedule
-    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name)).all()
+    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
     schedule_list = []
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
             check_class_start = datetime.datetime.fromtimestamp(room_obj[i][ii].epoch_class_start).astimezone(malaysiaTZ)
             timeDelta = current_time - check_class_start
-            if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7:
+            if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
                 db.session.delete(room_obj[i][ii])
                 db.session.commit()
             else:
