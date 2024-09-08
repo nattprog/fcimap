@@ -29,28 +29,51 @@ class class_availability_schedule(db.Model):
         self.class_subject_code = class_subject_code
         self.class_section = class_section
 
+# schedule_input = ("""September 2, 2024
+# 10:00am - 12:00pm		FIRS4001 : CMF1114 - LEC (TC1L)
+# 2:00pm - 4:00pm		CQAR4002 : CMT1114 - TUT (TT4L)
+# September 3, 2024
+# 1:00pm - 4:00pm		CQAR4003 : LAE1113 - LEC (FC03)
+# 4:00pm - 6:00pm		CQAR4004 : CIT4163 - TUT (TT2L)
+# July 4, 2024
+# 8:00am - 10:00am		CQAR4005 : CMA4114 - TUT (TT3L)
+# 10:00am - 12:00pm		CQAR4006 : CMT1134 - TUT (TT5L)
+# 10:00am - 12:00pm		CQAR4007 : CMTJ1132 - LEC (TC1B)
+# December 5, 2024 dsafd
+# 8:00am - 10:00am		CQAR4008 : CMA4114 - TUT (TT2L)
+# 10:00am - 12:00pm		CQAR4009 : CMA4124 - TUT (TT1L)
+# 12:00pm - 2:00pm		CQAR4000 : CDS1114 - TUT (TT2L)
+# 2:00pm - 4:00pm		CQAR4005 : CIT4132 - TUT (TT2L)
+# 4:00pm - 6:00pm		CQAR4005 : CMT1114 - TUT (TT3L)
+# October 6, 2024
+# 8:00am - 10:00am		CQAR4005 : CMT1114 - TUT (TT7L)
+# 10:00am - 12:00pm		CQAR4005 : CMT1124 - TUT (TT1L)
+# 3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FCM1)
+# 3:00pm - 6:00pm		LAST4005 : LMPU2223 - LEC (FC01)
+# """)
+
 schedule_input = ("""September 2, 2024
-10:00am - 12:00pm		FIRS4001 : CMF1114 - LEC (TC1L)
-2:00pm - 4:00pm		CQAR4002 : CMT1114 - TUT (TT4L)
+10:00am - 12:00pm		CQAR4005 : CMF1114 - LEC (TC1L)
+2:00pm - 4:00pm		CQAR4005 : CMT1114 - TUT (TT4L)
 September 3, 2024
-1:00pm - 4:00pm		CQAR4003 : LAE1113 - LEC (FC03)
-4:00pm - 6:00pm		CQAR4004 : CIT4163 - TUT (TT2L)
-July 4, 2024
+1:00pm - 4:00pm		CQAR4005 : LAE1113 - LEC (FC03)
+4:00pm - 6:00pm		CQAR4005 : CIT4163 - TUT (TT2L)
+September 4, 2024
 8:00am - 10:00am		CQAR4005 : CMA4114 - TUT (TT3L)
-10:00am - 12:00pm		CQAR4006 : CMT1134 - TUT (TT5L)
-10:00am - 12:00pm		CQAR4007 : CMTJ1132 - LEC (TC1B)
-December 5, 2024 dsafd
-8:00am - 10:00am		CQAR4008 : CMA4114 - TUT (TT2L)
-10:00am - 12:00pm		CQAR4009 : CMA4124 - TUT (TT1L)
-12:00pm - 2:00pm		CQAR4000 : CDS1114 - TUT (TT2L)
+10:00am - 12:00pm		CQAR4005 : CMT1134 - TUT (TT5L)
+10:00am - 12:00pm		CQAR4005 : CMTJ1132 - LEC (TC1B)
+September 5, 2024
+8:00am - 10:00am		CQAR4005 : CMA4114 - TUT (TT2L)
+10:00am - 12:00pm		CQAR4005 : CMA4124 - TUT (TT1L)
+12:00pm - 2:00pm		CQAR4005 : CDS1114 - TUT (TT2L)
 2:00pm - 4:00pm		CQAR4005 : CIT4132 - TUT (TT2L)
 4:00pm - 6:00pm		CQAR4005 : CMT1114 - TUT (TT3L)
-October 6, 2024
+September 6, 2024
 8:00am - 10:00am		CQAR4005 : CMT1114 - TUT (TT7L)
 10:00am - 12:00pm		CQAR4005 : CMT1124 - TUT (TT1L)
 3:00pm - 6:00pm		CQAR4005 : LMPU2223 - LEC (FCM1)
-3:00pm - 6:00pm		LAST4005 : LMPU2223 - LEC (FC01)
-""")
+3:00pm - 6:00pm		AAAA4005 : LMPU2223 - LEC (FC01)""")
+
 
 
 
@@ -81,8 +104,13 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     pattern_date = re.compile(dates)
     pattern_time = re.compile(times)
 
-    # clear_room_history = pattern_time.finditer(schedule_input)
-    # search_results = db.session.execute(db.select(class_availability_schedule).filter_by(room_name = clear_room_history)).all()
+    first_occurence_room_name = pattern_time.search(schedule_input)
+    with app.app_context():
+        search_results = db.session.execute(db.select(class_availability_schedule).filter_by(room_name_FK = first_occurence_room_name.group(3))).all()
+        for i in range(len(search_results)):
+            for ii in range(len(search_results[i])):
+                db.session.delete(search_results[i][ii])
+                db.session.commit()
 
     dates_list = []
     for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
@@ -90,9 +118,9 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     for date_iter in range(len(dates_list)): # iterates through dates
         print(dates_list[date_iter].group(0))
         if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
-            schedule_day = schedule_input[dates_list[date_iter].end():(dates_list[date_iter+1].start() or -1)]
+            schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
         elif date_iter == len(dates_list) - 1: # to fix list out of bounds
-            schedule_day = schedule_input[dates_list[date_iter].end():-1]
+            schedule_day = schedule_input[dates_list[date_iter].end():]
         
         for time_iter in pattern_time.finditer(schedule_day):
             class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
@@ -110,17 +138,11 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 db.session.add(incoming_to_DB)
                 db.session.commit()
 
-            print(str(malaysiaTZ.localize(datetime.datetime.fromtimestamp(class_start)).time())+" - "+str(malaysiaTZ.localize(datetime.datetime.fromtimestamp(class_end)).time()))
-
-
-user_input_new_delete_old_schedule_decoder(schedule_input)
-
-
-
-
-
+            print(time_iter.group(0))
 
 
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+
+user_input_new_delete_old_schedule_decoder(schedule_input)
