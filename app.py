@@ -21,7 +21,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     schedule_input = schedule_input.replace("\n", " ")
 
     dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
-    times = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Za-z]{4}\d{4})\s*:\s*([A-Za-z]*\d*)\s*-\s*\w*\s*\((\w*)\)"
+    times = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Za-z]{4}\d{4})\s*:\s*([A-Za-z]*\d*)\s*-\s*(\w*)\s*\((\w*)\)"
     # regex string to find in the input. 
 
     # months = string to match the dates
@@ -65,12 +65,14 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
 
                 epoch_class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp() # taking the sections from the strings and sorting into their values
                 epoch_class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
+                verbose_weekday_class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).strftime("%A")
                 fci_room_id = time_iter.group(3)
                 class_subject_code = time_iter.group(4)
-                class_section = time_iter.group(5)
+                class_section = time_iter.group(6)
+                schedule_description = time_iter.group(5)
                 persistence_weeks = 6
                 input_from_scheduleORcustomORbutton = "schedule"
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = class_subject_code, class_section = class_section, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton)
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton)
                 schedule_input_success_bool = True
 
                 with app.app_context():
@@ -121,19 +123,23 @@ class room_availability_schedule(db.Model):
     fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
     epoch_class_start = db.Column(db.Float, nullable=False)
     epoch_class_end = db.Column(db.Float, nullable=False)
+    verbose_weekday_class_start = db.Column(db.String(50), nullable=False) # must set automatically
     class_subject_code = db.Column(db.String(50))
     class_section = db.Column(db.String(50))
-    persistence_weeks = db.Column(db.Integer, nullable=False)
-    input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False)
-    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section, persistence_weeks, input_from_scheduleORcustomORbutton):
+    schedule_description = db.Column(db.String(200))
+    persistence_weeks = db.Column(db.Integer, nullable=False) # must set automatically, allow user choice from input
+    input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
+    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, verbose_weekday_class_start, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton):
         self.id = id
         self.fci_room_id = fci_room_id
         self.epoch_class_start = epoch_class_start
         self.epoch_class_end = epoch_class_end
+        self.verbose_weekday_class_start = verbose_weekday_class_start
         self.class_subject_code = class_subject_code
         self.class_section = class_section
-        persistence_weeks = persistence_weeks
-        input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton
+        self.schedule_description = schedule_description
+        self.persistence_weeks = persistence_weeks
+        self.input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton
     
     
 
@@ -209,7 +215,7 @@ def room_page(room_name):
             else:
                 schedule_list.append(room_obj[i][ii])
     
-    # current class checker
+    # current class checker, checks if class in in session
     class_in_session = None
     for schedule_single in schedule_list:
         check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_class_start).astimezone(malaysiaTZ)
@@ -220,10 +226,16 @@ def room_page(room_name):
                 current_class_start = check_class_start
                 current_class_end = check_class_end
                 break
-    if class_in_session:
-        return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, class_in_session = class_in_session, current_class_start = current_class_start, current_class_end = current_class_end)
+    schedule_list_verbose_hours = []
+    for i in schedule_list:
+        schedule_list_verbose_hours.append(i)
+        schedule_list_verbose_hours[-1].epoch_class_start = datetime.datetime.fromtimestamp(i.epoch_class_start).astimezone(malaysiaTZ).strftime("%I:%M%p")
+        schedule_list_verbose_hours[-1].epoch_class_end = datetime.datetime.fromtimestamp(i.epoch_class_end).astimezone(malaysiaTZ).strftime("%I:%M%p")
+        
+    if class_in_session: # returns extra values
+        return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, schedule_list_verbose_hours = schedule_list_verbose_hours, class_in_session = class_in_session, current_class_start = current_class_start, current_class_end = current_class_end)
     else: 
-        return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list)
+        return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, schedule_list_verbose_hours = schedule_list_verbose_hours)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():

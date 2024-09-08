@@ -35,8 +35,15 @@
     </div>
     <div class="RoomClassSchedule">
         <p>Classes in this room:</p>
-        {% for schedule_single in schedule_list %}
-        <p>{{schedule_single.id}}
+        {% for schedule_single in schedule_list_verbose_hours %}
+        {% if loop.first %}
+            {{schedule_single.verbose_weekday_class_start}}
+        {% elif schedule_single.verbose_weekday_class_start != loop.previtem.verbose_weekday_class_start %}
+            {{schedule_single.verbose_weekday_class_start}}
+        {% else %}
+        {% endif %}
+
+        <p>
         {{ schedule_single.fci_room_id }}
         {{ schedule_single.epoch_class_start }}
         {{ schedule_single.epoch_class_end }}
