@@ -104,9 +104,9 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     pattern_date = re.compile(dates)
     pattern_time = re.compile(times)
 
-    first_occurence_room_name = pattern_time.search(schedule_input)
+    first_occurence_room_name = pattern_time.search(schedule_input).group(3)
     with app.app_context():
-        search_results = db.session.execute(db.select(class_availability_schedule).filter_by(room_name_FK = first_occurence_room_name.group(3))).all()
+        search_results = db.session.execute(db.select(class_availability_schedule).filter_by(room_name_FK = first_occurence_room_name)).all()
         for i in range(len(search_results)):
             for ii in range(len(search_results[i])):
                 db.session.delete(search_results[i][ii])
@@ -123,22 +123,23 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
             schedule_day = schedule_input[dates_list[date_iter].end():]
         
         for time_iter in pattern_time.finditer(schedule_day):
-            class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
-            class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()
-            class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
-            class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
-            class_start = float(class_start)
-            class_end = float(class_end)
-            room_name_FK = time_iter.group(3)
-            class_subject_code = time_iter.group(4)
-            class_section = time_iter.group(5)
-            incoming_to_DB = class_availability_schedule(room_name_FK = room_name_FK, class_start = class_start, class_end = class_end, class_subject_code = class_subject_code, class_section = class_section)
+            if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
+                class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
+                class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()
+                class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
+                class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
+                class_start = float(class_start)
+                class_end = float(class_end)
+                room_name_FK = time_iter.group(3)
+                class_subject_code = time_iter.group(4)
+                class_section = time_iter.group(5)
+                incoming_to_DB = class_availability_schedule(room_name_FK = room_name_FK, class_start = class_start, class_end = class_end, class_subject_code = class_subject_code, class_section = class_section)
 
-            with app.app_context():
-                db.session.add(incoming_to_DB)
-                db.session.commit()
+                with app.app_context():
+                    db.session.add(incoming_to_DB)
+                    db.session.commit()
 
-            print(time_iter.group(0))
+                print(time_iter.group(0))
 
 
 if __name__ == "__main__":

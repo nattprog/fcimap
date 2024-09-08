@@ -8,6 +8,71 @@ db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'sessionsecretkey'
 search = None
 
+# Declare functions
+
+def user_input_new_delete_old_schedule_decoder(schedule_input):
+    
+
+    malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
+    schedule_input = schedule_input.replace("\n", " ")
+
+
+    dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
+    times = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Za-z]{4}\d{4})\s*:\s*([A-Za-z]*\d*)\s*-\s*\w*\s*(\(\w*\))"
+    # regex string to find in the input. 
+
+    # months = string to match the dates
+    # group(1) = ([month] [day], [year])
+
+    # times = string to match the dates
+    # group(1) = ([start time][am/pm])
+    # group(2) = ([end time][am/pm])
+    # group(3) = ([room name])
+    # group(4) = ([subject code])
+    # group(5) = ([class section])
+
+
+    pattern_date = re.compile(dates)
+    pattern_time = re.compile(times)
+
+    first_occurence_room_name = pattern_time.search(schedule_input).group(3)
+    with app.app_context():
+        search_results = db.session.execute(db.select(class_availability_schedule).filter_by(room_name_FK = first_occurence_room_name)).all()
+        for i in range(len(search_results)):
+            for ii in range(len(search_results[i])):
+                db.session.delete(search_results[i][ii])
+                db.session.commit()
+
+    dates_list = []
+    for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
+        dates_list.append(i)
+    for date_iter in range(len(dates_list)): # iterates through dates
+        print(dates_list[date_iter].group(0))
+        if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
+            schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
+        elif date_iter == len(dates_list) - 1: # to fix list out of bounds
+            schedule_day = schedule_input[dates_list[date_iter].end():]
+        
+        for time_iter in pattern_time.finditer(schedule_day):
+            if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
+                class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
+                class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()
+                class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
+                class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
+                class_start = float(class_start)
+                class_end = float(class_end)
+                room_name_FK = time_iter.group(3)
+                class_subject_code = time_iter.group(4)
+                class_section = time_iter.group(5)
+                incoming_to_DB = class_availability_schedule(room_name_FK = room_name_FK, class_start = class_start, class_end = class_end, class_subject_code = class_subject_code, class_section = class_section)
+
+                with app.app_context():
+                    db.session.add(incoming_to_DB)
+                    db.session.commit()
+
+                print(time_iter.group(0))
+
+
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
     __tablename__ = "fci_room"
