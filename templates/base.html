@@ -8,7 +8,7 @@
 </head>
 
 <header>
-<div class="TopNavigationBar"id="TopLogo">
+<div class="TopNavigationBar" id="TopLogo">
     <ul>
         <li>
             <img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px">
@@ -22,13 +22,12 @@
     <ul>
         <li><a href="/" {% if ActivePage == "index" %}class="NavigationActive"{% endif %}>Home</a></li>
         <li id="account"><a href="/account" {% if ActivePage == "account"%}class="NavigationActive"{% endif %}>Account</a></li>
-        <li {% if ActivePage == "search"%}class="NavigationActive"{% endif %}>
-            <form method="POST">
-                <label for="search">Search Room:</label>
-              <input type="search" id="search" name="search" placeholder="Enter Search" value="{{session["search"]}}">
-              <input type="submit" value="Enter">
-            </form>
-        </li>
+        {% if session.get('user_id') %}
+            <li><a href="/change_password">Change Password</a></li>
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login" {% if ActivePage == "login"%}class="NavigationActive"{% endif %}>Login</a></li>
+        {% endif %}
     </ul>
 </nav>
 </header>

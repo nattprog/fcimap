@@ -63,7 +63,6 @@ def room_page(room_code):
 @app.route("/account/", methods=["GET", "POST"])
 def account():
     return redirect("/signup")
-    # return render_template("account.html", ActivePage="account")
 
 @app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
@@ -134,6 +133,46 @@ def login():
             return render_template('login.html', error="Invalid email or password.")
 
     return render_template('login.html')
+
+# Logout route
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('login'))
+
+# Change password route
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        current_password = request.form['current_password']
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+
+        user = User.query.get(session['user_id'])
+
+        # Check if the current password matches the stored password
+        if not check_password_hash(user.password, current_password):
+            return render_template('change_password.html', error="Current password is incorrect.")
+
+        # Validate new password
+        if len(new_password) < 8 or not re.search(r'[A-Z]', new_password) or not re.search(r'[a-z]', new_password) or not re.search(r'[0-9]', new_password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
+            return render_template('change_password.html', error="New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
+
+        if new_password != confirm_password:
+            return render_template('change_password.html', error="New password and confirmation password do not match.")
+
+        # Hash the new password and update the database
+        hashed_password = generate_password_hash(new_password, method='pbkdf2:sha256')
+        user.password = hashed_password
+        db.session.commit()
+
+        return redirect(url_for('account'))
+
+    return render_template('change_password.html')
+
 
 if __name__ == "__main__":
     with app.app_context():
