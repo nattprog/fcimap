@@ -42,7 +42,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     except:
         first_occurence_room_name = None
     with app.app_context():
-        search_results = db.session.execute(db.select(class_availability_schedule).filter_by(fci_room_id = first_occurence_room_name)).all()
+        search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = first_occurence_room_name)).all()
         for i in range(len(search_results)):
             for ii in range(len(search_results[i])):
                 db.session.delete(search_results[i][ii])
@@ -68,7 +68,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 fci_room_id = time_iter.group(3)
                 class_subject_code = time_iter.group(4)
                 class_section = time_iter.group(5)
-                incoming_to_DB = class_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = class_subject_code, class_section = class_section)
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = class_subject_code, class_section = class_section)
                 schedule_input_success_bool = True
 
                 with app.app_context():
@@ -102,7 +102,7 @@ class fci_room(db.Model):
     room_floor = db.Column(db.Integer, nullable=False)
     room_number = db.Column(db.Integer, nullable=False)
     room_status = db.Column(db.Integer, nullable=False)
-    room_classes_schedule = db.relationship("class_availability_schedule", backref="fci_room")
+    room_classes_schedule = db.relationship("room_availability_schedule", backref="fci_room")
     room_name_aliases = db.relationship("room_aliases", backref="fci_room")
     def __repr__(self, id, room_name, room_block, room_floor, room_number, room_status):
         self.id = id
@@ -113,21 +113,25 @@ class fci_room(db.Model):
         self.room_status = room_status
 
 # Database table for room availability, from CLiC schedule
-class class_availability_schedule(db.Model):
-    __tablename__ = "class_availability_schedule"
+class room_availability_schedule(db.Model):
+    __tablename__ = "room_availability_schedule"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
     epoch_class_start = db.Column(db.Float, nullable=False)
     epoch_class_end = db.Column(db.Float, nullable=False)
-    class_subject_code = db.Column(db.String(50), nullable=False)
-    class_section = db.Column(db.String(50), nullable=False)
-    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section):
+    class_subject_code = db.Column(db.String(50))
+    class_section = db.Column(db.String(50))
+    persistence_weeks = db.Column(db.Integer, nullable=False)
+    input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False)
+    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section, persistence_weeks, input_from_scheduleORcustomORbutton):
         self.id = id
         self.fci_room_id = fci_room_id
         self.epoch_class_start = epoch_class_start
         self.epoch_class_end = epoch_class_end
         self.class_subject_code = class_subject_code
         self.class_section = class_section
+        persistence_weeks = persistence_weeks
+        input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton
     
     
 
@@ -189,7 +193,7 @@ def room_page(room_name):
     room_status, room_status_modifier = room_status_func(room_status=room.room_status)
 
     # room availability schedule
-    room_obj = db.session.execute(db.select(class_availability_schedule).filter_by(fci_room_id = room.room_name)).all()
+    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name)).all()
     schedule_list = []
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):

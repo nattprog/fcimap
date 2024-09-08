@@ -29,6 +29,7 @@
             {% if class_in_session %}
             <p>{{class_in_session.class_subject_code}} {{class_in_session.class_section}}</p>
             <p>{{current_class_start.strftime("%A")}}, {{current_class_start.strftime("%I:%M%p")}} - {{current_class_end.strftime("%I:%M%p")}}</p>
+            <p>Schedule last updated: {{current_class_start.strftime("%B %d, %Y")}}</p>
             {% endif %}
         </div>
     </div>
