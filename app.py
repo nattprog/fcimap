@@ -16,8 +16,8 @@ search = None
 # Declare functions
 
 def user_input_new_delete_old_schedule_decoder(schedule_input):
-    
-    malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
+    global schedule_input_success_bool
+    schedule_input_success_bool = False
     schedule_input = schedule_input.replace("\n", " ")
 
     dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
@@ -49,8 +49,8 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     dates_list = []
     for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
         dates_list.append(i)
+
     for date_iter in range(len(dates_list)): # iterates through dates
-        print(dates_list[date_iter].group(0))
         if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
             schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
         elif date_iter == len(dates_list) - 1: # to fix list out of bounds
@@ -68,12 +68,11 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 class_subject_code = time_iter.group(4)
                 class_section = time_iter.group(5)
                 incoming_to_DB = class_availability_schedule(room_name_FK = room_name_FK, class_start = class_start, class_end = class_end, class_subject_code = class_subject_code, class_section = class_section)
+                schedule_input_success_bool = True
 
                 with app.app_context():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
-
-                print(time_iter.group(0))
 
 
 # Database for block, floor and number of rooms.
@@ -216,7 +215,26 @@ def search(search):
 
 @app.route("/schedule_input", methods=["GET", "POST"])
 def schedule_input():
-    
+    if request.method == "POST":
+        try:
+            request.form["search"]
+        except:
+            pass
+        else:
+            search = request.form["search"]
+            return redirect(f"/search/{search}")
+        
+        try:
+            request.form["schedule_input"]
+        except:
+            pass
+        else:
+            schedule_input = str(request.form["schedule_input"])
+            user_input_new_delete_old_schedule_decoder(schedule_input)
+            if schedule_input_success_bool:
+                pass # Show popup that "Input has entered the database" or give user a reward
+            return redirect("/schedule_input")
+
 
     return render_template("schedule_input.html")
 
