@@ -68,7 +68,9 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 fci_room_id = time_iter.group(3)
                 class_subject_code = time_iter.group(4)
                 class_section = time_iter.group(5)
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = class_subject_code, class_section = class_section)
+                persistence_weeks = 6
+                input_from_scheduleORcustomORbutton = "schedule"
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = class_subject_code, class_section = class_section, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton)
                 schedule_input_success_bool = True
 
                 with app.app_context():
