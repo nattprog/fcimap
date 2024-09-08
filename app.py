@@ -61,11 +61,10 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
         for time_iter in pattern_time.finditer(schedule_day):
             if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
                 class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
-                epoch_class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()
                 class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
+
+                epoch_class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp() # taking the sections from the strings and sorting into their values
                 epoch_class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
-                epoch_class_start = float(epoch_class_start)
-                epoch_class_end = float(epoch_class_end)
                 fci_room_id = time_iter.group(3)
                 class_subject_code = time_iter.group(4)
                 class_section = time_iter.group(5)
@@ -166,26 +165,27 @@ def home(floor):
 def room_page(room_name):
     room = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalar()
     search = None
+
+    # Identify which form is input
     if request.method == "POST":
         try:
             request.form["search"]
-        except:
-            pass
-        else:
             search = request.form["search"]
             return redirect(f"/search/{search}")
-        try:
-            request.form["room_status"]
         except:
             pass
-        else:
+        try:
+            request.form["room_status"]
             room_status = int(request.form["room_status"])
             if (int(room.room_status) < 5) and (room_status > 0):
                 room.room_status = int(room.room_status) + int(room_status)
             elif (int(room.room_status) > -5) and (room_status < 0):
                 room.room_status = int(room.room_status) + int(room_status)
             db.session.commit()
+        except:
+            pass
 
+    # TODO: change this to advanced system. this is the upvote/downvote room availability system
     room_status, room_status_modifier = room_status_func(room_status=room.room_status)
 
     # room availability schedule
@@ -196,7 +196,7 @@ def room_page(room_name):
             schedule_list.append(room_obj[i][ii])
 
     # Schedule input section
-    current_time_epoch = datetime.datetime.now(tz=malaysiaTZ).timestamp()
+    current_time_epoch = datetime.datetime.now(tz=malaysiaTZ)
     
     return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list)
     
@@ -231,23 +231,21 @@ def schedule_input():
     if request.method == "POST":
         try:
             request.form["search"]
-        except:
-            pass
-        else:
             search = request.form["search"]
             return redirect(f"/search/{search}")
+        except:
+            pass
+            
         
         try:
             request.form["schedule_input"]
-        except:
-            pass
-        else:
             schedule_input = str(request.form["schedule_input"])
             user_input_new_delete_old_schedule_decoder(schedule_input)
             if schedule_input_success_bool:
                 pass # Show popup that "Input has entered the database" or give user a reward, etc.
             return redirect("/schedule_input")
-
+        except:
+            pass
 
     return render_template("schedule_input.html")
 
