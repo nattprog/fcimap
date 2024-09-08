@@ -118,8 +118,8 @@ class class_availability_schedule(db.Model):
     __tablename__ = "class_availability_schedule"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
-    epoch_class_start = db.Column(db.Float(50), nullable=False)
-    epoch_class_end = db.Column(db.Float(50), nullable=False)
+    epoch_class_start = db.Column(db.Float, nullable=False)
+    epoch_class_end = db.Column(db.Float, nullable=False)
     class_subject_code = db.Column(db.String(50), nullable=False)
     class_section = db.Column(db.String(50), nullable=False)
     def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section):
