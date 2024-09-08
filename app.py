@@ -94,6 +94,18 @@ def room_status_func(room_status):
         room_status = "Occupied"
     return room_status, room_status_modifier
 
+def room_schedule_display_func(fci_room_id):
+    room_obj = db.session.execute(db.select(class_availability_schedule).filter_by(fci_room_id = fci_room_id)).all()
+
+    schedule_list = []
+    for i in range(len(room_obj)):
+        for ii in range(len(room_obj[i])):
+            schedule_list.append(room_obj[i][ii])
+    
+    return schedule_list
+
+
+
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
     __tablename__ = "fci_room"
@@ -187,11 +199,20 @@ def room_page(room_name):
             db.session.commit()
 
     room_status, room_status_modifier = room_status_func(room_status=room.room_status)
+    schedule_list = []
+    try:
+        room_obj = db.session.execute(db.select(class_availability_schedule).filter_by(fci_room_id = room.room_name)).all()
 
+        schedule_list = []
+        for i in range(len(room_obj)):
+            for ii in range(len(room_obj[i])):
+                schedule_list.append(room_obj[i][ii])
+    except:
+        print("nope")
     # Schedule input section
     current_time_epoch = datetime.datetime.now(tz=malaysiaTZ).timestamp()
     
-    return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier)
+    return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list)
     
 
 @app.route("/account/", methods=["GET", "POST"])

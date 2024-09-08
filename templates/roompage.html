@@ -25,6 +25,16 @@
             <input type="submit" value="Submit">
         </form>
     </div>
+    <div class="RoomClassSchedule">
+        {% for schedule_single in schedule_list %}
+        <p>{{schedule_single.id}}
+        {{ schedule_single.fci_room_id }}
+        {{ schedule_single.time_class_start }}
+        {{ schedule_single.time_class_end }}
+        {{ schedule_single.class_subject_code }}
+        {{ schedule_single.class_section }}</p>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}
