@@ -192,16 +192,23 @@ def room_page(room_name):
     # TODO: change this to advanced system. this is the upvote/downvote room availability system
     room_status, room_status_modifier = room_status_func(room_status=room.room_status)
 
+    current_time = datetime.datetime.now(tz=malaysiaTZ) #find current time
+
     # room availability schedule
     room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name)).all()
     schedule_list = []
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
-            schedule_list.append(room_obj[i][ii])
+            check_class_start = datetime.datetime.fromtimestamp(room_obj[i][ii].epoch_class_start).astimezone(malaysiaTZ)
+            timeDelta = current_time - check_class_start
+            if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7:
+                db.session.delete(room_obj[i][ii])
+                db.session.commit()
+            else:
+                schedule_list.append(room_obj[i][ii])
     
     # current class checker
     class_in_session = None
-    current_time = datetime.datetime.now(tz=malaysiaTZ)
     for schedule_single in schedule_list:
         check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_class_start).astimezone(malaysiaTZ)
         check_class_end = datetime.datetime.fromtimestamp(schedule_single.epoch_class_end).astimezone(malaysiaTZ)

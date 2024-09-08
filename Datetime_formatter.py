@@ -22,4 +22,9 @@ malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
 
 classstart = "July 4, 2024 8:00pm"
 classstart = malaysiaTZ.localize(datetime.datetime.strptime(classstart, "%B %d, %Y %I:%M%p"))
+
+current_time = datetime.datetime.now(tz=malaysiaTZ)
+print(current_time)
 print(classstart)
+tdelta = current_time-classstart
+print(tdelta.days)
