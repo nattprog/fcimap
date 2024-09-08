@@ -29,14 +29,14 @@ class fci_room(db.Model):
 class class_availability_schedule(db.Model):
     __tablename__ = "class_availability_schedule"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    room_name = db.Column(db.String(50), nullable=False)
+    room_name_FK = db.Column(db.String(50), nullable=False)
     class_start = db.Column(db.String(50), nullable=False)
     class_end = db.Column(db.String(50), nullable=False)
     class_subject_code = db.Column(db.String(50), nullable=False)
     class_section = db.Column(db.String(50), nullable=False)
-    def __repr__(self, id, room_name, class_start, class_end, class_subject_code, class_section):
+    def __repr__(self, id, room_name_FK, class_start, class_end, class_subject_code, class_section):
         self.id = id
-        self.room_name = room_name
+        self.room_name_FK = room_name_FK
         self.time_class_start = class_start
         self.time_class_end = class_end
         self.class_subject_code = class_subject_code
