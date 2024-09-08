@@ -8,7 +8,10 @@
 
 
 {% block content %}
-<form>
-    
+<form class="schedule_input_form">
+    <p><label for="w3review">Enter room schedule from CLiC:</label></p>
+    <textarea id="schedule_input" name="schedule_input" placeholder="Copy and paste Week List schedule!" rows="4" cols="50" required></textarea>
+    <br>
+    <input type="submit" value="Submit">
 </form>
 {% endblock %}

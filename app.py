@@ -182,6 +182,9 @@ def room_page(room_name):
         room_status = "Empty"
     elif room_status < 0:
         room_status = "Occupied"
+
+    # Schedule input section
+    current_time_epoch = datetime.datetime.now(tz=malaysiaTZ).timestamp()
     
     return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier)
     
@@ -213,8 +216,8 @@ def search(search):
 
 @app.route("/schedule_input", methods=["GET", "POST"])
 def schedule_input():
-    current_time_epoch = datetime.datetime.now(tz=malaysiaTZ).timestamp()
-    print(current_time_epoch)
+    
+
     return render_template("schedule_input.html")
 
 # -------------------------------------------------------
