@@ -40,7 +40,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
 
     first_occurence_room_name = pattern_time.search(schedule_input).group(3)
     with app.app_context():
-        search_results = db.session.execute(db.select(class_availability_schedule).filter_by(room_name_FK = first_occurence_room_name)).all()
+        search_results = db.session.execute(db.select(class_availability_schedule).filter_by(fci_room_id = first_occurence_room_name)).all()
         for i in range(len(search_results)):
             for ii in range(len(search_results[i])):
                 db.session.delete(search_results[i][ii])
@@ -64,10 +64,10 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
                 class_start = float(class_start)
                 class_end = float(class_end)
-                room_name_FK = time_iter.group(3)
+                fci_room_id = time_iter.group(3)
                 class_subject_code = time_iter.group(4)
                 class_section = time_iter.group(5)
-                incoming_to_DB = class_availability_schedule(room_name_FK = room_name_FK, class_start = class_start, class_end = class_end, class_subject_code = class_subject_code, class_section = class_section)
+                incoming_to_DB = class_availability_schedule(fci_room_id = fci_room_id, class_start = class_start, class_end = class_end, class_subject_code = class_subject_code, class_section = class_section)
                 schedule_input_success_bool = True
 
                 with app.app_context():
@@ -84,6 +84,8 @@ class fci_room(db.Model):
     room_floor = db.Column(db.Integer, nullable=False)
     room_number = db.Column(db.Integer, nullable=False)
     room_status = db.Column(db.Integer, nullable=False)
+    room_classes_schedule = db.relationship("class_availability_schedule", backref="fci_room")
+    room_name_aliases = db.relationship("room_aliases", backref="fci_room")
     def __repr__(self, id, room_name, room_block, room_floor, room_number, room_status):
         self.id = id
         self.room_name = room_name
@@ -96,14 +98,14 @@ class fci_room(db.Model):
 class class_availability_schedule(db.Model):
     __tablename__ = "class_availability_schedule"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    room_name_FK = db.Column(db.String(50), nullable=False)
+    fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
     class_start = db.Column(db.String(50), nullable=False)
     class_end = db.Column(db.String(50), nullable=False)
     class_subject_code = db.Column(db.String(50), nullable=False)
     class_section = db.Column(db.String(50), nullable=False)
-    def __repr__(self, id, room_name_FK, class_start, class_end, class_subject_code, class_section):
+    def __repr__(self, id, fci_room_id, class_start, class_end, class_subject_code, class_section):
         self.id = id
-        self.room_name_FK = room_name_FK
+        self.fci_room_id = fci_room_id
         self.time_class_start = class_start
         self.time_class_end = class_end
         self.class_subject_code = class_subject_code
