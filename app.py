@@ -76,6 +76,23 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     db.session.add(incoming_to_DB)
                     db.session.commit()
 
+def room_status_func(room_status):
+    if abs(room_status) == 0:
+        room_status_modifier = ""
+    if 1 <= abs(room_status) <= 2:
+        room_status_modifier = "Likely"
+    elif 3 <= abs(room_status) <= 4:
+        room_status_modifier = "Probably"
+    elif abs(room_status) == 5:
+        room_status_modifier = "Definitely"
+    
+    if room_status == 0:
+        room_status = "Unknown"
+    elif room_status > 0:
+        room_status = "Empty"
+    elif room_status < 0:
+        room_status = "Occupied"
+    return room_status, room_status_modifier
 
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
@@ -169,22 +186,7 @@ def room_page(room_name):
                 room.room_status = int(room.room_status) + int(room_status)
             db.session.commit()
 
-    room_status = room.room_status
-    if abs(room_status) == 0:
-        room_status_modifier = ""
-    if 1 <= abs(room_status) <= 2:
-        room_status_modifier = "Likely"
-    elif 3 <= abs(room_status) <= 4:
-        room_status_modifier = "Probably"
-    elif abs(room_status) == 5:
-        room_status_modifier = "Definitely"
-    
-    if room_status == 0:
-        room_status = "Unknown"
-    elif room_status > 0:
-        room_status = "Empty"
-    elif room_status < 0:
-        room_status = "Occupied"
+    room_status, room_status_modifier = room_status_func(room_status=room.room_status)
 
     # Schedule input section
     current_time_epoch = datetime.datetime.now(tz=malaysiaTZ).timestamp()
