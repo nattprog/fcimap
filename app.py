@@ -284,6 +284,15 @@ def schedule_input():
         except:
             pass
 
+        try:
+            custom_schedule_search_room = request.form["custom_schedule_search_room"]
+            custom_schedule_datetime = request.form["custom_schedule_datetime"]
+            custom_schedule_hours = request.form["custom_schedule_hours"]
+            custom_schedule_textarea = request.form["custom_schedule_textarea"]
+            custom_schedule_datetime = malaysiaTZ.localize(datetime.datetime.strptime(custom_schedule_datetime, "%Y-%m-%dT%H:%M")).timestamp()
+        except:
+            pass
+
     return render_template("schedule_input.html")
 
 # -------------------------------------------------------
