@@ -27,9 +27,9 @@
         <div>
             <p>Class in session:</p>
             {% if class_in_session %}
-            <p>{{class_in_session.class_subject_code}} {{class_in_session.class_section}}</p>
-            <p>{{current_class_start.strftime("%A")}}, {{current_class_start.strftime("%I:%M%p")}} - {{current_class_end.strftime("%I:%M%p")}}</p>
-            <p>Schedule last updated: {{current_class_start.strftime("%B %d, %Y")}}</p>
+            <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}</br>
+            {{current_class_start.strftime("%A")}}, {{current_class_start.strftime("%I:%M%p")}} - {{current_class_end.strftime("%I:%M%p")}}</br></br>   
+            Schedule last updated: {{current_class_start.strftime("%B %d, %Y")}}</p>
             {% endif %}
         </div>
     </div>
@@ -37,18 +37,13 @@
         <p>Classes in this room:</p>
         {% for schedule_single in schedule_list_verbose_hours %}
         {% if loop.first %}
-            {{schedule_single.verbose_weekday_class_start}}
+        <p>{{schedule_single.verbose_weekday_class_start}}</p>
         {% elif schedule_single.verbose_weekday_class_start != loop.previtem.verbose_weekday_class_start %}
-            {{schedule_single.verbose_weekday_class_start}}
+        <p>{{schedule_single.verbose_weekday_class_start}}</p>
         {% else %}
         {% endif %}
-
-        <p>
-        {{ schedule_single.fci_room_id }}
-        {{ schedule_single.epoch_class_start }}
-        {{ schedule_single.epoch_class_end }}
-        {{ schedule_single.class_subject_code }}
-        {{ schedule_single.class_section }}</p>
+        {{ schedule_single.class_subject_code }}  {{ schedule_single.class_section }}  {{schedule_single.schedule_description}}  {{ schedule_single.epoch_class_start }} - {{ schedule_single.epoch_class_end }}
+        </br>
         {% endfor %}
     </div>
 </div>
