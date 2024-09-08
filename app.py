@@ -1,21 +1,24 @@
 from flask import Flask, redirect, url_for, render_template, session, request
 from flask_sqlalchemy import SQLAlchemy
+import datetime, pytz, re
 
+# Flask and sqlalchemy config
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'sessionsecretkey'
+
+# Declare variables
+malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
 search = None
 
 # Declare functions
 
 def user_input_new_delete_old_schedule_decoder(schedule_input):
     
-
     malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
     schedule_input = schedule_input.replace("\n", " ")
-
 
     dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
     times = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Za-z]{4}\d{4})\s*:\s*([A-Za-z]*\d*)\s*-\s*\w*\s*(\(\w*\))"
@@ -121,7 +124,6 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
-
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -208,6 +210,12 @@ def search(search):
         if search:
             return redirect(f"/search/{search}")
     return render_template("search.html", ActivePage = "search", search = session["search"], results_list = results_list)
+
+@app.route("/schedule_input", methods=["GET", "POST"])
+def schedule_input():
+    current_time_epoch = datetime.datetime.now(tz=malaysiaTZ).timestamp()
+    print(current_time_epoch)
+    return render_template("schedule_input.html")
 
 # -------------------------------------------------------
 
