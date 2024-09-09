@@ -21,7 +21,7 @@
     <input type="search" id="custom_schedule_search_room" name="custom_schedule_search_room" placeholder="Enter Room ID" required></br></br>
 
     <label for="custom_schedule_datetime">Enter Starting Date and Time:</label></br>
-    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" required></br></br> 
+    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time}}"required></br></br> 
     <!-- min="1979-12-31T00:00" -->
 
     <label for="custom_schedule_hours">Length of stay (hours):</label></br>
@@ -32,6 +32,11 @@
         <option value="4">4 Hours</option>
         <option value="5">5 Hours</option>
     </select></br></br>
+
+    <input type="radio" id="empty" name="custom_room_status" value="+1" required>
+    <label for="empty">Empty</label></br>
+    <input type="radio" id="occupied" name="custom_room_status" value="-1" required>
+    <label for="occupied">Occupied</label></br></br>
 
     <label for="custom_schedule_textarea">Enter description of activity:</label></br>
     <textarea id="custom_schedule_textarea" name="custom_schedule_textarea" placeholder="Yap here" rows="4" cols="50" maxlength="100" required></textarea></br></br>

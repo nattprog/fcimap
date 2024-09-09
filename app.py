@@ -98,6 +98,9 @@ def room_status_func(room_status): # TODO: delete this feature
         room_status = "Occupied"
     return room_status, room_status_modifier
 
+def current_time():
+    return datetime.datetime.now(tz=malaysiaTZ)  #find current time
+
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
     __tablename__ = "fci_room"
@@ -201,7 +204,7 @@ def room_page(room_name):
     # TODO: change this to advanced system. this is the upvote/downvote room availability system
     room_status, room_status_modifier = room_status_func(room_status=room.room_status)
 
-    current_time = datetime.datetime.now(tz=malaysiaTZ) #find current time
+    current_time_single = current_time()
 
     # room availability schedule
     room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
@@ -209,7 +212,7 @@ def room_page(room_name):
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
             check_class_start = datetime.datetime.fromtimestamp(room_obj[i][ii].epoch_class_start).astimezone(malaysiaTZ)
-            timeDelta = current_time - check_class_start
+            timeDelta = current_time_single - check_class_start
             if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
                 db.session.delete(room_obj[i][ii])
                 db.session.commit()
@@ -221,8 +224,8 @@ def room_page(room_name):
     for schedule_single in schedule_list:
         check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_class_start).astimezone(malaysiaTZ)
         check_class_end = datetime.datetime.fromtimestamp(schedule_single.epoch_class_end).astimezone(malaysiaTZ)
-        if check_class_start.weekday() == current_time.weekday():
-            if check_class_start <= current_time < check_class_end:
+        if check_class_start.weekday() == current_time_single.weekday():
+            if check_class_start <= current_time_single < check_class_end:
                 class_in_session = schedule_single
                 current_class_start = check_class_start
                 current_class_end = check_class_end
@@ -289,11 +292,18 @@ def schedule_input():
             custom_schedule_datetime = request.form["custom_schedule_datetime"]
             custom_schedule_hours = request.form["custom_schedule_hours"]
             custom_schedule_textarea = request.form["custom_schedule_textarea"]
-            custom_schedule_datetime = malaysiaTZ.localize(datetime.datetime.strptime(custom_schedule_datetime, "%Y-%m-%dT%H:%M")).timestamp()
+            request.form["custom_room_status"]
+            custom_schedule_datetime_start = malaysiaTZ.localize(datetime.datetime.strptime(custom_schedule_datetime, "%Y-%m-%dT%H:%M"))
+            custom_schedule_datetime_end = custom_schedule_datetime_start + datetime.timedelta(hours=int(custom_schedule_hours))
+
+            custom_schedule_datetime_start = custom_schedule_datetime_start.timestamp()
+            custom_schedule_datetime_end = custom_schedule_datetime_end.timestamp()
+            input_from_scheduleORcustomORbutton = "custom"
+
         except:
             pass
 
-    return render_template("schedule_input.html")
+    return render_template("schedule_input.html", current_time=current_time().strftime("%Y-%m-%dT%H:%M"))
 
 # -------------------------------------------------------
 
