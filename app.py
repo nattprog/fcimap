@@ -153,23 +153,23 @@ def change_password():
 
         user = User.query.get(session['user_id'])
 
-        # Check if the current password matches the stored password
         if not check_password_hash(user.password, current_password):
             return render_template('change_password.html', error="Current password is incorrect.")
 
-        # Validate new password
         if len(new_password) < 8 or not re.search(r'[A-Z]', new_password) or not re.search(r'[a-z]', new_password) or not re.search(r'[0-9]', new_password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
             return render_template('change_password.html', error="New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
 
+        # Check if new password and confirmation match
         if new_password != confirm_password:
             return render_template('change_password.html', error="New password and confirmation password do not match.")
 
-        # Hash the new password and update the database
+        # Hash the new password before storing it in the database
         hashed_password = generate_password_hash(new_password, method='pbkdf2:sha256')
         user.password = hashed_password
         db.session.commit()
 
-        return redirect(url_for('account'))
+        # Redirect to the login page after successful password change
+        return redirect(url_for('login'))
 
     return render_template('change_password.html')
 
