@@ -6,7 +6,7 @@ import datetime, pytz, re
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, session_options={"autoflush": False})
 app.config["SECRET_KEY"] = 'sessionsecretkey'
 
 # Declare variables
@@ -73,7 +73,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 schedule_description = time_iter.group(5)
                 persistence_weeks = 6
                 input_from_scheduleORcustomORbutton = "schedule"
-                availability_status_counter = -10
+                availability_status_counter = 10
                 incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_status_counter = availability_status_counter)
                 schedule_input_success_bool = True # used to check if schedule input is successful, for rewards or score etc.
 
