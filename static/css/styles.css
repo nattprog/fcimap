@@ -154,3 +154,12 @@ html, body {
 .custom_schedule_form {
     color: black;
 }
+
+.RoomClassSchedule {
+    display: inline-block;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
