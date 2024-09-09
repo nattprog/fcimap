@@ -269,7 +269,7 @@ def search(search):
             return redirect(f"/search/{search}")
     return render_template("search.html", ActivePage = "search", search = session["search"], results_list = results_list)
 
-@app.route("/schedule_input", methods=["GET", "POST"])
+@app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
     if request.method == "POST":
         try:
@@ -307,7 +307,7 @@ def schedule_input():
         except:
             pass
 
-    return render_template("schedule_input.html", current_time=current_time().strftime("%Y-%m-%dT%H:%M"))
+    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time().strftime("%Y-%m-%dT%H:%M"))
 
 # -------------------------------------------------------
 
