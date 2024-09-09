@@ -73,7 +73,8 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 schedule_description = time_iter.group(5)
                 persistence_weeks = 6
                 input_from_scheduleORcustomORbutton = "schedule"
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton)
+                availability_status_counter = -10
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_status_counter = availability_status_counter)
                 schedule_input_success_bool = True # used to check if schedule input is successful, for rewards or score etc.
 
                 with app.app_context():
@@ -133,7 +134,8 @@ class room_availability_schedule(db.Model):
     schedule_description = db.Column(db.String(200))
     persistence_weeks = db.Column(db.Integer, nullable=False) # must set automatically, allow user choice from input
     input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
-    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, verbose_weekday_class_start, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton):
+    availability_status_counter = db.Column(db.Integer, nullable=False)
+    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, verbose_weekday_class_start, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_status_counter):
         self.id = id
         self.fci_room_id = fci_room_id
         self.epoch_class_start = epoch_class_start
@@ -144,6 +146,7 @@ class room_availability_schedule(db.Model):
         self.schedule_description = schedule_description
         self.persistence_weeks = persistence_weeks
         self.input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton
+        self.availability_status_counter = availability_status_counter
     
     
 
@@ -295,6 +298,7 @@ def schedule_input():
             request.form["custom_room_status"]
             custom_schedule_datetime_start = malaysiaTZ.localize(datetime.datetime.strptime(custom_schedule_datetime, "%Y-%m-%dT%H:%M"))
             custom_schedule_datetime_end = custom_schedule_datetime_start + datetime.timedelta(hours=int(custom_schedule_hours))
+            persistence_weeks = 1
 
             custom_schedule_datetime_start = custom_schedule_datetime_start.timestamp()
             custom_schedule_datetime_end = custom_schedule_datetime_end.timestamp()
