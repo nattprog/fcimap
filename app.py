@@ -195,21 +195,27 @@ def room_page(room_name):
     # Identify which form is input
     if request.method == "POST":
         try:
-            request.form["search"]
             search = request.form["search"]
             return redirect(f"/search/{search}")
         except:
             pass
+
         try:
-            request.form["room_status"] # TODO: delete /remake this system
-            room_status = int(request.form["room_status"])
-            if (int(room.room_status) < 5) and (room_status > 0):
-                room.room_status = int(room.room_status) + int(room_status)
-            elif (int(room.room_status) > -5) and (room_status < 0):
-                room.room_status = int(room.room_status) + int(room_status)
-            db.session.commit()
+            room_status = request.form["room_status"] # TODO: delete /remake this system
+            current_time_single = current_time
+            fci_room_id = room_name
+            epoch_start = current_time_single.timestamp()
+            epoch_end = (current_time_single + datetime.timedelta(hours=1)).timestamp()
+            persistence_weeks = 1
+            input_from_scheduleORcustomORbutton = "button"
+            availability_weightage_value = int(room_status)
+            incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_start = epoch_start, epoch_end = epoch_end, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+            with app.app_context():
+                db.session.add(incoming_to_DB)
+                db.session.commit()
         except:
             pass
+
 
     # TODO: change this to advanced system. this is the upvote/downvote room availability system
     room_status, room_status_modifier = room_status_func(room_status=room.room_status)
@@ -222,7 +228,7 @@ def room_page(room_name):
         for ii in range(len(room_obj[i])):
             check_class_start = room_obj[i][ii].datetime_start()
             timeDelta = current_time_single - check_class_start
-            if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
+            if timeDelta.days >= (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
                 db.session.delete(room_obj[i][ii])
                 db.session.commit()
             else:
@@ -242,7 +248,7 @@ def room_page(room_name):
         for ii in range(len(room_obj[i])):
             check_class_start = room_obj[i][ii].datetime_start()
             timeDelta = current_time_single - check_class_start
-            if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
+            if timeDelta.days >= (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
                 db.session.delete(room_obj[i][ii])
                 db.session.commit()
             else:
@@ -288,7 +294,6 @@ def search(search):
 def schedule_input():
     if request.method == "POST":
         try:
-            request.form["search"]
             search = request.form["search"]
             return redirect(f"/search/{search}")
         except:
@@ -296,7 +301,6 @@ def schedule_input():
             
         
         try:
-            request.form["schedule_input"]
             schedule_input = str(request.form["schedule_input"])
             user_input_new_delete_old_schedule_decoder(schedule_input)
             if schedule_input_success_bool:
