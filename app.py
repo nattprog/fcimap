@@ -66,15 +66,14 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
 
                 epoch_class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp() # taking the sections from the strings and sorting into their values
                 epoch_class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
-                verbose_weekday_class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).strftime("%A")
                 fci_room_id = time_iter.group(3)
                 class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
                 class_section = time_iter.group(6)
                 schedule_description = time_iter.group(5)
                 persistence_weeks = 6
                 input_from_scheduleORcustomORbutton = "schedule"
-                availability_status_value = 10
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_status_value = availability_status_value)
+                availability_weightage_value = 10
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
                 schedule_input_success_bool = True # used to check if schedule input is successful, for rewards or score etc.
 
                 with app.app_context():
@@ -133,8 +132,8 @@ class room_availability_schedule(db.Model):
     schedule_description = db.Column(db.String(200))
     persistence_weeks = db.Column(db.Integer, nullable=False) # must set automatically, allow user choice from input
     input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
-    availability_status_value = db.Column(db.Integer, nullable=False)
-    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_status_value):
+    availability_weightage_value = db.Column(db.Integer, nullable=False)
+    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_weightage_value):
         self.id = id
         self.fci_room_id = fci_room_id
         self.epoch_class_start = epoch_class_start
@@ -147,7 +146,7 @@ class room_availability_schedule(db.Model):
         self.schedule_description = schedule_description
         self.persistence_weeks = persistence_weeks
         self.input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton
-        self.availability_status_value = availability_status_value
+        self.availability_weightage_value = availability_weightage_value
 
 class room_aliases(db.Model):
     __tablename__ = "room_aliases"
@@ -318,9 +317,9 @@ def schedule_input():
                 schedule_description = custom_schedule_textarea
                 persistence_weeks = 1
                 input_from_scheduleORcustomORbutton = "custom"
-                availability_status_value = custom_room_status
+                availability_weightage_value = custom_room_status
                 
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_status_value = availability_status_value)
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
                 with app.app_context():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
