@@ -36,14 +36,11 @@
     </div>
     <div class="RoomClassSchedule">
         <p>Classes in this room:</p>
-        {% for schedule_single in schedule_list_verbose_hours %}
-        {% if loop.first %}
-        <p>{{schedule_single.verbose_weekday_class_start}}</p>
-        {% elif schedule_single.verbose_weekday_class_start != loop.previtem.verbose_weekday_class_start %}
-        <p>{{schedule_single.verbose_weekday_class_start}}</p>
-        {% else %}
+        {% for schedule_single in class_schedule_list %}
+        {% if loop.first  or (schedule_single.datetime_start("%A") != loop.previtem.datetime_start("%A"))%}
+        <p>{{schedule_single.datetime_start(strftime="%A")}}</p>
         {% endif %}
-        {{ schedule_single.class_subject_code }}  {{ schedule_single.class_section }}  {{schedule_single.schedule_description}}  {{ schedule_single.epoch_class_start }} - {{ schedule_single.epoch_class_end }}
+        {{ schedule_single.class_subject_code }}  {{ schedule_single.class_section }}  {{schedule_single.schedule_description}}  {{schedule_single.datetime_start(strftime="%I:%M%p")}} - {{schedule_single.datetime_end(strftime="%I:%M%p")}}
         </br>
         {% endfor %}
     </div>

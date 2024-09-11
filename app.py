@@ -216,32 +216,29 @@ def room_page(room_name):
 
     # room availability schedule
     room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
-    schedule_list = []
+    class_schedule_list = []
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
-            check_class_start = datetime.datetime.fromtimestamp(float(room_obj[i][ii].epoch_start)).astimezone(malaysiaTZ)
+            check_class_start = room_obj[i][ii].datetime_start()
             timeDelta = current_time_single - check_class_start
             if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
                 db.session.delete(room_obj[i][ii])
                 db.session.commit()
             else:
-                schedule_list.append(room_obj[i][ii])
+                class_schedule_list.append(room_obj[i][ii])
     
     # current class checker, checks if class in in session
     class_in_session = None
-    for schedule_single in schedule_list:
-        check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_start).astimezone(malaysiaTZ)
-        check_class_end = datetime.datetime.fromtimestamp(schedule_single.epoch_end).astimezone(malaysiaTZ)
-        if check_class_start.weekday() == current_time_single.weekday():
-            if float(check_class_start.timestamp()) <= float(current_time_single.timestamp()) < float(check_class_end.timestamp()):
+    for schedule_single in class_schedule_list:
+        if schedule_single.datetime_start().weekday() == current_time_single.weekday():
+            if int(schedule_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(schedule_single.datetime_end(strftime="%H%M%S%f")):
                 class_in_session = schedule_single
-                print("YESSS")
                 break
     
-    # schedule_list = list of row objects of CLiC MMUclass
+    # class_schedule_list = list of row objects of CLiC MMUclass
     # class_in_session = single row object of CLiC MMUclass which is currently going on in this room. Returns None if no class ongoing
     # TODO room_status and room_status_modifier = to be deleted/remade
-    return render_template("roompage.html", room = room, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, class_in_session = class_in_session, current_time_single = current_time_single)
+    return render_template("roompage.html", room = room, room_status = room_status, room_status_modifier = room_status_modifier, class_schedule_list = class_schedule_list, class_in_session = class_in_session, current_time_single = current_time_single)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
