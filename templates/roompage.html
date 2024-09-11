@@ -25,20 +25,24 @@
             <input type="submit" value="Submit">
         </form>
         <div>
-            <p>{{current_time_single.strftime("%B %d, %Y")}}</p>
-            {% if class_in_session %}
+            <p>{{current_time_single.strftime("%B %d, %Y %I:%M%p")}}</p>
+            {% if class_in_session_list %}
             <p>Class in session:</p>
+            {% for class_in_session in class_in_session_list %}
             <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}</br>
             {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}</br></br>   
             Schedule last updated: {{class_in_session.datetime_start(strftime="%B %d, %Y")}}</p>
+            {% endfor %}
             {% endif %}
         </div>
         <div>
-            {% if custom_in_session %}
+            {% if custom_in_session_list %}
             <p>Meeting in session:</p>
-            <p>{{custom_in_session.class_subject_code}}  {{custom_in_session.class_section}}  {{custom_in_session.schedule_description}}</br>
+            {% for custom_in_session in custom_in_session_list %}
+            <p>{{custom_in_session.schedule_description}}</br>
                 {{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</br></br></p>
-                {% endif %}
+            {% endfor %}
+            {% endif %}
         </div>
     </div>
     <div class="RoomClassSchedule">
