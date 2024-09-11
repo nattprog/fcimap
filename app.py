@@ -128,27 +128,26 @@ class room_availability_schedule(db.Model):
     fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
     epoch_class_start = db.Column(db.Float, nullable=False)
     epoch_class_end = db.Column(db.Float, nullable=False)
-    verbose_weekday_class_start = db.Column(db.String(50), nullable=False) # must set automatically
     class_subject_code = db.Column(db.String(50))
     class_section = db.Column(db.String(50))
     schedule_description = db.Column(db.String(200))
     persistence_weeks = db.Column(db.Integer, nullable=False) # must set automatically, allow user choice from input
     input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
     availability_status_value = db.Column(db.Integer, nullable=False)
-    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, verbose_weekday_class_start, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_status_value):
+    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_status_value):
         self.id = id
         self.fci_room_id = fci_room_id
         self.epoch_class_start = epoch_class_start
         self.epoch_class_end = epoch_class_end
-        self.verbose_weekday_class_start = verbose_weekday_class_start
+        self.verbose_weekday_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ).strftime("%A")
+        self.verbose_ampm_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ).strftime("%I:%M%p")
+        self.verbose_ampm_class_end = datetime.datetime.fromtimestamp(float(epoch_class_end)).astimezone(malaysiaTZ).strftime("%I:%M%p")
         self.class_subject_code = class_subject_code
         self.class_section = class_section
         self.schedule_description = schedule_description
         self.persistence_weeks = persistence_weeks
         self.input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton
         self.availability_status_value = availability_status_value
-    
-    
 
 class room_aliases(db.Model):
     __tablename__ = "room_aliases"
