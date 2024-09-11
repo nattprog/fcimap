@@ -6,9 +6,9 @@
 <div id="RoomPageMainDiv">
     <div class="RoomPageInfo">
         <h1>{{room_name}}</h1>
-        <p>Block: {{room_block}}</p>
-        <p>Floor: {{room_floor}}</p>
-        <p>Room: {{room_number}}</p>
+        <p>Block: {{room.room_block}}</p>
+        <p>Floor: {{room.room_floor}}</p>
+        <p>Room: {{room.room_number}}</p>
     </div>
     <div class="RoomPageAliases">
         <p>Aliases:</p>
@@ -25,11 +25,12 @@
             <input type="submit" value="Submit">
         </form>
         <div>
+            <p>{{current_time_single.strftime("%B %d, %Y")}}</p>
             <p>Class in session:</p>
             {% if class_in_session %}
             <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}</br>
-            {{current_class_start.strftime("%A")}}, {{current_class_start.strftime("%I:%M%p")}} - {{current_class_end.strftime("%I:%M%p")}}</br></br>   
-            Schedule last updated: {{current_class_start.strftime("%B %d, %Y")}}</p>
+            {{class_in_session.datetime_class_start().strftime("%A %d")}}, {{class_in_session.verbose_ampm_class_start}} - {{class_in_session.verbose_ampm_class_end}}</br></br>   
+            Schedule last updated: {{class_in_session.epoch_class_start}}</p>
             {% endif %}
         </div>
     </div>

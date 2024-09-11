@@ -21,8 +21,7 @@
     <input type="search" id="custom_schedule_search_room" name="custom_schedule_search_room" placeholder="Enter Room ID" required></br></br>
 
     <label for="custom_schedule_datetime">Enter Starting Date and Time:</label></br>
-    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time_limiter}}"required></br></br> 
-    <!-- min="1979-12-31T00:00" -->
+    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time.strftime("%Y-%m-%dT%H:%M")}}" required></br></br>
 
     <label for="custom_schedule_hours">Length of stay (hours):</label></br>
     <select name="custom_schedule_hours" id="custom_schedule_hours" required>

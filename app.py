@@ -12,6 +12,7 @@ app.config["SECRET_KEY"] = 'sessionsecretkey'
 # Declare variables
 malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
 search = None
+current_time = datetime.datetime.now(tz=malaysiaTZ)
 
 # Declare functions
 
@@ -98,21 +99,6 @@ def room_status_func(room_status): # TODO: delete this feature
         room_status = "Occupied"
     return room_status, room_status_modifier
 
-def current_time(year=False, month=False, weekday=False, date=False, time=False): #find current time
-    current_time_now = datetime.datetime.now(tz=malaysiaTZ)
-    if year:
-        return current_time_now.strftime("%Y")
-    elif month:
-        return current_time_now.strftime("%B")
-    elif weekday:
-        return current_time_now.strftime("%A")  
-    elif date:
-        return int(current_time_now.strftime("%d"))
-    elif time:
-        return current_time_now.strftime("%I:%M%p")
-    else:
-        return current_time_now
-
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
     __tablename__ = "fci_room"
@@ -145,14 +131,21 @@ class room_availability_schedule(db.Model):
     persistence_weeks = db.Column(db.Integer, nullable=False) # must set automatically, allow user choice from input
     input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
     availability_weightage_value = db.Column(db.Integer, nullable=False)
+
+    def verbose_weekday_class_start(self):
+        return datetime.datetime.fromtimestamp(float(self.epoch_class_start)).astimezone(malaysiaTZ).strftime("%A")
+    def datetime_class_start(self):
+        return datetime.datetime.fromtimestamp(float(self.epoch_class_start)).astimezone(malaysiaTZ)
+
     def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_weightage_value):
         self.id = id
         self.fci_room_id = fci_room_id
         self.epoch_class_start = epoch_class_start
         self.epoch_class_end = epoch_class_end
-        self.verbose_weekday_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ).strftime("%A")
-        self.verbose_ampm_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ).strftime("%I:%M%p")
-        self.verbose_ampm_class_end = datetime.datetime.fromtimestamp(float(epoch_class_end)).astimezone(malaysiaTZ).strftime("%I:%M%p")
+        # self.verbose_weekday_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ).strftime("%A")
+        # self.verbose_ampm_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ).strftime("%I:%M%p")
+        # self.verbose_ampm_class_end = datetime.datetime.fromtimestamp(float(epoch_class_end)).astimezone(malaysiaTZ).strftime("%I:%M%p")
+        # self.datetime_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ)
         self.class_subject_code = class_subject_code
         self.class_section = class_section
         self.schedule_description = schedule_description
@@ -194,6 +187,7 @@ def home(floor):
 def room_page(room_name):
     room = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalar()
     search = None
+    current_time_single = current_time
 
     # Identify which form is input
     if request.method == "POST":
@@ -204,7 +198,7 @@ def room_page(room_name):
         except:
             pass
         try:
-            request.form["room_status"]
+            request.form["room_status"] # TODO: delete /remake this system
             room_status = int(request.form["room_status"])
             if (int(room.room_status) < 5) and (room_status > 0):
                 room.room_status = int(room.room_status) + int(room_status)
@@ -216,8 +210,6 @@ def room_page(room_name):
 
     # TODO: change this to advanced system. this is the upvote/downvote room availability system
     room_status, room_status_modifier = room_status_func(room_status=room.room_status)
-
-    current_time_single = current_time()
 
     # room availability schedule
     room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
@@ -238,11 +230,14 @@ def room_page(room_name):
         check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_class_start).astimezone(malaysiaTZ)
         check_class_end = datetime.datetime.fromtimestamp(schedule_single.epoch_class_end).astimezone(malaysiaTZ)
         if check_class_start.weekday() == current_time_single.weekday():
-            if check_class_start <= current_time_single < check_class_end:
+            if float(check_class_start.timestamp()) <= float(current_time_single.timestamp()) < float(check_class_end.timestamp()):
                 class_in_session = schedule_single
                 break
-
-    return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, class_in_session = class_in_session)
+    
+    # schedule_list = list of row objects of CLiC MMUclass
+    # class_in_session = single row object of CLiC MMUclass which is currently going on in this room. Returns None if no class ongoing
+    # TODO room_status and room_status_modifier = to be deleted/remade
+    return render_template("roompage.html", room = room, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, class_in_session = class_in_session, current_time_single = current_time_single)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
@@ -327,7 +322,7 @@ def schedule_input():
         except:
             pass
 
-    return render_template("schedule_input.html", ActivePage="schedule_input", current_time_limiter=current_time().strftime("%Y-%m-%dT%H:%M"))
+    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time)
 
 # -------------------------------------------------------
 
