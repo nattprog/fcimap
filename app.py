@@ -36,7 +36,6 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     # group(5) = ([description])
     # group(6) = ([class section])
 
-
     pattern_date = re.compile(dates)
     pattern_time = re.compile(times)
     try:
