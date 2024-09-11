@@ -64,8 +64,8 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
                 class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
 
-                epoch_class_start = malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp() # taking the sections from the strings and sorting into their values
-                epoch_class_end = malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp()
+                epoch_class_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
+                epoch_class_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
                 fci_room_id = time_iter.group(3)
                 class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
                 class_section = time_iter.group(6)
@@ -98,8 +98,20 @@ def room_status_func(room_status): # TODO: delete this feature
         room_status = "Occupied"
     return room_status, room_status_modifier
 
-def current_time():
-    return datetime.datetime.now(tz=malaysiaTZ)  #find current time
+def current_time(year=False, month=False, weekday=False, date=False, time=False): #find current time
+    current_time_now = datetime.datetime.now(tz=malaysiaTZ)
+    if year:
+        return current_time_now.strftime("%Y")
+    elif month:
+        return current_time_now.strftime("%B")
+    elif weekday:
+        return current_time_now.strftime("%A")  
+    elif date:
+        return int(current_time_now.strftime("%d"))
+    elif time:
+        return current_time_now.strftime("%I:%M%p")
+    else:
+        return current_time_now
 
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
@@ -212,7 +224,7 @@ def room_page(room_name):
     schedule_list = []
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
-            check_class_start = datetime.datetime.fromtimestamp(room_obj[i][ii].epoch_class_start).astimezone(malaysiaTZ)
+            check_class_start = datetime.datetime.fromtimestamp(float(room_obj[i][ii].epoch_class_start)).astimezone(malaysiaTZ)
             timeDelta = current_time_single - check_class_start
             if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
                 db.session.delete(room_obj[i][ii])
@@ -228,19 +240,9 @@ def room_page(room_name):
         if check_class_start.weekday() == current_time_single.weekday():
             if check_class_start <= current_time_single < check_class_end:
                 class_in_session = schedule_single
-                current_class_start = check_class_start
-                current_class_end = check_class_end
                 break
-    schedule_list_verbose_hours = []
-    for i in schedule_list:
-        schedule_list_verbose_hours.append(i)
-        schedule_list_verbose_hours[-1].epoch_class_start = datetime.datetime.fromtimestamp(i.epoch_class_start).astimezone(malaysiaTZ).strftime("%I:%M%p")
-        schedule_list_verbose_hours[-1].epoch_class_end = datetime.datetime.fromtimestamp(i.epoch_class_end).astimezone(malaysiaTZ).strftime("%I:%M%p")
-        
-    if class_in_session: # returns extra values
-        return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, schedule_list_verbose_hours = schedule_list_verbose_hours, class_in_session = class_in_session, current_class_start = current_class_start, current_class_end = current_class_end)
-    else: 
-        return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, schedule_list_verbose_hours = schedule_list_verbose_hours)
+
+    return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier, schedule_list = schedule_list, class_in_session = class_in_session)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
@@ -311,22 +313,21 @@ def schedule_input():
             room_name_pattern = re.compile(room_name_re_check)
             if room_name_pattern.search(custom_schedule_search_room):
                 fci_room_id = custom_schedule_search_room
-                epoch_class_start = custom_schedule_datetime_start.timestamp()
-                epoch_class_end = custom_schedule_datetime_end.timestamp()
-                verbose_weekday_class_start = custom_schedule_datetime_start.strftime("%A")
+                epoch_class_start = float(custom_schedule_datetime_start.timestamp())
+                epoch_class_end = float(custom_schedule_datetime_end.timestamp())
                 schedule_description = custom_schedule_textarea
                 persistence_weeks = 1
                 input_from_scheduleORcustomORbutton = "custom"
-                availability_weightage_value = custom_room_status
+                availability_weightage_value = int(custom_room_status)
                 
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, verbose_weekday_class_start = verbose_weekday_class_start, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
                 with app.app_context():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
         except:
             pass
 
-    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time().strftime("%Y-%m-%dT%H:%M"))
+    return render_template("schedule_input.html", ActivePage="schedule_input", current_time_limiter=current_time().strftime("%Y-%m-%dT%H:%M"))
 
 # -------------------------------------------------------
 

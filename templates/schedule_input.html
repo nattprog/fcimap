@@ -9,7 +9,7 @@
 
 {% block content %}
 <form class="schedule_input_form" method="POST">
-    <p><label for="schedule_input">Enter room schedule from CLiC:</label></p>
+    <p><label for="schedule_input"><h4>Enter room schedule from CLiC:</h4></label></p>
     <textarea id="schedule_input" name="schedule_input" placeholder="Copy and paste Week List schedule!" rows="4" cols="50" maxlength="2000" required></textarea>
     <br>
     <input type="submit" value="Submit">
@@ -21,7 +21,7 @@
     <input type="search" id="custom_schedule_search_room" name="custom_schedule_search_room" placeholder="Enter Room ID" required></br></br>
 
     <label for="custom_schedule_datetime">Enter Starting Date and Time:</label></br>
-    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time}}"required></br></br> 
+    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time_limiter}}"required></br></br> 
     <!-- min="1979-12-31T00:00" -->
 
     <label for="custom_schedule_hours">Length of stay (hours):</label></br>
@@ -33,9 +33,9 @@
         <option value="5">5 Hours</option>
     </select></br></br>
 
-    <input type="radio" id="empty" name="custom_room_status" value="10" required>
+    <input type="radio" id="empty" name="custom_room_status" value="-10" required>
     <label for="empty">Empty</label></br>
-    <input type="radio" id="occupied" name="custom_room_status" value="-10" required>
+    <input type="radio" id="occupied" name="custom_room_status" value="10" required>
     <label for="occupied">Occupied</label></br></br>
 
     <label for="custom_schedule_textarea">Enter description of activity:</label></br>
