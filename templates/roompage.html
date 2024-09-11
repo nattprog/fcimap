@@ -26,23 +26,46 @@
         </form>
         <div>
             <p>{{current_time_single.strftime("%B %d, %Y")}}</p>
-            <p>Class in session:</p>
             {% if class_in_session %}
+            <p>Class in session:</p>
             <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}</br>
             {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}</br></br>   
             Schedule last updated: {{class_in_session.datetime_start(strftime="%B %d, %Y")}}</p>
             {% endif %}
         </div>
+        <div>
+            {% if custom_in_session %}
+            <p>Meeting in session:</p>
+            <p>{{custom_in_session.class_subject_code}}  {{custom_in_session.class_section}}  {{custom_in_session.schedule_description}}</br>
+                {{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</br></br></p>
+                {% endif %}
+        </div>
     </div>
     <div class="RoomClassSchedule">
-        <p>Classes in this room:</p>
-        {% for schedule_single in class_schedule_list %}
-        {% if loop.first  or (schedule_single.datetime_start("%A") != loop.previtem.datetime_start("%A"))%}
-        <p>{{schedule_single.datetime_start(strftime="%A")}}</p>
-        {% endif %}
-        {{ schedule_single.class_subject_code }}  {{ schedule_single.class_section }}  {{schedule_single.schedule_description}}  {{schedule_single.datetime_start(strftime="%I:%M%p")}} - {{schedule_single.datetime_end(strftime="%I:%M%p")}}
-        </br>
-        {% endfor %}
+        <div>
+            {% if class_schedule_list %}
+            <p>Classes in this room:</p>
+            {% for schedule_single in class_schedule_list %}
+            {% if loop.first  or (schedule_single.datetime_start("%A") != loop.previtem.datetime_start("%A"))%}
+            <p>{{schedule_single.datetime_start(strftime="%A")}}</p>
+            {% endif %}
+            {{ schedule_single.class_subject_code }}  {{ schedule_single.class_section }}  {{schedule_single.schedule_description}}  {{schedule_single.datetime_start(strftime="%I:%M%p")}} - {{schedule_single.datetime_end(strftime="%I:%M%p")}}
+            </br>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div>
+            {% if custom_schedule_list %}
+            <p>Meetings in this room:</p>
+            {% for custom_single in custom_schedule_list %}
+            <p>{{custom_single.datetime_start(strftime="%B %d, %Y | %I:%M%p")}} - 
+            {% if custom_single.datetime_start(strftime="%B %d") != custom_single.datetime_end(strftime="%B %d") %}{{custom_single.datetime_end(strftime="%B %d, %Y")}}{% endif %}
+            {{custom_single.datetime_end(strftime="%I:%M%p")}}</br>
+            {{custom_single.schedule_description}}
+            {% endfor %}
+            {% endif %}
+            </p>
+        </div>
     </div>
 </div>
 

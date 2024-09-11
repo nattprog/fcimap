@@ -93,9 +93,9 @@ def room_status_func(room_status): # TODO: delete this feature
     
     if room_status == 0:
         room_status = "Unknown"
-    elif room_status > 0:
-        room_status = "Empty"
     elif room_status < 0:
+        room_status = "Empty"
+    elif room_status > 0:
         room_status = "Occupied"
     return room_status, room_status_modifier
 
@@ -214,6 +214,7 @@ def room_page(room_name):
     # TODO: change this to advanced system. this is the upvote/downvote room availability system
     room_status, room_status_modifier = room_status_func(room_status=room.room_status)
 
+    # --------------------------------------------------------clic schedule
     # room availability schedule
     room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
     class_schedule_list = []
@@ -234,11 +235,30 @@ def room_page(room_name):
             if int(schedule_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(schedule_single.datetime_end(strftime="%H%M%S%f")):
                 class_in_session = schedule_single
                 break
+    #-----------------------------------------------------custom schedule
+    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name, input_from_scheduleORcustomORbutton = "custom")).all()
+    custom_schedule_list = []
+    for i in range(len(room_obj)):
+        for ii in range(len(room_obj[i])):
+            check_class_start = room_obj[i][ii].datetime_start()
+            timeDelta = current_time_single - check_class_start
+            if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
+                db.session.delete(room_obj[i][ii])
+                db.session.commit()
+            else:
+                custom_schedule_list.append(room_obj[i][ii])
     
+    custom_in_session = None
+    for custom_single in custom_schedule_list:
+        if custom_single.datetime_start().weekday() == current_time_single.weekday():
+            if int(custom_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(custom_single.datetime_end(strftime="%H%M%S%f")):
+                custom_in_session = custom_single
+                break
+
     # class_schedule_list = list of row objects of CLiC MMUclass
     # class_in_session = single row object of CLiC MMUclass which is currently going on in this room. Returns None if no class ongoing
     # TODO room_status and room_status_modifier = to be deleted/remade
-    return render_template("roompage.html", room = room, room_status = room_status, room_status_modifier = room_status_modifier, class_schedule_list = class_schedule_list, class_in_session = class_in_session, current_time_single = current_time_single)
+    return render_template("roompage.html", room = room, room_status = room_status, room_status_modifier = room_status_modifier, class_schedule_list = class_schedule_list, class_in_session = class_in_session, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session = custom_in_session)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
@@ -276,16 +296,6 @@ def schedule_input():
             pass
             
         
-        try:
-            request.form["schedule_input"]
-            schedule_input = str(request.form["schedule_input"])
-            user_input_new_delete_old_schedule_decoder(schedule_input)
-            if schedule_input_success_bool:
-                pass # Show popup that "Input has entered the database" or give user a reward, etc.
-            return redirect("/schedule_input")
-        except:
-            pass
-
         try:
             request.form["schedule_input"]
             schedule_input = str(request.form["schedule_input"])
