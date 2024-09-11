@@ -29,8 +29,8 @@
             <p>Class in session:</p>
             {% if class_in_session %}
             <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}</br>
-            {{class_in_session.datetime_class_start().strftime("%A %d")}}, {{class_in_session.verbose_ampm_class_start}} - {{class_in_session.verbose_ampm_class_end}}</br></br>   
-            Schedule last updated: {{class_in_session.epoch_class_start}}</p>
+            {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}</br></br>   
+            Schedule last updated: {{class_in_session.datetime_start(strftime="%B %d, %Y")}}</p>
             {% endif %}
         </div>
     </div>

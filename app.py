@@ -65,8 +65,8 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
                 class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
 
-                epoch_class_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
-                epoch_class_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
+                epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
+                epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
                 fci_room_id = time_iter.group(3)
                 class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
                 class_section = time_iter.group(6)
@@ -74,7 +74,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                 persistence_weeks = 6
                 input_from_scheduleORcustomORbutton = "schedule"
                 availability_weightage_value = 10
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
                 schedule_input_success_bool = True # used to check if schedule input is successful, for rewards or score etc.
 
                 with app.app_context():
@@ -123,8 +123,8 @@ class room_availability_schedule(db.Model):
     __tablename__ = "room_availability_schedule"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
-    epoch_class_start = db.Column(db.Float, nullable=False)
-    epoch_class_end = db.Column(db.Float, nullable=False)
+    epoch_start = db.Column(db.Float, nullable=False)
+    epoch_end = db.Column(db.Float, nullable=False)
     class_subject_code = db.Column(db.String(50))
     class_section = db.Column(db.String(50))
     schedule_description = db.Column(db.String(200))
@@ -132,20 +132,23 @@ class room_availability_schedule(db.Model):
     input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
     availability_weightage_value = db.Column(db.Integer, nullable=False)
 
-    def verbose_weekday_class_start(self):
-        return datetime.datetime.fromtimestamp(float(self.epoch_class_start)).astimezone(malaysiaTZ).strftime("%A")
-    def datetime_class_start(self):
-        return datetime.datetime.fromtimestamp(float(self.epoch_class_start)).astimezone(malaysiaTZ)
+    def datetime_start(self, strftime=None):
+        if strftime:
+            return datetime.datetime.fromtimestamp(float(self.epoch_start)).astimezone(malaysiaTZ).strftime(strftime)
+        else:
+            return datetime.datetime.fromtimestamp(float(self.epoch_start)).astimezone(malaysiaTZ)
+    
+    def datetime_end(self, strftime=None):
+        if strftime:
+            return datetime.datetime.fromtimestamp(float(self.epoch_end)).astimezone(malaysiaTZ).strftime(strftime)
+        else:
+            return datetime.datetime.fromtimestamp(float(self.epoch_end)).astimezone(malaysiaTZ)
 
-    def __repr__(self, id, fci_room_id, epoch_class_start, epoch_class_end, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_weightage_value):
+    def __repr__(self, id, fci_room_id, epoch_start, epoch_end, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_weightage_value):
         self.id = id
         self.fci_room_id = fci_room_id
-        self.epoch_class_start = epoch_class_start
-        self.epoch_class_end = epoch_class_end
-        # self.verbose_weekday_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ).strftime("%A")
-        # self.verbose_ampm_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ).strftime("%I:%M%p")
-        # self.verbose_ampm_class_end = datetime.datetime.fromtimestamp(float(epoch_class_end)).astimezone(malaysiaTZ).strftime("%I:%M%p")
-        # self.datetime_class_start = datetime.datetime.fromtimestamp(float(epoch_class_start)).astimezone(malaysiaTZ)
+        self.epoch_start = epoch_start
+        self.epoch_end = epoch_end
         self.class_subject_code = class_subject_code
         self.class_section = class_section
         self.schedule_description = schedule_description
@@ -216,7 +219,7 @@ def room_page(room_name):
     schedule_list = []
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
-            check_class_start = datetime.datetime.fromtimestamp(float(room_obj[i][ii].epoch_class_start)).astimezone(malaysiaTZ)
+            check_class_start = datetime.datetime.fromtimestamp(float(room_obj[i][ii].epoch_start)).astimezone(malaysiaTZ)
             timeDelta = current_time_single - check_class_start
             if timeDelta.days > (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
                 db.session.delete(room_obj[i][ii])
@@ -227,11 +230,12 @@ def room_page(room_name):
     # current class checker, checks if class in in session
     class_in_session = None
     for schedule_single in schedule_list:
-        check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_class_start).astimezone(malaysiaTZ)
-        check_class_end = datetime.datetime.fromtimestamp(schedule_single.epoch_class_end).astimezone(malaysiaTZ)
+        check_class_start = datetime.datetime.fromtimestamp(schedule_single.epoch_start).astimezone(malaysiaTZ)
+        check_class_end = datetime.datetime.fromtimestamp(schedule_single.epoch_end).astimezone(malaysiaTZ)
         if check_class_start.weekday() == current_time_single.weekday():
             if float(check_class_start.timestamp()) <= float(current_time_single.timestamp()) < float(check_class_end.timestamp()):
                 class_in_session = schedule_single
+                print("YESSS")
                 break
     
     # schedule_list = list of row objects of CLiC MMUclass
@@ -308,14 +312,14 @@ def schedule_input():
             room_name_pattern = re.compile(room_name_re_check)
             if room_name_pattern.search(custom_schedule_search_room):
                 fci_room_id = custom_schedule_search_room
-                epoch_class_start = float(custom_schedule_datetime_start.timestamp())
-                epoch_class_end = float(custom_schedule_datetime_end.timestamp())
+                epoch_start = float(custom_schedule_datetime_start.timestamp())
+                epoch_end = float(custom_schedule_datetime_end.timestamp())
                 schedule_description = custom_schedule_textarea
                 persistence_weeks = 1
                 input_from_scheduleORcustomORbutton = "custom"
                 availability_weightage_value = int(custom_room_status)
                 
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_class_start = epoch_class_start, epoch_class_end = epoch_class_end, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
                 with app.app_context():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
