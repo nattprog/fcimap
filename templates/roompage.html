@@ -27,7 +27,7 @@
         <div>
             <p>{{current_time_single.strftime("%B %d, %Y %I:%M%p")}}</p>
             {% if class_in_session_list %}
-            <p>Class in session:</p>
+            <h4>Class in session:</h4>
             {% for class_in_session in class_in_session_list %}
             <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}</br>
             {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}</br></br>   
@@ -37,7 +37,7 @@
         </div>
         <div>
             {% if custom_in_session_list %}
-            <p>Meeting in session:</p>
+            <h4>Meeting in session:</h4>
             {% for custom_in_session in custom_in_session_list %}
             <p>{{custom_in_session.schedule_description}}</br>
                 {{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</br></br></p>
@@ -48,7 +48,7 @@
     <div class="RoomClassSchedule">
         <div>
             {% if class_schedule_list %}
-            <p>Classes in this room:</p>
+            <h4>Classes in this room:</h4>
             {% for schedule_single in class_schedule_list %}
             {% if loop.first  or (schedule_single.datetime_start("%A") != loop.previtem.datetime_start("%A"))%}
             <p>{{schedule_single.datetime_start(strftime="%A")}}</p>
@@ -60,7 +60,7 @@
         </div>
         <div>
             {% if custom_schedule_list %}
-            <p>Meetings in this room:</p>
+            <h4>Meetings in this room:</h4>
             {% for custom_single in custom_schedule_list %}
             <p>{{custom_single.datetime_start(strftime="%B %d, %Y | %I:%M%p")}} - 
             {% if custom_single.datetime_start(strftime="%B %d") != custom_single.datetime_end(strftime="%B %d") %}{{custom_single.datetime_end(strftime="%B %d, %Y")}}{% endif %}
