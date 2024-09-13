@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Schedule Input
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+<form class="schedule_input_form" method="POST">
+    <p><label for="schedule_input"><h4>Enter room schedule from CLiC:</h4></label></p>
+    <textarea id="schedule_input" name="schedule_input" placeholder="Copy and paste Week List schedule!" rows="4" cols="50" maxlength="2000" required></textarea>
+    <br>
+    <input type="submit" value="Submit">
+</form>
+
+<form class="custom_schedule_form" method="POST">
+    <h4>Or add a custom schedule:</h4>
+    <label for="custom_schedule_search_room">Search Room:</label></br>
+    <input type="search" id="custom_schedule_search_room" name="custom_schedule_search_room" placeholder="Enter Room ID" required></br></br>
+
+    <label for="custom_schedule_datetime">Enter Starting Date and Time:</label></br>
+    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time.strftime("%Y-%m-%dT%H:%M")}}" required></br></br>
+
+    <label for="custom_schedule_hours">Length of stay (hours):</label></br>
+    <select name="custom_schedule_hours" id="custom_schedule_hours" required>
+        <option value="1">1 Hour</option>
+        <option value="2">2 Hours</option>
+        <option value="3">3 Hours</option>
+        <option value="4">4 Hours</option>
+        <option value="5">5 Hours</option>
+    </select></br></br>
+
+    <input type="radio" id="empty" name="custom_room_status" value="-10" required>
+    <label for="empty">Empty</label></br>
+    <input type="radio" id="occupied" name="custom_room_status" value="10" required>
+    <label for="occupied">Occupied</label></br></br>
+
+    <label for="custom_schedule_textarea">Enter description of activity:</label></br>
+    <textarea id="custom_schedule_textarea" name="custom_schedule_textarea" placeholder="Yap here" rows="4" cols="50" maxlength="100" required></textarea></br></br>
+
+    <input type="submit" value="Submit">
+    <input type="reset" value="Reset">
+</form>
+{% endblock %}

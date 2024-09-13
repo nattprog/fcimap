@@ -6,9 +6,9 @@
 <div id="RoomPageMainDiv">
     <div class="RoomPageInfo">
         <h1>{{room_name}}</h1>
-        <p>Block: {{room_block}}</p>
-        <p>Floor: {{room_floor}}</p>
-        <p>Room: {{room_number}}</p>
+        <p>Block: {{room.room_block}}</p>
+        <p>Floor: {{room.room_floor}}</p>
+        <p>Room: {{room.room_number}}</p>
     </div>
     <div class="RoomPageAliases">
         <p>Aliases:</p>
@@ -18,12 +18,58 @@
             <p>Status: {{room_status_modifier}} {{room_status}}</p>
         </div>
         <form method="POST">
-            <input type="radio" id="empty" name="room_status" value="+1" required>
+            <input type="radio" id="empty" name="room_status" value="-5" required>
             <label for="empty">Empty</label></br>
-            <input type="radio" id="occupied" name="room_status" value="-1" required>
+            <input type="radio" id="occupied" name="room_status" value="+5" required>
             <label for="occupied">Occupied</label></br></br>
             <input type="submit" value="Submit">
         </form>
+        <div>
+            <p>{{current_time_single.strftime("%B %d, %Y %I:%M%p")}}</p>
+            {% if class_in_session_list %}
+            <h4>Class in session:</h4>
+            {% for class_in_session in class_in_session_list %}
+            <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}</br>
+            {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}</br></br>   
+            Schedule last updated: {{class_in_session.datetime_start(strftime="%B %d, %Y")}}</p>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div>
+            {% if custom_in_session_list %}
+            <h4>Meeting in session:</h4>
+            {% for custom_in_session in custom_in_session_list %}
+            <p>{{custom_in_session.schedule_description}}</br>
+                {{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</br></br></p>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="RoomClassSchedule">
+        <div>
+            {% if class_schedule_list %}
+            <h4>Classes in this room:</h4>
+            {% for schedule_single in class_schedule_list %}
+            {% if loop.first  or (schedule_single.datetime_start("%A") != loop.previtem.datetime_start("%A"))%}
+            <p>{{schedule_single.datetime_start(strftime="%A")}}</p>
+            {% endif %}
+            {{ schedule_single.class_subject_code }}  {{ schedule_single.class_section }}  {{schedule_single.schedule_description}}  {{schedule_single.datetime_start(strftime="%I:%M%p")}} - {{schedule_single.datetime_end(strftime="%I:%M%p")}}
+            </br>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div>
+            {% if custom_schedule_list %}
+            <h4>Meetings in this room:</h4>
+            {% for custom_single in custom_schedule_list %}
+            <p>{{custom_single.datetime_start(strftime="%B %d, %Y | %I:%M%p")}} - 
+            {% if custom_single.datetime_start(strftime="%B %d") != custom_single.datetime_end(strftime="%B %d") %}{{custom_single.datetime_end(strftime="%B %d, %Y")}}{% endif %}
+            {{custom_single.datetime_end(strftime="%I:%M%p")}}</br>
+            {{custom_single.schedule_description}}
+            {% endfor %}
+            {% endif %}
+            </p>
+        </div>
     </div>
 </div>
 
