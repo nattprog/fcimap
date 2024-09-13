@@ -231,7 +231,7 @@ def room_page(room_name):
 
     # --------------------------------------------------------clic schedule
     # room availability schedule
-    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room.room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
+    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room.room_name, input_from_scheduleORcustomORbutton = "schedule").order_by(room_availability_schedule.epoch_start)).all()
     class_schedule_list = []
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
@@ -251,7 +251,7 @@ def room_page(room_name):
                 class_in_session_list.append(schedule_single)
 
     #-----------------------------------------------------custom schedule
-    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room.room_name, input_from_scheduleORcustomORbutton = "custom")).all()
+    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room.room_name, input_from_scheduleORcustomORbutton = "custom").order_by(room_availability_schedule.epoch_start)).all()
     custom_schedule_list = []
     for i in range(len(room_obj)):
         for ii in range(len(room_obj[i])):
