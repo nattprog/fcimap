@@ -84,23 +84,23 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     db.session.add(incoming_to_DB)
                     db.session.commit()
 
-def room_status_func(room_status): # TODO: delete this feature
-    if abs(room_status) == 0:
-        room_status_modifier = ""
-    if 1 <= abs(room_status) <= 2:
-        room_status_modifier = "Likely"
-    elif 3 <= abs(room_status) <= 4:
-        room_status_modifier = "Probably"
-    elif abs(room_status) == 5:
-        room_status_modifier = "Definitely"
+# def room_status_func(room_status): # TODO: delete this feature
+#     if abs(room_status) == 0:
+#         room_status_modifier = ""
+#     if 1 <= abs(room_status) <= 2:
+#         room_status_modifier = "Likely"
+#     elif 3 <= abs(room_status) <= 4:
+#         room_status_modifier = "Probably"
+#     elif abs(room_status) == 5:
+#         room_status_modifier = "Definitely"
     
-    if room_status == 0:
-        room_status = "Unknown"
-    elif room_status < 0:
-        room_status = "Empty"
-    elif room_status > 0:
-        room_status = "Occupied"
-    return room_status, room_status_modifier
+#     if room_status == 0:
+#         room_status = "Unknown"
+#     elif room_status < 0:
+#         room_status = "Empty"
+#     elif room_status > 0:
+#         room_status = "Occupied"
+#     return room_status, room_status_modifier
 
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
@@ -115,13 +115,12 @@ class fci_room(db.Model):
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
     popup = db.Column(db.String(50)) # nullable=False
-    def __repr__(self, id, room_name, room_block, room_floor, room_number, room_status):
+    def __repr__(self, room_name, room_block, room_floor, room_number):
         # self.id = id TODO Delete
         self.room_name = room_name
         self.room_block = room_block
         self.room_floor = room_floor
         self.room_number = room_number
-        self.room_status = room_status
 
 # Database table for room availability, from CLiC schedule
 class room_availability_schedule(db.Model):
@@ -189,7 +188,7 @@ def get_markers(floor):
     for i in range(len(room)):
         for ii in range(len(room[i])):
             if room[i][ii].lat and room[i][ii].lng:
-                markers.append({"lat":float(room[i][ii].lat), "lng":float(room[i][ii].lng), "popup":str(room[i][ii].popup)})
+                markers.append({"lat":float(room[i][ii].lat), "lng":float(room[i][ii].lng), "popup":f"<a href=\"/roompage/{room[i][ii].room_name}\">{room[i][ii].room_name}</a></br>{room[i][ii].popup}"})
     return jsonify(markers)
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
@@ -229,10 +228,6 @@ def room_page(room_name):
                 db.session.commit()
         except:
             pass
-
-
-    # TODO: change this to advanced system. this is the upvote/downvote room availability system
-    room_status, room_status_modifier = room_status_func(room_status=room.room_status)
 
     # --------------------------------------------------------clic schedule
     # room availability schedule
@@ -277,7 +272,7 @@ def room_page(room_name):
     # class_schedule_list = list of row objects of CLiC MMUclass
     # class_in_session = single row object of CLiC MMUclass which is currently going on in this room. Returns None if no class ongoing
     # TODO room_status and room_status_modifier = to be deleted/remade
-    return render_template("roompage.html", room = room, room_status = room_status, room_status_modifier = room_status_modifier, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list)
+    return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
