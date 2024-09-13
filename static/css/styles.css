@@ -7,24 +7,12 @@ html, body {
     padding: 0;
 }
 
-#TopLogo {
-    display: block;
-    padding: 10px;
-    margin: 0px;
-    background-color: white;
-    align-items: center;
-    font-size: 30px;
-}
-
-#WebsiteName {
-    font-size: 30px;
-    float: top;
-}
 
 /*Top Navigation Bar, with specific elements */
 .TopNavigationBar {
-    background-color: rgb(49, 116, 175);
+    background-color: #0050a2;
     color: white;
+    padding-left: 2%;
 }
 
 .TopNavigationBar ul {
@@ -50,11 +38,11 @@ html, body {
 }
 
 .TopNavigationBar a:hover {
-    background-color: rgb(37, 94, 145);
+    background-color: #004489;
 }
 
 .NavigationActive {
-    background-color: rgb(8, 49, 90);
+    background-color: #003264;
 }
 
 #account {
@@ -68,6 +56,7 @@ html, body {
     background-color: white;
     text-align: left;
     font-size: 30px;
+    padding-left: 2%;
 }
 #TopLogo li {
     font-size: 30px;
@@ -81,8 +70,12 @@ html, body {
 /*Floor navigation bar*/
 
 .FloorNavigationBar {
-    background-color: rgb(49, 116, 175);
-    width: 150px
+    display: block;
+    background-color: #0050a2;
+    width: 150px;
+    margin: 2%;
+    border-radius: 10px;
+    text-align: center;
 }
 
 .FloorNavigationBar ul {
@@ -104,8 +97,52 @@ html, body {
     display: block;
     margin: 0;
     padding: 20px;
+    border-radius: 10px;
 }
 
 .FloorNavigationBar a:hover {
-    background-color: rgb(37, 94, 145);
+    background-color: #004489;
+}
+
+#RoomPageMainDiv {
+    display: flex;
+    margin: 1%;
+}
+
+.RoomPageInfo {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
+
+.RoomPageAliases {
+    display: inline-block;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
+
+.RoomPageStatus {
+    display: inline-block;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
+
+.RoomPageStatus form {
+    color: black;
+    text-align: left;
+    padding: 0%;
+    margin: 0%;
+}
+
+.container {
+    height: 100%;
+    display: flex;
 }
