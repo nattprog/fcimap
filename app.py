@@ -110,9 +110,11 @@ class fci_room(db.Model):
     room_block = db.Column(db.String(1), nullable=False)
     room_floor = db.Column(db.Integer, nullable=False)
     room_number = db.Column(db.Integer, nullable=False)
-    room_status = db.Column(db.Integer, nullable=False)
     room_classes_schedule = db.relationship("room_availability_schedule", backref="fci_room")
     room_name_aliases = db.relationship("room_aliases", backref="fci_room")
+    lat = db.Column(db.Float)
+    lng = db.Column(db.Float)
+    popup = db.Column(db.String(50)) # nullable=False
     def __repr__(self, id, room_name, room_block, room_floor, room_number, room_status):
         # self.id = id TODO Delete
         self.room_name = room_name
@@ -180,20 +182,14 @@ class User(db.Model):
 def redirect_home():
     return redirect("/map/0")
 
-floor_markers = {
-    '0': [
-        {'lat': 2.9285, 'lng': 101.6411, 'popup': 'Marker 0-1'},
-        {'lat': 2.9286, 'lng': 101.6412, 'popup': 'Marker 0-2'},
-    ],
-    '1': [
-        {'lat': 2.9290, 'lng': 101.6405, 'popup': 'Marker 1-1'},
-        {'lat': 2.9291, 'lng': 101.6406, 'popup': 'Marker 1-2'},
-    ],
-}
-
 @app.route("/get_markers/<floor>")
 def get_markers(floor):
-    markers = floor_markers.get(floor, [])
+    room = db.session.execute(db.select(fci_room).filter_by(room_floor = floor)).all()
+    markers = []
+    for i in range(len(room)):
+        for ii in range(len(room[i])):
+            if room[i][ii].lat and room[i][ii].lng:
+                markers.append({"lat":float(room[i][ii].lat), "lng":float(room[i][ii].lng), "popup":str(room[i][ii].popup)})
     return jsonify(markers)
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
@@ -203,8 +199,7 @@ def home(floor):
         search = request.form["search"]
         if search:
             return redirect(f"/search/{search}")
-    markers = floor_markers.get(floor,[])
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor, markers = markers)
+    return render_template("index.html", ActivePage="index", ActiveFloor = floor)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
