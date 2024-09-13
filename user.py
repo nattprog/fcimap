@@ -1,3 +1,4 @@
+import re
 from flask import Flask, request, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 
@@ -30,6 +31,10 @@ def signup():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+
+        # Password validation
+        if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            return render_template('signup.html', error="Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
 
         # Check if the username or email already exists
         existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
@@ -66,5 +71,6 @@ def login():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # This will create the data base and the tables
-    app.run(debug=True, port=5001)
+        db.create_all()  # This will create the database and the tables
+    app.run(debug=True, port=5002)
+

@@ -1,5 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, session, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+import re
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -8,7 +10,7 @@ db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = 'sessionsecretkey'
 search = None
 
-# Database for block, floor and number of rooms.
+# Database for block, floor, and number of rooms.
 class fci_room(db.Model):
         __tablename__ = "fci_room"
         id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -115,16 +117,10 @@ def room_page(room_name):
         room_status = "Occupied"
     
     return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier)
-    
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
-    search = None
-    if request.method == "POST":
-        search = request.form["search"]
-        if search:
-            return redirect(f"/search/{search}")
-    return render_template("account.html", ActivePage = "account")
+    return redirect("/signup")
 
 @app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
@@ -140,7 +136,7 @@ def search(search):
         search = request.form["search"]
         if search:
             return redirect(f"/search/{search}")
-    return render_template("search.html", ActivePage = "search", search = session["search"], results_list = results_list)
+    return render_template("search.html", ActivePage="search", search=session["search"], results_list=results_list)
 
 # -------------------------------------------------------
 
@@ -155,6 +151,10 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
+        # Password validation
+        if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            return render_template('signup.html', error="Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
+
         # Check if the username or email already exists
         existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
         if existing_user:
@@ -163,7 +163,10 @@ def signup():
             elif existing_user.email == email:
                 return render_template('signup.html', error="Email address already registered.", login_link=True)
 
-        new_user = User(username=username, email=email, password=password)
+        # Hash the password using pbkdf2:sha256
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
+        new_user = User(username=username, email=email, password=hashed_password)
 
         db.session.add(new_user)
         db.session.commit()
@@ -178,19 +181,55 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
-        user = User.query.filter_by(email=email, password=password).first()
+        user = User.query.filter_by(email=email).first()
 
-        if user:
+        # Check if the user exists and verify the password
+        if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
-            return "Logged in successfully!"
+            return redirect("/")
         else:
             return render_template('login.html', error="Invalid email or password.")
 
     return render_template('login.html')
 
+# Logout route
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('login'))
 
+# Change password route
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
 
+    if request.method == 'POST':
+        current_password = request.form['current_password']
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
 
+        user = User.query.get(session['user_id'])
+
+        if not check_password_hash(user.password, current_password):
+            return render_template('change_password.html', error="Current password is incorrect.")
+
+        if len(new_password) < 8 or not re.search(r'[A-Z]', new_password) or not re.search(r'[a-z]', new_password) or not re.search(r'[0-9]', new_password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
+            return render_template('change_password.html', error="New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
+
+        # Check if new password and confirmation match
+        if new_password != confirm_password:
+            return render_template('change_password.html', error="New password and confirmation password do not match.")
+
+        # Hash the new password before storing it in the database
+        hashed_password = generate_password_hash(new_password, method='pbkdf2:sha256')
+        user.password = hashed_password
+        db.session.commit()
+
+        # Redirect to the login page after successful password change
+        return redirect(url_for('login'))
+
+    return render_template('change_password.html')
 
 
 if __name__ == "__main__":
