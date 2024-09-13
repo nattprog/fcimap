@@ -90,9 +90,18 @@ FCI Map
 
     var image_bounds = [[2.9283 - movela - enlargeLat, 101.6403 + movelo - enlargeLng],[2.9292 - movela, 101.6417 + movelo]];
 
-    L.imageOverlay('C:\Users\cheng\OneDrive\桌面\FcimapS\itproject\fcimap\templates\floor2.png', image_bounds, {
+    var floorImage = "{{ url_for('static', filename='images/floor' + ActiveFloor + '.png') }}";
+    L.imageOverlay(floorImage, image_bounds, {
     opacity: 0.7,
-    }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04)
+    }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
+    $.getJSON("/get_markers/{{ ActiveFloor }}", function(markers) {
+            markers.forEach(function(marker) {
+                L.marker([marker.lat, marker.lng])
+                    .bindPopup(marker.popup)
+                    .addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+            });
+        });
 
 </script>
 {% endblock %}
