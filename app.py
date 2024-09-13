@@ -117,16 +117,6 @@ def room_page(room_name):
         room_status = "Occupied"
     
     return render_template("roompage.html", room_name = room.room_name, room_block = room.room_block, room_floor = room.room_floor, room_number = room.room_number, room_status = room_status, room_status_modifier = room_status_modifier)
-    
-
-@app.route("/account/", methods=["GET", "POST"])
-def account():
-    search = None
-    if request.method == "POST":
-        search = request.form["search"]
-        if search:
-            return redirect(f"/search/{search}")
-    return render_template("roompage.html", room_code=room.room_code, room_block=room.room_block, room_floor=room.room_floor, room_number=room.room_number)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
