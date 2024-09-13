@@ -14,7 +14,9 @@ app.config["SECRET_KEY"] = 'sessionsecretkey'
 # Declare variables
 malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
 search = None
-current_time = datetime.datetime.now(tz=malaysiaTZ)
+
+def current_time():
+    return datetime.datetime.now(tz=malaysiaTZ)
 
 # Declare functions
 
@@ -208,7 +210,7 @@ def home(floor):
 def room_page(room_name):
     room = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalar()
     search = None
-    current_time_single = current_time
+    current_time_single = current_time()
 
     # Identify which form is input
     if request.method == "POST":
@@ -220,7 +222,6 @@ def room_page(room_name):
 
         try:
             room_status = request.form["room_status"] # TODO: delete /remake this system
-            current_time_single = current_time
             fci_room_id = room_name
             epoch_start = current_time_single.timestamp()
             epoch_end = (current_time_single + datetime.timedelta(hours=1)).timestamp()
@@ -349,7 +350,7 @@ def schedule_input():
         except:
             pass
 
-    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time)
+    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time())
 
 # -------------------------------------------------------
 
