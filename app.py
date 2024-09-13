@@ -122,8 +122,8 @@ class fci_room(db.Model):
     room_block = db.Column(db.String(1), nullable=False)
     room_floor = db.Column(db.Integer, nullable=False)
     room_number = db.Column(db.Integer, nullable=False)
-    room_classes_schedule = db.relationship("room_availability_schedule", backref="fci_room")
-    room_name_aliases = db.relationship("room_aliases", backref="fci_room")
+    room_classes_schedule = db.relationship("room_availability_schedule", backref="fci_room", lazy=True)
+    room_name_aliases = db.relationship("room_aliases", backref="fci_room", lazy=True)
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
     popup = db.Column(db.String(50)) # nullable=False
@@ -138,7 +138,7 @@ class fci_room(db.Model):
 class room_availability_schedule(db.Model):
     __tablename__ = "room_availability_schedule"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    fci_room_name = db.Column(db.Integer, db.ForeignKey("fci_room.room_name"), nullable=False)
+    fci_room_name = db.Column(db.String(50), db.ForeignKey("fci_room.room_name"), nullable=False)
     epoch_start = db.Column(db.Float, nullable=False)
     epoch_end = db.Column(db.Float, nullable=False)
     class_subject_code = db.Column(db.String(50))
@@ -175,8 +175,8 @@ class room_availability_schedule(db.Model):
 class room_aliases(db.Model):
     __tablename__ = "room_aliases"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    fci_room_name = db.Column(db.Integer, db.ForeignKey("fci_room.room_name"), nullable=False)
     room_name_aliases = db.Column(db.String(50), nullable=False)
+    fci_room_name = db.Column(db.String(50), db.ForeignKey("fci_room.room_name"), nullable=False)
 
 # Database for user info
 class User(db.Model):
