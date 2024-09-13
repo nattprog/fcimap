@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, session, request
+from flask import Flask, redirect, url_for, render_template, session, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -47,6 +47,22 @@ class User(db.Model):
 def redirect_home():
     return redirect("/map/0")
 
+floor_markers = {
+    '0': [
+        {'lat': 2.9285, 'lng': 101.6411, 'popup': 'Marker 0-1'},
+        {'lat': 2.9286, 'lng': 101.6412, 'popup': 'Marker 0-2'},
+    ],
+    '1': [
+        {'lat': 2.9290, 'lng': 101.6405, 'popup': 'Marker 1-1'},
+        {'lat': 2.9291, 'lng': 101.6406, 'popup': 'Marker 1-2'},
+    ],
+}
+
+@app.route("/get_markers/<floor>")
+def get_markers(floor):
+    markers = floor_markers.get(floor, [])
+    return jsonify(markers)
+
 @app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
     search = None
@@ -54,7 +70,8 @@ def home(floor):
         search = request.form["search"]
         if search:
             return redirect(f"/search/{search}")
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor)
+    markers = floor_markers.get(floor,[])
+    return render_template("index.html", ActivePage="index", ActiveFloor = floor, markers = markers)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
