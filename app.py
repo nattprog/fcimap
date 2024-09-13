@@ -84,6 +84,18 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     db.session.add(incoming_to_DB)
                     db.session.commit()
 
+def in_session_weightage_total(room_name):
+    current_time_single = current_time()
+    query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room_name)).all()
+    weightage_total = 0
+    for i in range(len(query)):
+        for ii in range(len(query[i])):
+            if (query[i][ii].input_from_scheduleORcustomORbutton == "schedule") and (int(query[i][ii].datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(query[i][ii].datetime_end(strftime="%H%M%S%f"))):
+                weightage_total += int(query[i][ii].availability_weightage_value)
+            elif float(query[i][ii].epoch_start) < float(current_time_single.timestamp()) <= float(query[i][ii].epoch_end):
+                weightage_total += int(query[i][ii].availability_weightage_value)
+    return weightage_total
+
 # def room_status_func(room_status): # TODO: delete this feature
 #     if abs(room_status) == 0:
 #         room_status_modifier = ""
@@ -266,7 +278,7 @@ def room_page(room_name):
     custom_in_session_list = []
     for custom_single in custom_schedule_list:
         if custom_single.datetime_start().weekday() == current_time_single.weekday():
-            if int(custom_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(custom_single.datetime_end(strftime="%H%M%S%f")):
+            if float(custom_single.epoch_start) < float(current_time_single.timestamp()) <= float(custom_single.epoch_end):
                 custom_in_session_list.append(custom_single)
 
     # class_schedule_list = list of row objects of CLiC MMUclass
