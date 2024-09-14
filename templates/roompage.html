@@ -6,12 +6,15 @@
 <div id="RoomPageMainDiv">
     <div class="RoomPageInfo">
         <h1>{{room.room_name}}</h1>
+        {% if room.room_name_aliases %}
+        <span><strong>Aliases:</strong></span></br>
+        {% for i in room.room_name_aliases %}
+        {{ i.room_name_aliases }}</br>
+        {% endfor %}
+        {% endif %}
         <p>Block: {{room.room_block}}</p>
         <p>Floor: {{room.room_floor}}</p>
         <p>Room: {{room.room_number}}</p>
-    </div>
-    <div class="RoomPageAliases">
-        <p>Aliases:</p>
     </div>
     <div class="RoomPageStatus">
         <div>
