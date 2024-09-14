@@ -295,17 +295,23 @@ def account():
 def search(search):
     search = str(search)
     session["search"] = search
-    room_name_results = db.session.execute(db.select(fci_room).filter_by(room_name = search.upper())).scalars()
-
+    room_name_results = db.session.execute(db.select(fci_room).filter(fci_room.room_name.icontains(search))).scalars()
     room_name_results_list = []
-    for i in room_name_results:
-        room_name_results_list.append(i)
-
-    aliases_results = db.session.execute(db.select(room_aliases).filter_by(room_name_aliases = search.upper())).scalars()
+    i = 0
+    for ii in room_name_results:
+        i+=1
+        room_name_results_list.append(ii)
+        if i >= 5:
+            break
+    aliases_results = db.session.execute(db.select(room_aliases).filter(room_aliases.room_name_aliases.icontains(search))).scalars()
+    i = 0
     aliases_results_list = []
-    for i in aliases_results:
-        aliases_results_list.append(i)
-    
+    for ii in aliases_results:
+        i+=1
+        aliases_results_list.append(ii)
+        if i >= 5:
+            break
+
     if request.method == "POST":
         try:
             search = request.form["search"]

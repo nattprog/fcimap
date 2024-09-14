@@ -13,7 +13,7 @@ Search Results
 {% endfor %}
 {% for i in aliases_results_list %}
 <p>
-    <a href="/roompage/{{i.fci_room_name}}">{{i.room_name_aliases}}</a>
+    <a href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.room_name_aliases}}</a>
 </p>
 {% endfor %}
 {% endblock %}
