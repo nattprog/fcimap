@@ -192,11 +192,13 @@ class User(db.Model):
 def redirect_home():
     return redirect("/map/0")
 
-@app.route("/get_markers/<floor>")
-def get_markers(floor):
-    room = db.session.execute(db.select(fci_room).filter_by(room_floor = floor)).scalars()
+@app.route("/get_markers/<floor>/<room_name>")
+def get_markers(floor, room_name="None"):
+    if room_name!="None":
+        query = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalars()
+    else: query = db.session.execute(db.select(fci_room).filter_by(room_floor = floor)).scalars()
     markers = []
-    for i in room:
+    for i in query:
             if i.lat and i.lng:
                 markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a></br>{i.popup}"})
     return jsonify(markers)
