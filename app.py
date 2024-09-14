@@ -293,12 +293,18 @@ def account():
 
 @app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
+    search = str(search)
     session["search"] = search
-    search_results = db.session.execute(db.select(fci_room).filter_by(room_name = search)).scalars()
+    room_name_results = db.session.execute(db.select(fci_room).filter_by(room_name = search.upper())).scalars()
 
-    results_list = []
-    for i in search_results:
-        results_list.append(i.room_name)
+    room_name_results_list = []
+    for i in room_name_results:
+        room_name_results_list.append(i)
+
+    aliases_results = db.session.execute(db.select(room_aliases).filter_by(room_name_aliases = search.upper())).scalars()
+    aliases_results_list = []
+    for i in aliases_results:
+        aliases_results_list.append(i)
     
     if request.method == "POST":
         try:
@@ -306,7 +312,7 @@ def search(search):
             return redirect(f"/search/{search}")
         except:
             pass
-    return render_template("search.html", ActivePage = "search", search = session["search"], results_list = results_list)
+    return render_template("search.html", ActivePage = "search", search = session["search"], room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list )
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
