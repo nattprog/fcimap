@@ -6,9 +6,14 @@ Search Results
 
 {% block content %}
 <p><em>Results for:</em><b> {{search}}</b></p>
-{% for i in results_list %}
+{% for i in room_name_results_list %}
 <p>
-    <a href="/roompage/{{i}}">{{i}}</a>
+    <a href="/roompage/{{i.room_name}}">{{i.room_name}}</a>
+</p>
+{% endfor %}
+{% for i in aliases_results_list %}
+<p>
+    <a href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.room_name_aliases}}</a>
 </p>
 {% endfor %}
 {% endblock %}

@@ -13,7 +13,6 @@ app.config["SECRET_KEY"] = 'sessionsecretkey'
 
 # Declare variables
 malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
-search = None
 
 def current_time():
     return datetime.datetime.now(tz=malaysiaTZ)
@@ -47,11 +46,10 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     except:
         first_occurence_room_name = None
     with app.app_context():
-        search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = first_occurence_room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
-        for i in range(len(search_results)):
-            for ii in range(len(search_results[i])):
-                db.session.delete(search_results[i][ii])
-                db.session.commit()
+        search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = first_occurence_room_name, input_from_scheduleORcustomORbutton = "schedule")).scalars()
+        for i in search_results:
+            db.session.delete(i)
+            db.session.commit()
 
     dates_list = [] # first we find the dates, eg. September 6, 2024
     for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
@@ -70,62 +68,75 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
 
                 epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
                 epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
-                fci_room_id = time_iter.group(3)
+                fci_room_name = time_iter.group(3)
                 class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
                 class_section = time_iter.group(6)
                 schedule_description = time_iter.group(5)
                 persistence_weeks = 6
                 input_from_scheduleORcustomORbutton = "schedule"
                 availability_weightage_value = 10
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+                incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
                 schedule_input_success_bool = True # used to check if schedule input is successful, for rewards or score etc.
 
                 with app.app_context():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
 
-def room_status_func(room_status): # TODO: delete this feature
-    if abs(room_status) == 0:
-        room_status_modifier = ""
-    if 1 <= abs(room_status) <= 2:
-        room_status_modifier = "Likely"
-    elif 3 <= abs(room_status) <= 4:
-        room_status_modifier = "Probably"
-    elif abs(room_status) == 5:
-        room_status_modifier = "Definitely"
+def in_session_weightage_total(room_name):
+    current_time_single = current_time()
+    query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room_name)).all()
+    weightage_total = 0
+    for i in range(len(query)):
+        for ii in range(len(query[i])):
+            if (query[i][ii].input_from_scheduleORcustomORbutton == "schedule") and (int(query[i][ii].datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(query[i][ii].datetime_end(strftime="%H%M%S%f"))):
+                weightage_total += int(query[i][ii].availability_weightage_value)
+            elif float(query[i][ii].epoch_start) < float(current_time_single.timestamp()) <= float(query[i][ii].epoch_end):
+                weightage_total += int(query[i][ii].availability_weightage_value)
+    return weightage_total
+
+# def room_status_func(room_status): # TODO: delete this feature
+#     if abs(room_status) == 0:
+#         room_status_modifier = ""
+#     if 1 <= abs(room_status) <= 2:
+#         room_status_modifier = "Likely"
+#     elif 3 <= abs(room_status) <= 4:
+#         room_status_modifier = "Probably"
+#     elif abs(room_status) == 5:
+#         room_status_modifier = "Definitely"
     
-    if room_status == 0:
-        room_status = "Unknown"
-    elif room_status < 0:
-        room_status = "Empty"
-    elif room_status > 0:
-        room_status = "Occupied"
-    return room_status, room_status_modifier
+#     if room_status == 0:
+#         room_status = "Unknown"
+#     elif room_status < 0:
+#         room_status = "Empty"
+#     elif room_status > 0:
+#         room_status = "Occupied"
+#     return room_status, room_status_modifier
 
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
     __tablename__ = "fci_room"
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    room_name = db.Column(db.String(50), nullable=False )
+    # id = db.Column(db.Integer,nullable=False) TODO Delete
+    room_name = db.Column(db.String(50), primary_key=True,  nullable=False )
     room_block = db.Column(db.String(1), nullable=False)
     room_floor = db.Column(db.Integer, nullable=False)
     room_number = db.Column(db.Integer, nullable=False)
-    room_status = db.Column(db.Integer, nullable=False)
-    room_classes_schedule = db.relationship("room_availability_schedule", backref="fci_room")
-    room_name_aliases = db.relationship("room_aliases", backref="fci_room")
-    def __repr__(self, id, room_name, room_block, room_floor, room_number, room_status):
-        self.id = id
+    room_classes_schedule = db.relationship("room_availability_schedule", backref="fci_room", lazy=True)
+    room_name_aliases = db.relationship("room_aliases", backref="fci_room", lazy=True)
+    lat = db.Column(db.Float)
+    lng = db.Column(db.Float)
+    popup = db.Column(db.String(50)) # nullable=False
+    def __repr__(self, room_name, room_block, room_floor, room_number):
+        # self.id = id TODO Delete
         self.room_name = room_name
         self.room_block = room_block
         self.room_floor = room_floor
         self.room_number = room_number
-        self.room_status = room_status
 
 # Database table for room availability, from CLiC schedule
 class room_availability_schedule(db.Model):
     __tablename__ = "room_availability_schedule"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
+    fci_room_name = db.Column(db.String(50), db.ForeignKey("fci_room.room_name"), nullable=False)
     epoch_start = db.Column(db.Float, nullable=False)
     epoch_end = db.Column(db.Float, nullable=False)
     class_subject_code = db.Column(db.String(50))
@@ -147,9 +158,9 @@ class room_availability_schedule(db.Model):
         else:
             return datetime.datetime.fromtimestamp(float(self.epoch_end)).astimezone(malaysiaTZ)
 
-    def __repr__(self, id, fci_room_id, epoch_start, epoch_end, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_weightage_value):
+    def __repr__(self, id, fci_room_name, epoch_start, epoch_end, class_subject_code, class_section, schedule_description, persistence_weeks, input_from_scheduleORcustomORbutton, availability_weightage_value):
         self.id = id
-        self.fci_room_id = fci_room_id
+        self.fci_room_name = fci_room_name
         self.epoch_start = epoch_start
         self.epoch_end = epoch_end
         self.class_subject_code = class_subject_code
@@ -162,8 +173,8 @@ class room_availability_schedule(db.Model):
 class room_aliases(db.Model):
     __tablename__ = "room_aliases"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    fci_room_id = db.Column(db.Integer, db.ForeignKey("fci_room.id"), nullable=False)
     room_name_aliases = db.Column(db.String(50), nullable=False)
+    fci_room_name = db.Column(db.String(50), db.ForeignKey("fci_room.room_name"), nullable=False)
 
 # Database for user info
 class User(db.Model):
@@ -180,36 +191,40 @@ class User(db.Model):
 def redirect_home():
     return redirect("/map/0")
 
-floor_markers = {
-    '0': [
-        {'lat': 2.9285, 'lng': 101.6411, 'popup': 'Marker 0-1'},
-        {'lat': 2.9286, 'lng': 101.6412, 'popup': 'Marker 0-2'},
-    ],
-    '1': [
-        {'lat': 2.9290, 'lng': 101.6405, 'popup': 'Marker 1-1'},
-        {'lat': 2.9291, 'lng': 101.6406, 'popup': 'Marker 1-2'},
-    ],
-}
-
-@app.route("/get_markers/<floor>")
-def get_markers(floor):
-    markers = floor_markers.get(floor, [])
+@app.route("/get_markers/<floor>/<room_name>")
+def get_markers(floor, room_name="None"):
+    if room_name!="None":
+        query = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalars()
+    else: query = db.session.execute(db.select(fci_room).filter_by(room_floor = floor)).scalars()
+    markers = []
+    for i in query:
+            if i.lat and i.lng:
+                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a></br>{i.popup}"})
     return jsonify(markers)
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
-    search = None
     if request.method == "POST":
-        search = request.form["search"]
-        if search:
+        try:
+            search = request.form["search"]
             return redirect(f"/search/{search}")
-    markers = floor_markers.get(floor,[])
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor, markers = markers)
+        except:
+            pass
+    search_suggestion = []
+    for i in db.session.execute(db.select(fci_room)).scalars():
+        search_suggestion.append(i.room_name)
+    for i in db.session.execute(db.select(room_aliases)).scalars():
+        search_suggestion.append(i.room_name_aliases)
+    session["search_suggestion"] = search_suggestion
+    return render_template("index.html", ActivePage="index", search_suggestion = session["search_suggestion"], ActiveFloor = floor)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
     room = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalar()
-    search = None
+    if room:
+        pass
+    else:
+        return render_template("search.html")
     current_time_single = current_time()
 
     # Identify which form is input
@@ -221,37 +236,32 @@ def room_page(room_name):
             pass
 
         try:
-            room_status = request.form["room_status"] # TODO: delete /remake this system
-            fci_room_id = room_name
+            room_status = request.form["room_status"]
+            fci_room_name = room_name
             epoch_start = current_time_single.timestamp()
             epoch_end = (current_time_single + datetime.timedelta(hours=1)).timestamp()
             persistence_weeks = 1
             input_from_scheduleORcustomORbutton = "button"
             availability_weightage_value = int(room_status)
-            incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_start = epoch_start, epoch_end = epoch_end, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+            incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
             with app.app_context():
                 db.session.add(incoming_to_DB)
                 db.session.commit()
         except:
             pass
 
-
-    # TODO: change this to advanced system. this is the upvote/downvote room availability system
-    room_status, room_status_modifier = room_status_func(room_status=room.room_status)
-
     # --------------------------------------------------------clic schedule
     # room availability schedule
-    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name, input_from_scheduleORcustomORbutton = "schedule")).all()
+    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room.room_name, input_from_scheduleORcustomORbutton = "schedule").order_by(room_availability_schedule.epoch_start)).scalars()
     class_schedule_list = []
-    for i in range(len(room_obj)):
-        for ii in range(len(room_obj[i])):
-            check_class_start = room_obj[i][ii].datetime_start()
-            timeDelta = current_time_single - check_class_start
-            if timeDelta.days >= (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
-                db.session.delete(room_obj[i][ii])
-                db.session.commit()
-            else:
-                class_schedule_list.append(room_obj[i][ii])
+    for i in room_obj:
+        check_class_start = i.datetime_start()
+        timeDelta = current_time_single - check_class_start
+        if timeDelta.days >= (i.persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
+            db.session.delete(i)
+            db.session.commit()
+        else:
+            class_schedule_list.append(i)
     
     # current class checker, checks if class in in session
     class_in_session_list = []
@@ -261,28 +271,27 @@ def room_page(room_name):
                 class_in_session_list.append(schedule_single)
 
     #-----------------------------------------------------custom schedule
-    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_id = room.room_name, input_from_scheduleORcustomORbutton = "custom")).all()
+    room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room.room_name, input_from_scheduleORcustomORbutton = "custom").order_by(room_availability_schedule.epoch_start)).scalars()
     custom_schedule_list = []
-    for i in range(len(room_obj)):
-        for ii in range(len(room_obj[i])):
-            check_class_start = room_obj[i][ii].datetime_start()
-            timeDelta = current_time_single - check_class_start
-            if timeDelta.days >= (room_obj[i][ii].persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
-                db.session.delete(room_obj[i][ii])
-                db.session.commit()
-            else:
-                custom_schedule_list.append(room_obj[i][ii])
+    for i in room_obj:
+        check_class_start = i.datetime_start()
+        timeDelta = current_time_single - check_class_start
+        if timeDelta.days >= (i.persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
+            db.session.delete(i)
+            db.session.commit()
+        else:
+            custom_schedule_list.append(i)
     
     custom_in_session_list = []
     for custom_single in custom_schedule_list:
         if custom_single.datetime_start().weekday() == current_time_single.weekday():
-            if int(custom_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(custom_single.datetime_end(strftime="%H%M%S%f")):
+            if float(custom_single.epoch_start) < float(current_time_single.timestamp()) <= float(custom_single.epoch_end):
                 custom_in_session_list.append(custom_single)
 
     # class_schedule_list = list of row objects of CLiC MMUclass
     # class_in_session = single row object of CLiC MMUclass which is currently going on in this room. Returns None if no class ongoing
     # TODO room_status and room_status_modifier = to be deleted/remade
-    return render_template("roompage.html", room = room, room_status = room_status, room_status_modifier = room_status_modifier, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list)
+    return render_template("roompage.html", search_suggestion = session["search_suggestion"], room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
@@ -290,19 +299,24 @@ def account():
 
 @app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
+    search = str(search)
     session["search"] = search
-    search_results = db.session.execute(db.select(fci_room).filter_by(room_name = search)).all()
+    room_name_results = db.session.execute(db.select(fci_room).filter(fci_room.room_name.icontains(search))).scalars()
+    room_name_results_list = []
+    for i in room_name_results:
+        room_name_results_list.append(i)
+    aliases_results = db.session.execute(db.select(room_aliases).filter(room_aliases.room_name_aliases.icontains(search))).scalars()
+    aliases_results_list = []
+    for i in aliases_results:
+        aliases_results_list.append(i)
 
-    results_list = []
-    for i in range(len(search_results)):
-        for ii in range(len(search_results[i])):
-            results_list.append(search_results[i][ii].room_name)
-    
     if request.method == "POST":
-        search = request.form["search"]
-        if search:
+        try:
+            search = request.form["search"]
             return redirect(f"/search/{search}")
-    return render_template("search.html", ActivePage = "search", search = session["search"], results_list = results_list)
+        except:
+            pass
+    return render_template("search.html", ActivePage = "search", search_suggestion = session["search_suggestion"], search = session["search"], room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list )
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
@@ -313,7 +327,6 @@ def schedule_input():
         except:
             pass
             
-        
         try:
             schedule_input = str(request.form["schedule_input"])
             user_input_new_delete_old_schedule_decoder(schedule_input)
@@ -335,7 +348,7 @@ def schedule_input():
             room_name_re_check = r"(^[A-Z]{4}\d{4}$)"
             room_name_pattern = re.compile(room_name_re_check)
             if room_name_pattern.search(custom_schedule_search_room):
-                fci_room_id = custom_schedule_search_room
+                fci_room_name = custom_schedule_search_room
                 epoch_start = float(custom_schedule_datetime_start.timestamp())
                 epoch_end = float(custom_schedule_datetime_end.timestamp())
                 schedule_description = custom_schedule_textarea
@@ -343,14 +356,14 @@ def schedule_input():
                 input_from_scheduleORcustomORbutton = "custom"
                 availability_weightage_value = int(custom_room_status)
                 
-                incoming_to_DB = room_availability_schedule(fci_room_id = fci_room_id, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+                incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
                 with app.app_context():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
         except:
             pass
 
-    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time())
+    return render_template("schedule_input.html", ActivePage="schedule_input", search_suggestion = session["search_suggestion"], current_time=current_time())
 
 # -------------------------------------------------------
 

@@ -5,17 +5,20 @@
 {% block content %}
 <div id="RoomPageMainDiv">
     <div class="RoomPageInfo">
-        <h1>{{room_name}}</h1>
+        <h1>{{room.room_name}}</h1>
+        {% if room.room_name_aliases %}
+        <span><strong>Aliases:</strong></span></br>
+        {% for i in room.room_name_aliases %}
+        {{ i.room_name_aliases }}</br>
+        {% endfor %}
+        {% endif %}
         <p>Block: {{room.room_block}}</p>
         <p>Floor: {{room.room_floor}}</p>
         <p>Room: {{room.room_number}}</p>
     </div>
-    <div class="RoomPageAliases">
-        <p>Aliases:</p>
-    </div>
     <div class="RoomPageStatus">
         <div>
-            <p>Status: {{room_status_modifier}} {{room_status}}</p>
+            <p>Status:</p>
         </div>
         <form method="POST">
             <input type="radio" id="empty" name="room_status" value="-5" required>

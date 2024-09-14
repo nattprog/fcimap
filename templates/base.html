@@ -22,14 +22,20 @@
 </div>
 <nav class="TopNavigationBar">
     <ul>
-        <li><a href="/" {% if ActivePage == "index" %}class="NavigationActive"{% endif %}>Home</a></li>
-        <li><a href="/schedule_input/" {% if ActivePage == "schedule_input" %}class="NavigationActive"{% endif %}>Add Schedule</a></li>
-        <li {% if ActivePage == "search"%}class="NavigationActive"{% endif %}>
+        <li><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></li>
+        <li><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></li>
+        <li class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
             <form method="POST">
                 <label for="search">Search Room:</label>
-                <input type="search" id="search" name="search" placeholder="Enter Search" value="{{session["search"]}}">
-                <input type="submit" value="Enter"></form></li>
-        <li id="account"><a href="/account" {% if ActivePage == "account"%}class="NavigationActive"{% endif %}>Account</a></li>
+                <input list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
+                <datalist id="search_foo">
+                    {% for i in search_suggestion %}
+                    <option value="{{i}}">
+                    {% endfor %}
+                </datalist>
+                <input type="submit" value="Enter">
+            </form></li>
+        <li id="account"><a href="/account" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}">Account</a></li>
     </ul>
 </nav>
 </header>
