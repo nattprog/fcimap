@@ -13,7 +13,6 @@ app.config["SECRET_KEY"] = 'sessionsecretkey'
 
 # Declare variables
 malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
-search = None
 
 def current_time():
     return datetime.datetime.now(tz=malaysiaTZ)
@@ -205,17 +204,21 @@ def get_markers(floor, room_name="None"):
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
-    search = None
     if request.method == "POST":
-        search = request.form["search"]
-        if search:
+        try:
+            search = request.form["search"]
             return redirect(f"/search/{search}")
+        except:
+            pass
     return render_template("index.html", ActivePage="index", ActiveFloor = floor)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
     room = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalar()
-    search = None
+    if room:
+        pass
+    else:
+        return render_template("search.html")
     current_time_single = current_time()
 
     # Identify which form is input
@@ -227,7 +230,7 @@ def room_page(room_name):
             pass
 
         try:
-            room_status = request.form["room_status"] # TODO: delete /remake this system
+            room_status = request.form["room_status"]
             fci_room_name = room_name
             epoch_start = current_time_single.timestamp()
             epoch_end = (current_time_single + datetime.timedelta(hours=1)).timestamp()
@@ -298,9 +301,11 @@ def search(search):
         results_list.append(i.room_name)
     
     if request.method == "POST":
-        search = request.form["search"]
-        if search:
+        try:
+            search = request.form["search"]
             return redirect(f"/search/{search}")
+        except:
+            pass
     return render_template("search.html", ActivePage = "search", search = session["search"], results_list = results_list)
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
@@ -312,7 +317,6 @@ def schedule_input():
         except:
             pass
             
-        
         try:
             schedule_input = str(request.form["schedule_input"])
             user_input_new_delete_old_schedule_decoder(schedule_input)
