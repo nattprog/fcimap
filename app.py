@@ -210,7 +210,13 @@ def home(floor):
             return redirect(f"/search/{search}")
         except:
             pass
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor)
+    search_suggestion = []
+    for i in db.session.execute(db.select(fci_room)).scalars():
+        search_suggestion.append(i.room_name)
+    for i in db.session.execute(db.select(room_aliases)).scalars():
+        search_suggestion.append(i.room_name_aliases)
+    session["search_suggestion"] = search_suggestion
+    return render_template("index.html", ActivePage="index", search_suggestion = session["search_suggestion"], ActiveFloor = floor)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
@@ -285,7 +291,7 @@ def room_page(room_name):
     # class_schedule_list = list of row objects of CLiC MMUclass
     # class_in_session = single row object of CLiC MMUclass which is currently going on in this room. Returns None if no class ongoing
     # TODO room_status and room_status_modifier = to be deleted/remade
-    return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list)
+    return render_template("roompage.html", search_suggestion = session["search_suggestion"], room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
@@ -318,7 +324,7 @@ def search(search):
             return redirect(f"/search/{search}")
         except:
             pass
-    return render_template("search.html", ActivePage = "search", search = session["search"], room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list )
+    return render_template("search.html", ActivePage = "search", search_suggestion = session["search_suggestion"], search = session["search"], room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list )
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
@@ -365,7 +371,7 @@ def schedule_input():
         except:
             pass
 
-    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time())
+    return render_template("schedule_input.html", ActivePage="schedule_input", search_suggestion = session["search_suggestion"], current_time=current_time())
 
 # -------------------------------------------------------
 
