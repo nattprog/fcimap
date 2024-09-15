@@ -122,22 +122,18 @@ def in_session_weightage_total(room_name):
 def return_dict_all_rooms_empty():
     current_time_single = current_time()
     suggested_rooms = {}
-    for schedule_single in db.session.execute(db.select(room_availability_schedule)).scalars():
+    for schedule_single in db.session.execute(db.select(room_availability_schedule).filter_by()).scalars():
         weightage = 0
         if (schedule_single.input_from_scheduleORcustomORbutton == "schedule") and (schedule_single.datetime_start().weekday() == current_time_single.weekday()) and (int(schedule_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(schedule_single.datetime_end(strftime="%H%M%S%f"))):
             weightage = int(schedule_single.availability_weightage_value)
         elif ((schedule_single.input_from_scheduleORcustomORbutton == "custom") or (schedule_single.input_from_scheduleORcustomORbutton == "button")) and (float(schedule_single.epoch_start) < float(current_time_single.timestamp()) <= float(schedule_single.epoch_end)):
             weightage = int(schedule_single.availability_weightage_value)
         try: 
-            if weightage and suggested_rooms[schedule_single.fci_room_name]: suggested_rooms[schedule_single.fci_room_name] += int(weightage)
+            if suggested_rooms[schedule_single.fci_room_name]: suggested_rooms[schedule_single.fci_room_name] += int(weightage)
         except:
-            if weightage: suggested_rooms[schedule_single.fci_room_name] = int(weightage)
-    suggested_rooms_foo = {}
-    for i in suggested_rooms:
-        if suggested_rooms[i] <= 0:
-            suggested_rooms_foo[i] = suggested_rooms[i]
-    if suggested_rooms_foo:
-        suggested_rooms = {k: v for k, v in sorted(suggested_rooms_foo.items(), key=lambda item: item[1])}
+            suggested_rooms[schedule_single.fci_room_name] = int(weightage)
+    if suggested_rooms:
+        suggested_rooms = {k: v for k, v in sorted(suggested_rooms.items(), key=lambda item: item[1])} #stolen algo from stackoverflow lesgooooooooo
     return suggested_rooms
 
 def success_fail_flash(boolean):
