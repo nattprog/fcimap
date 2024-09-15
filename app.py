@@ -25,62 +25,84 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     schedule_input = schedule_input.replace("\n", " ")
 
     dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
-    times = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*([A-Z]*\d*)\s*-\s*(\w*)\s*\((\w*)\)"
+    times_schedule = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*([A-Z]*\d*)\s*-\s*(\w*)\s*\((\w*)\)"
+    times_custom = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*(Class/Tutorial|Club\sActivity/Event|Examination|Final\sExam|External\sEvent|Meeting/Discussion|Others|Presentation|Training/Conference)"
     # regex string to find in the input. 
 
     # months = string to match the dates
     # group(1) = ([month] [day], [year])
 
-    # times = string to match the dates
+    # times_schedule OR times_custom = string to match the dates
     # group(1) = ([start time][am/pm])
     # group(2) = ([end time][am/pm])
-    # group(3) = ([room name])
-    # group(4) = ([subject code])
+    # group(3) = ([room name]) 
+    # group(4) = ([subject code]) OR ([description])
     # group(5) = ([description])
-    # group(6) = ([class section])
+    # group(6) = ([class section]) OR None
 
     pattern_date = re.compile(dates)
-    pattern_time = re.compile(times)
-    try:
-        first_occurence_room_name = pattern_time.search(schedule_input).group(3) # gets room name, to weed out old outdated schedules to be deleted
-    except:
-        first_occurence_room_name = None
-    with app.app_context():
-        search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = first_occurence_room_name, input_from_scheduleORcustomORbutton = "schedule")).scalars()
-        for i in search_results:
-            db.session.delete(i)
-            db.session.commit()
+    pattern_time_schedule = re.compile(times_schedule)
+    pattern_times_custom = re.compile(times_custom)
+    first_occurence_room_name = None
+    if pattern_time_schedule.search(schedule_input):
+        first_occurence_room_name = pattern_time_schedule.search(schedule_input).group(3) # gets room name, to weed out old outdated schedules to be deleted
+        with app.app_context():
+            search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = first_occurence_room_name, input_from_scheduleORcustomORbutton = "schedule")).scalars()
+            for i in search_results:
+                db.session.delete(i)
+                db.session.commit()
+    elif pattern_times_custom.search(schedule_input):
+        first_occurence_room_name = pattern_times_custom.search(schedule_input).group(3)
 
     dates_list = [] # first we find the dates, eg. September 6, 2024
     for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
         dates_list.append(i)
 
-    for date_iter in range(len(dates_list)): # iterates through dates
-        if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
-            schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
-        elif date_iter == len(dates_list) - 1: # to fix list out of bounds
-            schedule_day = schedule_input[dates_list[date_iter].end():]
-        
-        for time_iter in pattern_time.finditer(schedule_day): # finds the time values of class in between the dates
-            if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
-                class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
-                class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
+    if dates_list and first_occurence_room_name:
+        schedule_input_success_bool = True  # used to check if schedule input is successful, for rewards or score etc.
+        for date_iter in range(len(dates_list)): # iterates through dates
+            if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
+                schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
+            elif date_iter == len(dates_list) - 1: # to fix list out of bounds
+                schedule_day = schedule_input[dates_list[date_iter].end():]
+            
+            for time_iter in pattern_time_schedule.finditer(schedule_day): # finds the time values of class in between the dates
+                if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
+                    class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
+                    class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
 
-                epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
-                epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
-                fci_room_name = time_iter.group(3)
-                class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
-                class_section = time_iter.group(6)
-                schedule_description = time_iter.group(5)
-                persistence_weeks = 6
-                input_from_scheduleORcustomORbutton = "schedule"
-                availability_weightage_value = 10
-                incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
-                schedule_input_success_bool = True # used to check if schedule input is successful, for rewards or score etc.
+                    epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
+                    epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
+                    fci_room_name = time_iter.group(3)
+                    class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
+                    class_section = time_iter.group(6)
+                    schedule_description = time_iter.group(5)
+                    persistence_weeks = 6
+                    input_from_scheduleORcustomORbutton = "schedule"
+                    availability_weightage_value = 10
+                    incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
 
-                with app.app_context():
-                    db.session.add(incoming_to_DB)
-                    db.session.commit()
+                    with app.app_context():
+                        db.session.add(incoming_to_DB)
+                        db.session.commit()
+            for time_iter in pattern_times_custom.finditer(schedule_day): # finds the time values of class in between the dates
+                print(time_iter)
+                if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
+                    class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
+                    class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
+
+                    epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
+                    epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
+                    fci_room_name = time_iter.group(3)
+                    schedule_description = time_iter.group(4)
+                    persistence_weeks = 1
+                    input_from_scheduleORcustomORbutton = "custom"
+                    availability_weightage_value = 10
+                    incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+
+                    with app.app_context():
+                        db.session.add(incoming_to_DB)
+                        db.session.commit()
 
 def in_session_weightage_total(room_name):
     current_time_single = current_time()
@@ -320,6 +342,7 @@ def search(search):
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
+    global schedule_input_success_bool
     if request.method == "POST":
         try:
             search = request.form["search"]
