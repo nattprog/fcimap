@@ -334,7 +334,6 @@ def account():
 
 @app.route("/search/<search>", methods=["GET", "POST"])
 def search(search):
-    search = str(search)
     session["search"] = search
     room_name_results = db.session.execute(db.select(fci_room).filter(fci_room.room_name.icontains(search))).scalars()
     room_name_results_list = []
