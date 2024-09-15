@@ -72,7 +72,7 @@ html, body {
 .FloorNavigationBar {
     display: block;
     background-color: #0050a2;
-    width: 150px;
+    width: 10%;
     margin: 2%;
     border-radius: 10px;
     text-align: center;

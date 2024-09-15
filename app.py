@@ -119,6 +119,27 @@ def in_session_weightage_total(room_name):
                 weightage_total += int(query[i][ii].availability_weightage_value)
     return weightage_total
 
+def return_dict_all_rooms_empty():
+    current_time_single = current_time()
+    suggested_rooms = {}
+    for schedule_single in db.session.execute(db.select(room_availability_schedule)).scalars():
+        weightage = 0
+        if (schedule_single.input_from_scheduleORcustomORbutton == "schedule") and (schedule_single.datetime_start().weekday() == current_time_single.weekday()) and (int(schedule_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(schedule_single.datetime_end(strftime="%H%M%S%f"))):
+            weightage = int(schedule_single.availability_weightage_value)
+        elif ((schedule_single.input_from_scheduleORcustomORbutton == "custom") or (schedule_single.input_from_scheduleORcustomORbutton == "button")) and (float(schedule_single.epoch_start) < float(current_time_single.timestamp()) <= float(schedule_single.epoch_end)):
+            weightage = int(schedule_single.availability_weightage_value)
+        try: 
+            if weightage and suggested_rooms[schedule_single.fci_room_name]: suggested_rooms[schedule_single.fci_room_name] += int(weightage)
+        except:
+            if weightage: suggested_rooms[schedule_single.fci_room_name] = int(weightage)
+    suggested_rooms_foo = {}
+    for i in suggested_rooms:
+        if suggested_rooms[i] <= 0:
+            suggested_rooms_foo[i] = suggested_rooms[i]
+    if suggested_rooms_foo:
+        suggested_rooms = {k: v for k, v in sorted(suggested_rooms_foo.items(), key=lambda item: item[1])}
+    return suggested_rooms
+
 def success_fail_flash(boolean):
     if boolean:
         return flash("Success!")
@@ -248,7 +269,9 @@ def home(floor):
     for i in db.session.execute(db.select(room_aliases)).scalars():
         search_suggestion["aliases"].append(i.room_name_aliases)
     session["search_suggestion"] = search_suggestion
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor)
+    suggested_rooms = return_dict_all_rooms_empty()
+    print(suggested_rooms)
+    return render_template("index.html", ActivePage="index", ActiveFloor = floor, suggested_rooms = suggested_rooms)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
@@ -319,9 +342,8 @@ def room_page(room_name):
     
     custom_in_session_list = []
     for custom_single in custom_schedule_list:
-        if custom_single.datetime_start().weekday() == current_time_single.weekday():
-            if float(custom_single.epoch_start) < float(current_time_single.timestamp()) <= float(custom_single.epoch_end):
-                custom_in_session_list.append(custom_single)
+        if float(custom_single.epoch_start) < float(current_time_single.timestamp()) <= float(custom_single.epoch_end):
+            custom_in_session_list.append(custom_single)
 
     # class_schedule_list = list of row objects of CLiC MMUclass
     # class_in_session = single row object of CLiC MMUclass which is currently going on in this room. Returns None if no class ongoing
