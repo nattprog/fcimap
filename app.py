@@ -253,7 +253,9 @@ def room_page(room_name):
     if room:
         pass
     else:
-        return render_template("search.html")
+        success_fail_flash(False)
+        return render_template("/")
+    session["custom_schedule_search_room"] = room.room_name
     current_time_single = current_time()
 
     # Identify which form is input
@@ -388,7 +390,9 @@ def schedule_input():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
                 success_fail_flash(True)
+                session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = None, None, None, None, None
             else:
+                session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = custom_schedule_search_room, custom_schedule_datetime, custom_schedule_hours, custom_room_status, custom_schedule_textarea
                 success_fail_flash(False)
         except:
             pass
