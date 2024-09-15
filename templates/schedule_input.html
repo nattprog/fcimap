@@ -14,12 +14,15 @@
     <br>
     <input type="submit" value="Submit">
 </form>
-
 <form class="custom_schedule_form" method="POST">
     <h4>Or add a custom schedule:</h4>
     <label for="custom_schedule_search_room">Search Room:</label></br>
-    <input type="search" id="custom_schedule_search_room" name="custom_schedule_search_room" placeholder="Enter Room ID" required></br></br>
-
+    <input list="custom_schedule_search_room_foo" name="custom_schedule_search_room" id="custom_schedule_search_room" placeholder="Enter Room ID" required></br></br>
+                <datalist id="custom_schedule_search_room_foo">
+                    {% for i in search_suggestion["name"] %}
+                    <option value="{{i}}">
+                    {% endfor %}
+                </datalist>
     <label for="custom_schedule_datetime">Enter Starting Date and Time:</label></br>
     <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time.strftime("%Y-%m-%dT%H:%M")}}" required></br></br>
 

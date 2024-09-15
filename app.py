@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, session, request, jsonify
+from flask import Flask, redirect, url_for, render_template, session, request, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 import datetime, pytz, re
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,8 +20,6 @@ def current_time():
 # Declare functions
 
 def user_input_new_delete_old_schedule_decoder(schedule_input):
-    global schedule_input_success_bool
-    schedule_input_success_bool = False
     schedule_input = schedule_input.replace("\n", " ")
 
     dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
@@ -59,7 +57,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
         dates_list.append(i)
 
     if dates_list and first_occurence_room_name:
-        schedule_input_success_bool = True  # used to check if schedule input is successful, for rewards or score etc.
+        success_fail_flash(True)
         for date_iter in range(len(dates_list)): # iterates through dates
             if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
                 schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
@@ -103,6 +101,8 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     with app.app_context():
                         db.session.add(incoming_to_DB)
                         db.session.commit()
+    else:
+        success_fail_flash(False)
 
 def in_session_weightage_total(room_name):
     current_time_single = current_time()
@@ -115,6 +115,13 @@ def in_session_weightage_total(room_name):
             elif float(query[i][ii].epoch_start) < float(current_time_single.timestamp()) <= float(query[i][ii].epoch_end):
                 weightage_total += int(query[i][ii].availability_weightage_value)
     return weightage_total
+
+def success_fail_flash(boolean):
+    if boolean:
+        return flash("Success!")
+            
+    elif not boolean:
+        return flash("Something's wrong... Try again.")
 
 # def room_status_func(room_status): # TODO: delete this feature
 #     if abs(room_status) == 0:
@@ -232,11 +239,11 @@ def home(floor):
             return redirect(f"/search/{search}")
         except:
             pass
-    search_suggestion = []
+    search_suggestion = {"name":[], "aliases":[]}
     for i in db.session.execute(db.select(fci_room)).scalars():
-        search_suggestion.append(i.room_name)
+        search_suggestion["name"].append(i.room_name)
     for i in db.session.execute(db.select(room_aliases)).scalars():
-        search_suggestion.append(i.room_name_aliases)
+        search_suggestion["aliases"].append(i.room_name_aliases)
     session["search_suggestion"] = search_suggestion
     return render_template("index.html", ActivePage="index", search_suggestion = session["search_suggestion"], ActiveFloor = floor)
 
@@ -266,6 +273,7 @@ def room_page(room_name):
             input_from_scheduleORcustomORbutton = "button"
             availability_weightage_value = int(room_status)
             incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+            success_fail_flash(True)
             with app.app_context():
                 db.session.add(incoming_to_DB)
                 db.session.commit()
@@ -342,7 +350,6 @@ def search(search):
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
-    global schedule_input_success_bool
     if request.method == "POST":
         try:
             search = request.form["search"]
@@ -353,9 +360,6 @@ def schedule_input():
         try:
             schedule_input = str(request.form["schedule_input"])
             user_input_new_delete_old_schedule_decoder(schedule_input)
-            if schedule_input_success_bool:
-                pass # Show popup that "Input has entered the database" or give user a reward, etc.
-            return redirect("/schedule_input")
         except:
             pass
 
@@ -383,9 +387,11 @@ def schedule_input():
                 with app.app_context():
                     db.session.add(incoming_to_DB)
                     db.session.commit()
+                success_fail_flash(True)
+            else:
+                success_fail_flash(False)
         except:
             pass
-
     return render_template("schedule_input.html", ActivePage="schedule_input", search_suggestion = session["search_suggestion"], current_time=current_time())
 
 # -------------------------------------------------------

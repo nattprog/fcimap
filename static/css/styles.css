@@ -154,3 +154,11 @@ html, body {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     margin: 1%;
 }
+
+.flash_message {
+    display: block;
+    background-color: rgb(231, 231, 231);
+    color: black;
+    padding: 5px;
+    text-align: center;
+}
