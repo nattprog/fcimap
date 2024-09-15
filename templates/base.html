@@ -29,12 +29,14 @@
                 <label for="search">Search Room:</label>
                 <input list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
                 <datalist id="search_foo">
-                    {% for i in search_suggestion["name"] %}
-                    <option value="{{i}}">
-                    {% endfor %}
-                    {% for i in search_suggestion["aliases"] %}
-                    <option value="{{i}}">
-                    {% endfor %}
+                    {% if session["search_suggestion"] %}
+                        {% for i in session["search_suggestion"]["name"] %}
+                        <option value="{{i}}">
+                        {% endfor %}
+                        {% for i in session["search_suggestion"]["aliases"] %}
+                        <option value="{{i}}">
+                        {% endfor %}
+                    {% endif %}
                 </datalist>
                 <input type="submit" value="Enter">
             </form></li>

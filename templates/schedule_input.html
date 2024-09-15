@@ -19,9 +19,11 @@
     <label for="custom_schedule_search_room">Search Room:</label></br>
     <input list="custom_schedule_search_room_foo" name="custom_schedule_search_room" id="custom_schedule_search_room" placeholder="Enter Room ID" value="{% if session['custom_schedule_search_room'] %}{{session['custom_schedule_search_room']}}{% endif %}" required></br></br>
                 <datalist id="custom_schedule_search_room_foo">
-                    {% for i in search_suggestion["name"] %}
-                    <option value="{{i}}">
-                    {% endfor %}
+                    {% if session['search_suggestion']%}
+                        {% for i in session['search_suggestion']["name"] %}
+                        <option value="{{i}}">
+                        {% endfor %}
+                    {% endif %}
                 </datalist>
     <label for="custom_schedule_datetime">Enter Starting Date and Time:</label></br>
     <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time.strftime('%Y-%m-%dT%H:%M')}}" value="{% if session['custom_schedule_datetime'] %}{{session['custom_schedule_datetime']}}{% endif %}" required></br></br>
