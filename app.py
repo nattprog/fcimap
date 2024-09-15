@@ -119,10 +119,14 @@ def in_session_weightage_total(room_name):
                 weightage_total += int(query[i][ii].availability_weightage_value)
     return weightage_total
 
-def return_dict_all_rooms_empty():
+def return_dict_all_rooms_empty(fci_room_name=None):
     current_time_single = current_time()
     suggested_rooms = {}
-    for schedule_single in db.session.execute(db.select(room_availability_schedule).filter_by()).scalars():
+    if fci_room_name:
+        query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = fci_room_name)).scalars()
+    else:
+        query = db.session.execute(db.select(room_availability_schedule)).scalars()
+    for schedule_single in query:
         weightage = 0
         if (schedule_single.input_from_scheduleORcustomORbutton == "schedule") and (schedule_single.datetime_start().weekday() == current_time_single.weekday()) and (int(schedule_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(schedule_single.datetime_end(strftime="%H%M%S%f"))):
             weightage = int(schedule_single.availability_weightage_value)
@@ -139,7 +143,6 @@ def return_dict_all_rooms_empty():
 def success_fail_flash(boolean):
     if boolean:
         return flash("Success!")
-            
     elif not boolean:
         return flash("Something's wrong... Try again.")
 
