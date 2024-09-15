@@ -57,7 +57,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
         dates_list.append(i)
 
     if dates_list and first_occurence_room_name:
-        success_fail_flash(True)
+        success_bool = False
         for date_iter in range(len(dates_list)): # iterates through dates
             if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
                 schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
@@ -83,6 +83,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     with app.app_context():
                         db.session.add(incoming_to_DB)
                         db.session.commit()
+                    success_bool = True
             for time_iter in pattern_times_custom.finditer(schedule_day): # finds the time values of class in between the dates
                 print(time_iter)
                 if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
@@ -101,6 +102,8 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     with app.app_context():
                         db.session.add(incoming_to_DB)
                         db.session.commit()
+                    success_bool = True
+        success_fail_flash(success_bool)
     else:
         success_fail_flash(False)
 
@@ -275,10 +278,10 @@ def room_page(room_name):
             input_from_scheduleORcustomORbutton = "button"
             availability_weightage_value = int(room_status)
             incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
-            success_fail_flash(True)
             with app.app_context():
                 db.session.add(incoming_to_DB)
                 db.session.commit()
+            success_fail_flash(True)
         except:
             pass
 
