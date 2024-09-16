@@ -94,7 +94,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
                     fci_room_name = time_iter.group(3)
                     schedule_description = time_iter.group(4)
-                    persistence_weeks = 1
+                    persistence_weeks = 0
                     input_from_scheduleORcustomORbutton = "custom"
                     availability_weightage_value = 10
                     incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
@@ -128,6 +128,17 @@ def return_dict_all_rooms_weightage(fci_room_name=None):
     if total_rooms_weightage_sum:
         total_rooms_weightage_sum = {k: v for k, v in sorted(total_rooms_weightage_sum.items(), key=lambda item: item[1])} #stolen algo from stackoverflow lesgooooooooo
     return total_rooms_weightage_sum
+
+def delete_old_schedule():
+    room_obj = db.session.execute(db.select(room_availability_schedule)).scalars()
+    current_time_single = current_time()
+    for i in room_obj:
+        check_class_start = i.datetime_start()
+        timeDelta = current_time_single - check_class_start
+        if timeDelta.days > (i.persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
+            with app.app_context():
+                db.session.delete(i)
+                db.session.commit()
 
 def success_fail_flash(boolean):
     if boolean:
@@ -245,6 +256,7 @@ def get_markers(floor, room_name="None"):
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
+    delete_old_schedule()
     if request.method == "POST":
         try:
             search = request.form["search"]
@@ -262,6 +274,7 @@ def home(floor):
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
+    delete_old_schedule()
     room = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalar()
     if room:
         pass
@@ -295,44 +308,30 @@ def room_page(room_name):
         except:
             pass
 
-    # --------------------------------------------------------clic schedule
-    # room availability schedule
+    # CLIC SCHEDULE
     room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room.room_name, input_from_scheduleORcustomORbutton = "schedule").order_by(room_availability_schedule.epoch_start)).scalars()
-    class_schedule_list = []
+    class_schedule_list = [] # list of all schedule obj for creating the calender thing
     for i in room_obj:
-        check_class_start = i.datetime_start()
-        timeDelta = current_time_single - check_class_start
-        if timeDelta.days >= (i.persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
-            db.session.delete(i)
-            db.session.commit()
-        else:
-            class_schedule_list.append(i)
+        class_schedule_list.append(i)
     
-    # current class checker, checks if class in in session
-    class_in_session_list = []
+    class_in_session_list = [] # current class checker, checks if class in in session
     for schedule_single in class_schedule_list:
         if schedule_single.datetime_start().weekday() == current_time_single.weekday():
             if int(schedule_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(schedule_single.datetime_end(strftime="%H%M%S%f")):
                 class_in_session_list.append(schedule_single)
 
-    #-----------------------------------------------------custom schedule
+    # CUSTOM SCHEDULE
     room_obj = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room.room_name, input_from_scheduleORcustomORbutton = "custom").order_by(room_availability_schedule.epoch_start)).scalars()
-    custom_schedule_list = []
+    custom_schedule_list = [] # list of all custom obj for creating the calender thing
     for i in room_obj:
-        check_class_start = i.datetime_start()
-        timeDelta = current_time_single - check_class_start
-        if timeDelta.days >= (i.persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
-            db.session.delete(i)
-            db.session.commit()
-        else:
-            custom_schedule_list.append(i)
+        custom_schedule_list.append(i)
     
-    custom_in_session_list = []
+    custom_in_session_list = [] # current custom booking checker, checks if booking in in session
     for custom_single in custom_schedule_list:
         if float(custom_single.epoch_start) < float(current_time_single.timestamp()) <= float(custom_single.epoch_end):
             custom_in_session_list.append(custom_single)
 
-    total_rooms_weightage_sum = return_dict_all_rooms_weightage(fci_room_name=room.room_name)
+    total_rooms_weightage_sum = return_dict_all_rooms_weightage(fci_room_name=room.room_name) # returns dict containing data of how available a room is
     return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list, total_rooms_weightage_sum = total_rooms_weightage_sum)
 
 @app.route("/account/", methods=["GET", "POST"])
@@ -390,7 +389,7 @@ def schedule_input():
                 epoch_start = float(custom_schedule_datetime_start.timestamp())
                 epoch_end = float(custom_schedule_datetime_end.timestamp())
                 schedule_description = custom_schedule_textarea
-                persistence_weeks = 1
+                persistence_weeks = 0
                 input_from_scheduleORcustomORbutton = "custom"
                 availability_weightage_value = int(custom_room_status)
                 
