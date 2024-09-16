@@ -55,7 +55,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     dates_list = [] # first we find the dates, eg. September 6, 2024
     for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
         dates_list.append(i)
-
+# I pity every poor soul who has to set eyes on this peak logik shit
     if dates_list and first_occurence_room_name:
         if cooldown_checker_return_True_if_accept(first_occurence_room_name, input_type="schedule",seconds=5):
             success_bool = False
@@ -106,6 +106,35 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     else:
         success_fail_flash(False)
 
+def user_input_new_custom(): # the only reason this is up here is to clear up the website routes area
+    custom_schedule_search_room = request.form["custom_schedule_search_room"] # gets data from form
+    custom_schedule_datetime = request.form["custom_schedule_datetime"]
+    custom_schedule_hours = request.form["custom_schedule_hours"]
+    custom_schedule_textarea = request.form["custom_schedule_textarea"]
+    custom_room_status = request.form["custom_room_status"]
+    custom_schedule_datetime_start = malaysiaTZ.localize(datetime.datetime.strptime(custom_schedule_datetime, "%Y-%m-%dT%H:%M"))
+    custom_schedule_datetime_end = custom_schedule_datetime_start + datetime.timedelta(hours=int(custom_schedule_hours))
+
+    if db.session.execute(db.select(fci_room).filter_by(room_name = custom_schedule_search_room)).scalar(): # checks with database if room name is valid
+        fci_room_name = custom_schedule_search_room
+        epoch_start = float(custom_schedule_datetime_start.timestamp())
+        epoch_end = float(custom_schedule_datetime_end.timestamp())
+        schedule_description = custom_schedule_textarea
+        persistence_weeks = 0
+        input_from_scheduleORcustomORbutton = "custom" # TODO: change to user email or user id
+        availability_weightage_value = int(custom_room_status)
+        incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+        if cooldown_checker_return_True_if_accept(room_name=fci_room_name, input_type="custom", seconds=300):
+            with app.app_context():
+                db.session.add(incoming_to_DB)
+                db.session.commit()
+            success_fail_flash(True)
+        
+        session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = None, None, None, None, None # clears value from last booking
+    else:
+        session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = custom_schedule_search_room, custom_schedule_datetime, custom_schedule_hours, custom_room_status, custom_schedule_textarea # retains values from failed booking
+        success_fail_flash(False)
+
 def return_dict_all_rooms_weightage(fci_room_name=None):
     current_time_single = current_time()
     total_rooms_weightage_sum = {}
@@ -135,7 +164,8 @@ def delete_old_schedule():
         timeDelta = current_time_single - check_class_start
         if timeDelta.days > (i.persistence_weeks)*7: # Deletes old inputs that are more than the persistence time/exceeds the limit
             with app.app_context():
-                db.session.delete(i)
+                local_obj = db.session.merge(i) # I have no fucking clue what this is, but it might be IMPORTANT TODO ADD THIS TO EVERY COMMIT FUCKKKK refer to https://stackoverflow.com/questions/24291933/sqlalchemy-object-already-attached-to-session
+                db.session.delete(local_obj)
                 db.session.commit()
 
 def success_fail_flash(boolean):
@@ -347,33 +377,9 @@ def schedule_input():
         except:
             pass
         try:
-            custom_schedule_search_room = request.form["custom_schedule_search_room"] # gets data from form
-            custom_schedule_datetime = request.form["custom_schedule_datetime"]
-            custom_schedule_hours = request.form["custom_schedule_hours"]
-            custom_schedule_textarea = request.form["custom_schedule_textarea"]
-            custom_room_status = request.form["custom_room_status"]
-            custom_schedule_datetime_start = malaysiaTZ.localize(datetime.datetime.strptime(custom_schedule_datetime, "%Y-%m-%dT%H:%M"))
-            custom_schedule_datetime_end = custom_schedule_datetime_start + datetime.timedelta(hours=int(custom_schedule_hours))
+            request.form["custom_schedule_search_room"]
+            user_input_new_custom()
 
-            if db.session.execute(db.select(fci_room).filter_by(room_name = custom_schedule_search_room)).scalar(): # checks with database if room name is valid
-                fci_room_name = custom_schedule_search_room
-                epoch_start = float(custom_schedule_datetime_start.timestamp())
-                epoch_end = float(custom_schedule_datetime_end.timestamp())
-                schedule_description = custom_schedule_textarea
-                persistence_weeks = 0
-                input_from_scheduleORcustomORbutton = "custom" # TODO: change to user email or user id
-                availability_weightage_value = int(custom_room_status)
-                incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
-                if cooldown_checker_return_True_if_accept(room_name=fci_room_name, input_type="custom", seconds=300):
-                    with app.app_context():
-                        db.session.add(incoming_to_DB)
-                        db.session.commit()
-                    success_fail_flash(True)
-                
-                session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = None, None, None, None, None # clears value from last booking
-            else:
-                session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = custom_schedule_search_room, custom_schedule_datetime, custom_schedule_hours, custom_room_status, custom_schedule_textarea # retains values from failed booking
-                success_fail_flash(False)
         except:
             pass
     return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time(), current_time_max=(current_time()+datetime.timedelta(weeks=4)))

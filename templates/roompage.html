@@ -18,7 +18,7 @@
     </div>
     <div class="RoomPageStatus">
         <div>
-            <p>Status:</p>
+            <h4>Status:</h4>
         </div>
             <div {% if total_rooms_weightage_sum %}style="display: block; {% if (total_rooms_weightage_sum[room.room_name] <= -10) or total_rooms_weightage_sum[room.room_name] >= 10 %}border-style: solid{% endif %}; background-color: {% if total_rooms_weightage_sum[room.room_name] <= -5 %}#D2FDBB{% elif (-5 < total_rooms_weightage_sum[room.room_name]) and (total_rooms_weightage_sum[room.room_name] < 5)  %}#FDFD97{% elif total_rooms_weightage_sum[room.room_name] >= 5 %}#FDAAAA{% endif %}; padding: 5px; margin: 2px"{% endif %}>
             <form method="POST">
