@@ -57,51 +57,52 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
         dates_list.append(i)
 
     if dates_list and first_occurence_room_name:
-        success_bool = False
-        for date_iter in range(len(dates_list)): # iterates through dates
-            if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
-                schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
-            elif date_iter == len(dates_list) - 1: # to fix list out of bounds
-                schedule_day = schedule_input[dates_list[date_iter].end():]
-            
-            for time_iter in pattern_time_schedule.finditer(schedule_day): # finds the time values of class in between the dates
-                if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
-                    class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
-                    class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
+        if cooldown_checker_return_True_if_accept(first_occurence_room_name, input_type="schedule",seconds=5):
+            success_bool = False
+            for date_iter in range(len(dates_list)): # iterates through dates
+                if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
+                    schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
+                elif date_iter == len(dates_list) - 1: # to fix list out of bounds
+                    schedule_day = schedule_input[dates_list[date_iter].end():]
+                
+                for time_iter in pattern_time_schedule.finditer(schedule_day): # finds the time values of class in between the dates
+                    if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
+                        class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
+                        class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
 
-                    epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
-                    epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
-                    fci_room_name = time_iter.group(3)
-                    class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
-                    class_section = time_iter.group(6)
-                    schedule_description = time_iter.group(5)
-                    persistence_weeks = 12
-                    input_from_scheduleORcustomORbutton = "schedule"
-                    availability_weightage_value = 10
-                    incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
-                    with app.app_context():
-                        db.session.add(incoming_to_DB)
-                        db.session.commit()
-                    success_bool = True
-            for time_iter in pattern_times_custom.finditer(schedule_day): # finds the time values of custom booking in between the dates
-                if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
-                    class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
-                    class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
+                        epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
+                        epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
+                        fci_room_name = time_iter.group(3)
+                        class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
+                        class_section = time_iter.group(6)
+                        schedule_description = time_iter.group(5)
+                        persistence_weeks = 12
+                        input_from_scheduleORcustomORbutton = "schedule"
+                        availability_weightage_value = 10
+                        incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+                        with app.app_context():
+                            db.session.add(incoming_to_DB)
+                            db.session.commit()
+                            success_bool = True
+                for time_iter in pattern_times_custom.finditer(schedule_day): # finds the time values of custom booking in between the dates
+                    if time_iter.group(3) == first_occurence_room_name: # Verifies that all the room names match the first occurence, otherwise something is wrong with the input and it is discarded
+                        class_start = f"{dates_list[date_iter].group(0)} {time_iter.group(1)}"
+                        class_end = f"{dates_list[date_iter].group(0)} {time_iter.group(2)}"
 
-                    epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
-                    epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
-                    fci_room_name = time_iter.group(3)
-                    schedule_description = time_iter.group(4)
-                    persistence_weeks = 0
-                    input_from_scheduleORcustomORbutton = "custom" # TODO be replaced with user email
-                    availability_weightage_value = 10
-                    incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+                        epoch_start = float(malaysiaTZ.localize(datetime.datetime.strptime(class_start, "%B %d, %Y %I:%M%p")).timestamp()) # taking the sections from the strings and sorting into their values
+                        epoch_end = float(malaysiaTZ.localize(datetime.datetime.strptime(class_end, "%B %d, %Y %I:%M%p")).timestamp())
+                        fci_room_name = time_iter.group(3)
+                        schedule_description = time_iter.group(4)
+                        persistence_weeks = 0
+                        input_from_scheduleORcustomORbutton = "CLiC Reservation" # TODO be replaced with user email
+                        availability_weightage_value = 10
+                        incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
 
-                    with app.app_context():
-                        db.session.add(incoming_to_DB)
-                        db.session.commit()
-                    success_bool = True
-        success_fail_flash(success_bool)
+                        with app.app_context():
+                            db.session.add(incoming_to_DB)
+                            db.session.commit()
+                            success_bool = True
+            success_fail_flash(success_bool)
     else:
         success_fail_flash(False)
 
@@ -142,6 +143,24 @@ def success_fail_flash(boolean):
         return flash("Success!") # Flask flash message
     elif not boolean:
         return flash("Something's wrong... Try again.")
+
+def cooldown_checker_return_True_if_accept(room_name, input_type, seconds=None):
+    try:
+        tdelta = (float(session[f"{input_type}_{room_name}_cooldown_end"]) - current_time().timestamp())
+        if tdelta > 0:
+            if tdelta > 60: 
+                flash(f"On cooldown. Please wait {int(tdelta//60)} minutes {int(tdelta%60)} seconds...")
+            else:
+                flash(f"On cooldown. Please wait {int(tdelta)} seconds...")
+            return False
+        else:
+            if seconds:
+                session[f"{input_type}_{room_name}_cooldown_end"] = (current_time() + datetime.timedelta(seconds=seconds)).timestamp()
+            return True
+    except:
+        if seconds:
+            session[f"{input_type}_{room_name}_cooldown_end"] = (current_time() + datetime.timedelta(seconds=seconds)).timestamp()
+        return True
 
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
@@ -257,10 +276,11 @@ def room_page(room_name):
             input_from_scheduleORcustomORbutton = "button"
             availability_weightage_value = int(room_status)
             incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
-            with app.app_context():
-                db.session.add(incoming_to_DB)
-                db.session.commit()
-            success_fail_flash(True)
+            if cooldown_checker_return_True_if_accept(room_name=fci_room_name, input_type="button", seconds=300): # cooldown 5 minutes
+                with app.app_context():
+                    db.session.add(incoming_to_DB)
+                    db.session.commit()
+                success_fail_flash(True)
         except:
             pass
     # CLIC SCHEDULE
@@ -341,13 +361,15 @@ def schedule_input():
                 epoch_end = float(custom_schedule_datetime_end.timestamp())
                 schedule_description = custom_schedule_textarea
                 persistence_weeks = 0
-                input_from_scheduleORcustomORbutton = "CliC Reservation"
+                input_from_scheduleORcustomORbutton = "custom" # TODO: change to user email or user id
                 availability_weightage_value = int(custom_room_status)
-                incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
-                with app.app_context():
-                    db.session.add(incoming_to_DB)
-                    db.session.commit()
-                success_fail_flash(True)
+                incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+                if cooldown_checker_return_True_if_accept(room_name=fci_room_name, input_type="custom", seconds=300):
+                    with app.app_context():
+                        db.session.add(incoming_to_DB)
+                        db.session.commit()
+                    success_fail_flash(True)
+                
                 session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = None, None, None, None, None # clears value from last booking
             else:
                 session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = custom_schedule_search_room, custom_schedule_datetime, custom_schedule_hours, custom_room_status, custom_schedule_textarea # retains values from failed booking
