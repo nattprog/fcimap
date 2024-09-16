@@ -26,7 +26,7 @@
                     {% endif %}
                 </datalist>
     <label for="custom_schedule_datetime">Enter Starting Date and Time:</label></br>
-    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time.strftime('%Y-%m-%dT%H:%M')}}" value="{% if session['custom_schedule_datetime'] %}{{session['custom_schedule_datetime']}}{% endif %}" required></br></br>
+    <input type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time.strftime('%Y-%m-%dT%H:%M')}}" max="{{current_time_max.strftime('%Y-%m-%dT%H:%M')}}" value="{% if session['custom_schedule_datetime'] %}{{session['custom_schedule_datetime']}}{% endif %}" required></br></br>
 
     <label for="custom_schedule_hours">Length of stay (hours):</label></br>
     <select name="custom_schedule_hours" id="custom_schedule_hours" required>

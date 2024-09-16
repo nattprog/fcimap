@@ -75,7 +75,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     class_subject_code = time_iter.group(4)# all these are assigning values to variables, to be later placed in a class and commited to the database
                     class_section = time_iter.group(6)
                     schedule_description = time_iter.group(5)
-                    persistence_weeks = 6
+                    persistence_weeks = 12
                     input_from_scheduleORcustomORbutton = "schedule"
                     availability_weightage_value = 10
                     incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = class_subject_code, class_section = class_section, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
@@ -372,7 +372,7 @@ def schedule_input():
                 success_fail_flash(False)
         except:
             pass
-    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time())
+    return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time(), current_time_max=(current_time()+datetime.timedelta(weeks=4)))
 
 # -------------------------------------------------------
 
