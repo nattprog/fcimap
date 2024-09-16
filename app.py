@@ -107,38 +107,27 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     else:
         success_fail_flash(False)
 
-def in_session_weightage_total(room_name):
+def return_dict_all_rooms_weightage(fci_room_name=None):
     current_time_single = current_time()
-    query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room_name)).all()
-    weightage_total = 0
-    for i in range(len(query)):
-        for ii in range(len(query[i])):
-            if (query[i][ii].input_from_scheduleORcustomORbutton == "schedule") and (int(query[i][ii].datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(query[i][ii].datetime_end(strftime="%H%M%S%f"))):
-                weightage_total += int(query[i][ii].availability_weightage_value)
-            elif float(query[i][ii].epoch_start) < float(current_time_single.timestamp()) <= float(query[i][ii].epoch_end):
-                weightage_total += int(query[i][ii].availability_weightage_value)
-    return weightage_total
-
-def return_dict_all_rooms_empty(fci_room_name=None):
-    current_time_single = current_time()
-    suggested_rooms = {}
+    total_rooms_weightage_sum = {}
     if fci_room_name:
         query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = fci_room_name)).scalars()
     else:
         query = db.session.execute(db.select(room_availability_schedule)).scalars()
     for schedule_single in query:
+        print(schedule_single.input_from_scheduleORcustomORbutton)
         weightage = 0
         if (schedule_single.input_from_scheduleORcustomORbutton == "schedule") and (schedule_single.datetime_start().weekday() == current_time_single.weekday()) and (int(schedule_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(schedule_single.datetime_end(strftime="%H%M%S%f"))):
             weightage = int(schedule_single.availability_weightage_value)
         elif ((schedule_single.input_from_scheduleORcustomORbutton == "custom") or (schedule_single.input_from_scheduleORcustomORbutton == "button")) and (float(schedule_single.epoch_start) < float(current_time_single.timestamp()) <= float(schedule_single.epoch_end)):
             weightage = int(schedule_single.availability_weightage_value)
         try: 
-            if suggested_rooms[schedule_single.fci_room_name]: suggested_rooms[schedule_single.fci_room_name] += int(weightage)
+            total_rooms_weightage_sum[schedule_single.fci_room_name] += int(weightage)
         except:
-            suggested_rooms[schedule_single.fci_room_name] = int(weightage)
-    if suggested_rooms:
-        suggested_rooms = {k: v for k, v in sorted(suggested_rooms.items(), key=lambda item: item[1])} #stolen algo from stackoverflow lesgooooooooo
-    return suggested_rooms
+            total_rooms_weightage_sum[schedule_single.fci_room_name] = int(weightage)
+    if total_rooms_weightage_sum:
+        total_rooms_weightage_sum = {k: v for k, v in sorted(total_rooms_weightage_sum.items(), key=lambda item: item[1])} #stolen algo from stackoverflow lesgooooooooo
+    return total_rooms_weightage_sum
 
 def success_fail_flash(boolean):
     if boolean:
@@ -268,9 +257,8 @@ def home(floor):
     for i in db.session.execute(db.select(room_aliases)).scalars():
         search_suggestion["aliases"].append(i.room_name_aliases)
     session["search_suggestion"] = search_suggestion
-    suggested_rooms = return_dict_all_rooms_empty()
-    print(suggested_rooms)
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor, suggested_rooms = suggested_rooms)
+    total_rooms_weightage_sum = return_dict_all_rooms_weightage()
+    return render_template("index.html", ActivePage="index", ActiveFloor = floor, total_rooms_weightage_sum = total_rooms_weightage_sum)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
@@ -344,10 +332,9 @@ def room_page(room_name):
         if float(custom_single.epoch_start) < float(current_time_single.timestamp()) <= float(custom_single.epoch_end):
             custom_in_session_list.append(custom_single)
 
-    # class_schedule_list = list of row objects of CLiC MMUclass
-    # class_in_session = single row object of CLiC MMUclass which is currently going on in this room. Returns None if no class ongoing
-    # TODO room_status and room_status_modifier = to be deleted/remade
-    return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list)
+    total_room_weightage_sum = return_dict_all_rooms_weightage(fci_room_name=room.room_name)
+    print(total_room_weightage_sum)
+    return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list, total_room_weightage_sum = total_room_weightage_sum)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():

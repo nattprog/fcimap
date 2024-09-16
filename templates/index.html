@@ -51,7 +51,13 @@ FCI Map
 <div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
 <div>
     <h4>Suggested Study Rooms:</h4>
-    <div style="display: block; border-style:solid; border-color: gray; margin: 2px;">Here's my text</div>
+    {% if total_rooms_weightage_sum %}
+        {% for i in total_rooms_weightage_sum %}
+            {% if total_rooms_weightage_sum[i] <= 0 %}
+                <a href="/roompage/{{i}}" style="display: block; {% if total_rooms_weightage_sum[i] <= -10 %}border-style: solid{% endif %}; background-color: {% if total_rooms_weightage_sum[i] <= -5 %}#D2FDBB{% else %}#FDFD97{% endif %}; padding: 5px; margin: 2px">{{i}}</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 </div>
 </body>
 <script>
