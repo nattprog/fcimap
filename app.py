@@ -332,9 +332,8 @@ def room_page(room_name):
         if float(custom_single.epoch_start) < float(current_time_single.timestamp()) <= float(custom_single.epoch_end):
             custom_in_session_list.append(custom_single)
 
-    total_room_weightage_sum = return_dict_all_rooms_weightage(fci_room_name=room.room_name)
-    print(total_room_weightage_sum)
-    return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list, total_room_weightage_sum = total_room_weightage_sum)
+    total_rooms_weightage_sum = return_dict_all_rooms_weightage(fci_room_name=room.room_name)
+    return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list, total_rooms_weightage_sum = total_rooms_weightage_sum)
 
 @app.route("/account/", methods=["GET", "POST"])
 def account():
