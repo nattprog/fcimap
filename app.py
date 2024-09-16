@@ -93,7 +93,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
                     fci_room_name = time_iter.group(3)
                     schedule_description = time_iter.group(4)
                     persistence_weeks = 0
-                    input_from_scheduleORcustomORbutton = "custom"
+                    input_from_scheduleORcustomORbutton = "custom" # TODO be replaced with user email
                     availability_weightage_value = 10
                     incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
 
@@ -116,7 +116,7 @@ def return_dict_all_rooms_weightage(fci_room_name=None):
         weightage = 0
         if (schedule_single.input_from_scheduleORcustomORbutton == "schedule") and (schedule_single.datetime_start().weekday() == current_time_single.weekday()) and (int(schedule_single.datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(schedule_single.datetime_end(strftime="%H%M%S%f"))):
             weightage = int(schedule_single.availability_weightage_value)
-        elif ((schedule_single.input_from_scheduleORcustomORbutton == "custom") or (schedule_single.input_from_scheduleORcustomORbutton == "button")) and (float(schedule_single.epoch_start) < float(current_time_single.timestamp()) <= float(schedule_single.epoch_end)):
+        elif (float(schedule_single.epoch_start) < float(current_time_single.timestamp()) <= float(schedule_single.epoch_end)):
             weightage = int(schedule_single.availability_weightage_value)
         try: 
             total_rooms_weightage_sum[schedule_single.fci_room_name] += int(weightage) # if key already exists
@@ -142,24 +142,6 @@ def success_fail_flash(boolean):
         return flash("Success!") # Flask flash message
     elif not boolean:
         return flash("Something's wrong... Try again.")
-
-# def room_status_func(room_status): # TODO: delete this feature
-#     if abs(room_status) == 0:
-#         room_status_modifier = ""
-#     if 1 <= abs(room_status) <= 2:
-#         room_status_modifier = "Likely"
-#     elif 3 <= abs(room_status) <= 4:
-#         room_status_modifier = "Probably"
-#     elif abs(room_status) == 5:
-#         room_status_modifier = "Definitely"
-    
-#     if room_status == 0:
-#         room_status = "Unknown"
-#     elif room_status < 0:
-#         room_status = "Empty"
-#     elif room_status > 0:
-#         room_status = "Occupied"
-#     return room_status, room_status_modifier
 
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
@@ -359,7 +341,7 @@ def schedule_input():
                 epoch_end = float(custom_schedule_datetime_end.timestamp())
                 schedule_description = custom_schedule_textarea
                 persistence_weeks = 0
-                input_from_scheduleORcustomORbutton = "custom"
+                input_from_scheduleORcustomORbutton = "CliC Reservation"
                 availability_weightage_value = int(custom_room_status)
                 incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, class_subject_code = None, class_section = None, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
                 with app.app_context():
