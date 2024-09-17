@@ -57,7 +57,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
         dates_list.append(i)
 # I pity every poor soul who has to set eyes on this peak logik shit
     if dates_list and first_occurence_room_name:
-        if cooldown_checker_return_True_if_accept(first_occurence_room_name, input_type="schedule",seconds=5):
+        if cooldown_checker_return_True_if_accept(first_occurence_room_name, input_type="schedule",seconds=10):
             success_bool = False
             for date_iter in range(len(dates_list)): # iterates through dates
                 if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
@@ -124,7 +124,7 @@ def user_input_new_custom(): # the only reason this is up here is to clear up th
         input_from_scheduleORcustomORbutton = "custom" # TODO: change to user email or user id
         availability_weightage_value = int(custom_room_status)
         incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
-        if cooldown_checker_return_True_if_accept(room_name=fci_room_name, input_type="custom", seconds=300):
+        if cooldown_checker_return_True_if_accept(room_name=fci_room_name, input_type="custom", seconds=60):
             with app.app_context():
                 db.session.add(incoming_to_DB)
                 db.session.commit()
