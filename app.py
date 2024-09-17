@@ -41,24 +41,31 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     pattern_date = re.compile(dates)
     pattern_time_schedule = re.compile(times_schedule)
     pattern_times_custom = re.compile(times_custom)
-    first_occurence_room_name = None
-    if pattern_date.search(schedule_input) and pattern_time_schedule.search(schedule_input):
+    if (pattern_date.search(schedule_input) and pattern_time_schedule.search(schedule_input)) or (pattern_date.search(schedule_input) and pattern_times_custom.search(schedule_input)):# OR checks validity incase there is only schedule booking
         first_occurence_room_name = pattern_time_schedule.search(schedule_input).group(3) # gets room name, to weed out old outdated schedules to be deleted
-        with app.app_context():
-            search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = first_occurence_room_name, input_from_scheduleORcustomORbutton = "schedule")).scalars()
-            for i in search_results:
-                db.session.delete(i)
-                db.session.commit() # deletes outdated schedule data
-    elif pattern_date.search(schedule_input) and pattern_times_custom.search(schedule_input): #checks validity incase there is only schedule booking
-        first_occurence_room_name = pattern_times_custom.search(schedule_input).group(3)
-
-    dates_list = [] # first we find the dates, eg. September 6, 2024
-    for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
-        dates_list.append(i)
+        if pattern_time_schedule.search(schedule_input):
+            first_occurence_datetime_start = malaysiaTZ.localize(datetime.datetime.strptime(f"{pattern_date.search(schedule_input).group(0)} {pattern_time_schedule.search(schedule_input).group(1)}", "%B %d, %Y %I:%M%p"))
+        elif pattern_times_custom.search(schedule_input):
+            first_occurence_datetime_start = malaysiaTZ.localize(datetime.datetime.strptime(f"{pattern_date.search(schedule_input).group(0)} {pattern_times_custom.search(schedule_input).group(1)}", "%B %d, %Y %I:%M%p"))
+        if (((first_occurence_datetime_start - current_time()).days)//7) <= 12: # checks and fails if mass add is more than 12 weeks in the future
+            with app.app_context():
+                search_results = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = first_occurence_room_name, input_from_scheduleORcustomORbutton = "schedule")).scalars()
+                for i in search_results:
+                    local_obj = db.session.merge(i)
+                    db.session.delete(local_obj)
+                    db.session.commit() # deletes outdated schedule data
+        else:
+            first_occurence_datetime_start = None
+    else:
+        first_occurence_room_name = None
+    
 # I pity every poor soul who has to set eyes on this peak logik shit
-    if dates_list and first_occurence_room_name:
+    if first_occurence_room_name and first_occurence_datetime_start: # checks if room name is valid, and first occurence start date is valid (exists and not exceeding 12 weeks in future)
         if cooldown_checker_return_True_if_accept(first_occurence_room_name, input_type="schedule",seconds=10):
             success_bool = False
+            dates_list = [] # first we find the dates, eg. September 6, 2024
+            for i in pattern_date.finditer(schedule_input):# puts match objects into a list, so i can count and call through index
+                dates_list.append(i)
             for date_iter in range(len(dates_list)): # iterates through dates
                 if date_iter < len(dates_list) - 1: # selects text from current date till the next date, so we know which time belongs to which date
                     schedule_day = schedule_input[dates_list[date_iter].end():dates_list[date_iter+1].start()]
