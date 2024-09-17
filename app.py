@@ -387,6 +387,10 @@ def schedule_input():
             pass
     return render_template("schedule_input.html", ActivePage="schedule_input", current_time=current_time(), current_time_max=(current_time()+datetime.timedelta(weeks=4)))
 
+@app.route("/schedule_input/clic_add_tutorial/")
+def clic_add_tutorial():
+    return render_template("clic_add_tutorial.html")
+
 # -------------------------------------------------------
 
 @app.route('/signup_success')

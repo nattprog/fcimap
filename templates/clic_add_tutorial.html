@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}
+Add Tutorial
+{% endblock %}
+{% block content %}
+<div>
+    <h1>
+        How to add a room's week list from <a href="https://clic.mmu.edu.my/psp/csprd/?cmd=login&languageCd=ENG&" target="_blank">CLiC</a>:
+    </h1>
+    <p><a href="/schedule_input/">Back to Add Schedule</a></p>
+    <ol>
+        <li>Log into <a href="https://clic.mmu.edu.my/psp/csprd/?cmd=login&languageCd=ENG&" target="_blank">CLiC</a>, search for and navigate to "<a href="https://clic.mmu.edu.my/psp/csprd/EMPLOYEE/SA/c/N_VR.N_VR_USER_APP_CMP.GBL" target="_blank">Venue Reservation Application</a>"</li>
+    </ol>
+</div>
+<video width="400" height="225" controls autoplay loop muted>
+    <source src="{{url_for('static', filename='/clic_add_schedule_tutorial/search_venue_application.mp4')}}">
+    Your browser does not support the video tag.
+</video></br>
+<div>
+<ol start="3">
+    <li>Click "Venue Calendar", type room name without pressing Enter. (If "Monthly" calendar displays events, it worked)</li>
+    <li>Click "Week List". If schedule does not appear, repeat from step 3.</li>
+    <li>Hold right click, drag over weekly schedule, and Copy</li>
+</ol>
+<p>If errors occur, refresh the page</p>
+</div>
+<video width="400" height="225" controls autoplay loop muted>
+    <source src="{{url_for('static', filename='/clic_add_schedule_tutorial/search_room_copy.mp4')}}">
+    Your browser does not support the video tag.
+</video>
+<h1>Thank you for your help!</h1>
+<p><a href="/schedule_input/">Back to Add Schedule</a></p>
+{% endblock %}

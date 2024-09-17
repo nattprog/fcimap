@@ -10,9 +10,18 @@
 {% block content %}
 <form class="schedule_input_form" method="POST">
     <p><label for="schedule_input"><h4>Enter room schedule from CLiC:</h4></label></p>
-    <textarea id="schedule_input" name="schedule_input" placeholder="Copy and paste Week List schedule!" rows="4" cols="50" maxlength="2000" required></textarea>
+    <textarea id="schedule_input" name="schedule_input" placeholder=
+"Copy and paste Week List schedule! e.g.
+
+September 16, 2024
+2:00pm - 4:00pm		CQAR2006 : CSP1123 - LEC (TC3L)
+September 17, 2024
+8:00am - 10:00am		CQAR2006 : CSP1123 - LEC (TC4L)
+etc."
+rows="10" cols="50" maxlength="2000" required></textarea>
     <br>
     <input type="submit" value="Submit">
+    <p><a href="/schedule_input/clic_add_tutorial/">Click here for a guide</a></p>
 </form>
 <form class="custom_schedule_form" method="POST">
     <h4>Or add a custom schedule:</h4>
