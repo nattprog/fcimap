@@ -54,7 +54,7 @@ FCI Map
     {% if total_rooms_weightage_sum %}
         {% for i in total_rooms_weightage_sum %}
             {% if total_rooms_weightage_sum[i] <= 0 %}
-                <a href="/roompage/{{i}}" style="display: block; {% if total_rooms_weightage_sum[i] <= -10 %}border-style: solid{% endif %}; background-color: {% if total_rooms_weightage_sum[i] <= -5 %}#D2FDBB{% else %}#FDFD97{% endif %}; padding: 5px; margin: 2px">{{i}}</a>
+                <a href="/roompage/{{i}}" style="display: block; {% if total_rooms_weightage_sum[i] <= -10 %}border-style: solid{% endif %}; background-color: {% if total_rooms_weightage_sum[i] <= -5 %}#D2FDBB{% else %}#FDFD97{% endif %}; padding: 5px; margin: 2px; text-align: center">{{i}}</a>
             {% endif %}
         {% endfor %}
     {% endif %}

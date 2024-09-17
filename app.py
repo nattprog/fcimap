@@ -192,6 +192,14 @@ def cooldown_checker_return_True_if_accept(room_name, input_type, seconds=None):
             session[f"{input_type}_{room_name}_cooldown_end"] = (current_time() + datetime.timedelta(seconds=seconds)).timestamp()
         return True
 
+def search_suggestion_maker():
+    search_suggestion = {"name":[], "aliases":[]} # creates a dict with lists of room objs and aliases objs 
+    for i in db.session.execute(db.select(fci_room)).scalars():
+        search_suggestion["name"].append(i.room_name)
+    for i in db.session.execute(db.select(room_aliases)).scalars():
+        search_suggestion["aliases"].append(i.room_name_aliases)
+    session["search_suggestion"] = search_suggestion
+
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
     __tablename__ = "fci_room"
@@ -270,12 +278,7 @@ def home(floor):
             return redirect(f"/search/{search}")
         except:
             pass
-    search_suggestion = {"name":[], "aliases":[]} # creates a dict with lists of room objs and aliases objs 
-    for i in db.session.execute(db.select(fci_room)).scalars():
-        search_suggestion["name"].append(i.room_name)
-    for i in db.session.execute(db.select(room_aliases)).scalars():
-        search_suggestion["aliases"].append(i.room_name_aliases)
-    session["search_suggestion"] = search_suggestion
+    search_suggestion_maker()
     total_rooms_weightage_sum = return_dict_all_rooms_weightage()
     return render_template("index.html", ActivePage="index", ActiveFloor = floor, total_rooms_weightage_sum = total_rooms_weightage_sum)
 
