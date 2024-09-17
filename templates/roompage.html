@@ -44,10 +44,12 @@
             {% if custom_in_session_list %}
             <h4>Meeting in session:</h4>
             {% for custom_in_session in custom_in_session_list %}
-            <p>{{custom_in_session.schedule_description}}</br>
-                {{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</br></br></p>
-            {% endfor %}
-            {% endif %}
+            <p>{{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</br>
+                {% if custom_in_session.availability_weightage_value > 0 %}Occupied{% elif custom_in_session.availability_weightage_value < 0 %}Empty{% endif %} | {{custom_in_session.schedule_description}}</br></br>
+                {% endfor %}
+                {% endif %}
+            </p>
+            
         </div>
     </div>
     <div class="RoomClassSchedule">
@@ -70,7 +72,7 @@
             <p>{{custom_single.datetime_start(strftime="%B %d, %Y | %I:%M%p")}} - 
             {% if custom_single.datetime_start(strftime="%B %d") != custom_single.datetime_end(strftime="%B %d") %}{{custom_single.datetime_end(strftime="%B %d, %Y")}}{% endif %}
             {{custom_single.datetime_end(strftime="%I:%M%p")}}</br>
-            {{custom_single.schedule_description}}
+            {% if custom_single.availability_weightage_value > 0 %}Occupied{% elif custom_single.availability_weightage_value < 0 %}Empty{% endif %} | {{custom_single.schedule_description}}
             {% endfor %}
             {% endif %}
             </p>

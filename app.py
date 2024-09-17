@@ -123,7 +123,10 @@ def user_input_new_custom(): # the only reason this is up here is to clear up th
         persistence_weeks = 0
         input_from_scheduleORcustomORbutton = "custom" # TODO: change to user email or user id
         availability_weightage_value = int(custom_room_status)
-        incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
+        try: user_id = session["user_id"]
+        except: 
+            user_id = None
+        incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value, user_id = user_id)
         if cooldown_checker_return_True_if_accept(room_name=fci_room_name, input_type="custom", seconds=60):
             with app.app_context():
                 db.session.add(incoming_to_DB)
@@ -226,6 +229,7 @@ class room_availability_schedule(db.Model):
     persistence_weeks = db.Column(db.Integer, nullable=False, default=0) # must set automatically, allow user choice from input
     input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
     availability_weightage_value = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     def datetime_start(self, strftime=None): # gives datetime object of start and end, strftime string optional and will return a custom date and time string
         if strftime:
             return datetime.datetime.fromtimestamp(float(self.epoch_start)).astimezone(malaysiaTZ).strftime(strftime)
@@ -249,6 +253,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    schedule_reservation = db.relationship("room_availability_schedule", backref="reservations", lazy=True)
     def __repr__(self):
         return f'<User {self.username}>'
 
