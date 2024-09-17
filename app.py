@@ -131,7 +131,7 @@ def user_input_new_custom(): # the only reason this is up here is to clear up th
         input_from_scheduleORcustomORbutton = "custom" # TODO: change to user email or user id
         availability_weightage_value = int(custom_room_status)
         try: user_id = session["user_id"]
-        except: 
+        except:
             user_id = None
         incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, schedule_description = schedule_description, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value, user_id = user_id)
         if cooldown_checker_return_True_if_accept(room_name=fci_room_name, input_type="custom", seconds=60):
@@ -139,8 +139,9 @@ def user_input_new_custom(): # the only reason this is up here is to clear up th
                 db.session.add(incoming_to_DB)
                 db.session.commit()
             success_fail_flash(True)
-        
-        session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = None, None, None, None, None # clears value from last booking
+            session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = None, None, None, None, None # clears value from last booking
+        else:
+            session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = custom_schedule_search_room, custom_schedule_datetime, custom_schedule_hours, custom_room_status, custom_schedule_textarea # retains values from failed booking
     else:
         session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = custom_schedule_search_room, custom_schedule_datetime, custom_schedule_hours, custom_room_status, custom_schedule_textarea # retains values from failed booking
         success_fail_flash(False)
