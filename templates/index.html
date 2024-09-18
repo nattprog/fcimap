@@ -95,30 +95,37 @@ FCI Map
     opacity: 0.7,
     }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
 
-    var emptyIcon = L.icon({
+    var emptyicon = L.icon({
         iconUrl: '/static/images/roomempty.png',
         iconSize: [24, 24]
     });
 
-    var inactiveIcon = L.icon({
+    var inactiveicon = L.icon({
         iconUrl: '/static/images/roominactive.png',
         iconSize: [24, 24]
     });
 
-    var occupiedIcon = L.icon({
+    var occupiedicon = L.icon({
         iconUrl: '/static/images/roomoccupied.png',
         iconSize: [24, 24]
     });
+
+    var defaulticon = L.icon({
+        iconUrl: '/static/images/roominactive.png',
+        iconSize: [24, 24]
+    })
 
     $.getJSON("/get_markers/{{ ActiveFloor }}/None", function(markers) {
     markers.forEach(function(marker) {
         var icon;
         if (marker.weightage < 0) {
-            icon = emptyIcon;
+            icon = emptyicon;
         } else if (marker.weightage === 0) {
-            icon = inactiveIcon;
+            icon = inactiveicon;
+        } else if (marker.weightage > 0) {
+            icon = occupiedicon;
         } else {
-            icon = occupiedIcon;
+            icon = defaulticon;
         }
 
         L.marker([marker.lat, marker.lng], { icon: icon })
