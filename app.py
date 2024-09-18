@@ -199,6 +199,7 @@ def get_markers(floor, room_name="None"):
     markers = []
     for i in query:
             if i.lat and i.lng:
+                weightage = in_session_weightage_total(i.room_name)
                 markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a></br>{i.popup}"})
     return jsonify(markers)
 
