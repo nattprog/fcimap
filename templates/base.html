@@ -1,43 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}FCI Map{% endblock %}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-<link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-{% block head %}{% endblock %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FCI Map{% endblock %}</title>
+    <style>
+        /* Styles for the navigation bar and dropdown */
+        .TopNavigationBar {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        .TopNavigationBar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .TopNavigationBar ul li {
+            float: left;
+        }
+
+        .TopNavigationBar ul li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .TopNavigationBar ul li a:hover, .TopNavigationBar ul li a.NavigationActive {
+            background-color: #111;
+        }
+
+        .dropbtn {
+            background-color: #333;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {background-color: #f1f1f1}
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: #3e8e41;
+        }
+    </style>
+    {% block head %}{% endblock %}
 </head>
 
 <header>
-<div class="TopNavigationBar" id="TopLogo">
-    <ul>
-        <li>
-            <img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px">
-        </li>
-        <li>
-            <b>FCI Map</b>
-        </li>
-    </ul>
-</div>
-<nav class="TopNavigationBar">
-    <ul>
-        <li><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></li>
-        <li><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></li>
-        <li class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
-            <form method="POST">
-                <label for="search">Search Room:</label>
-                <input list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
-                <datalist id="search_foo">
-                    {% for i in search_suggestion %}
-                    <option value="{{i}}">
-                    {% endfor %}
-                </datalist>
-                <input type="submit" value="Enter">
-            </form></li>
-        <li id="account"><a href="/account" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}">Account</a></li>
-    </ul>
-</nav>
+    <div class="TopNavigationBar" id="TopLogo">
+        <ul>
+            <li>
+                <img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px">
+            </li>
+            <li>
+                <b>FCI Map</b>
+            </li>
+        </ul>
+    </div>
+    <nav class="TopNavigationBar">
+        <ul>
+            <li><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></li>
+            <li><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></li>
+            <li class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
+                <form method="POST">
+                    <label for="search">Search Room:</label>
+                    <input list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
+                    <datalist id="search_foo">
+                        {% for i in search_suggestion %}
+                        <option value="{{i}}">
+                        {% endfor %}
+                    </datalist>
+                    <input type="submit" value="Enter">
+                </form>
+            </li>
+            <li id="account">
+                <div class="dropdown">
+                    <button class="dropbtn">Account</button>
+                    <div class="dropdown-content">
+                        <a href="/change_password">Change Password</a>
+                        <a href="/delete_account">Delete Account</a>
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
 </header>
 
 {% block content %}
