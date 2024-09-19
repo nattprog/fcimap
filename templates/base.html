@@ -23,27 +23,23 @@
 <header>
 <div id="TopLogo">
     <ul>
-        <li>
-            <img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px">
-        </li>
-        <li>
-            <b>FCI Map</b>
-        </li>
+        <li><img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px"></li>
+        <li><b>FCI Map</b></li>
     </ul>
 </div>
 <div class="TopNavigationBar">
     <div><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></div>
     <div><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></div>
     <div style="flex: 1;"><div class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
-        <form style="display: flex;" method="POST">
-            <label for="search">Search Room:</label>
+        <form style="display: flex; text-align: center;" method="POST">
+            <label style="padding-right: 5px;" for="search">Search Room:</label>
             <input style="flex-grow: 1;" list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
             <datalist id="search_foo">
                 {% for i in search_suggestion %}
                 <option value="{{i}}">
                 {% endfor %}
             </datalist>
-            <input type="submit" value="Enter">
+            <input style="size: 2rem;" type="submit" value=" 🔎︎ ">
         </form></div></div>
     <div><a href="/account" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}">Account</a></div>
 </div>
