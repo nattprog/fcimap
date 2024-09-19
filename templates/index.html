@@ -49,7 +49,25 @@ FCI Map
 </nav>
 
 <div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
-
+<div>
+    <h4>Suggested Study Rooms:</h4>
+    {% if total_rooms_weightage_sum %}
+        {% for i in total_rooms_weightage_sum %}
+            {% if total_rooms_weightage_sum[i] <= 0 %}
+                <a href="/roompage/{{i}}" style="display: block; {% if total_rooms_weightage_sum[i] <= -10 %}border-style: solid{% endif %}; background-color: {% if total_rooms_weightage_sum[i] <= -5 %}#D2FDBB{% else %}#FDFD97{% endif %}; padding: 5px; margin: 2px; text-align: center">{{i}}</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <h4>Disclaimer:</h4>
+    <ul>
+        <li style="background-color: #D2FDBB;">Green = Actively Empty</li>
+        <li style="background-color: #FDFD97;">Yellow = Inactive</li>
+        <li style="background-color: #FDAAAA;">Red = Actively Occupied</li>
+        <li>Outlined with a black box = High likelyhood</li>
+    </ul>
+    <p style="text-align: left;">All rooms listed have had their CLiC schedules added less than 6 weeks ago OR have had reservations less than a day ago.</p>
+    <p>We can not guarantee the availability of these rooms, only provide an educated guess.</p>
+</div>
 </body>
 <script>
     var bounds = [[2.929198, 101.641659], [2.928153, 101.640517]];

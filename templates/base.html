@@ -35,13 +35,27 @@
             <label style="padding-right: 5px;" for="search">Search Room:</label>
             <input style="flex-grow: 1;" list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
             <datalist id="search_foo">
-                {% for i in search_suggestion %}
-                <option value="{{i}}">
-                {% endfor %}
+                {% if session["search_suggestion"] %}
+                    {% for i in session["search_suggestion"]["name"] %}
+                    <option value="{{i}}">
+                    {% endfor %}
+                    {% for i in session["search_suggestion"]["aliases"] %}
+                    <option value="{{i}}">
+                    {% endfor %}
+                {% endif %}
             </datalist>
             <input style="size: 2rem;" type="submit" value=" 🔎︎ ">
         </form></div></div>
     <div><a href="/account" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}">Account</a></div>
+</div>
+<div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for i in messages %}
+        <div class="flash_message"><p><strong>{{i}}</strong></p></div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 </div>
 </header>
 

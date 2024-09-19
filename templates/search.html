@@ -5,7 +5,7 @@ Search Results
 {% endblock %}
 
 {% block content %}
-<p><em>Results for:</em><b> {{search}}</b></p>
+<p><em>Results for:</em><b> {{session['search']}}</b></p>
 {% for i in room_name_results_list %}
 <p>
     <a href="/roompage/{{i.room_name}}">{{i.room_name}}</a>
