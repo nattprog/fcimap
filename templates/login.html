@@ -63,12 +63,11 @@
             color: #333;
             margin-top: 10px;
         }
-        /* Style for the sign-up link */
-        .signup-link {
-            color: blue;
+        a {
+            color: red;
             text-decoration: none;
         }
-        .signup-link:hover {
+        a:hover {
             text-decoration: underline;
         }
     </style>
@@ -88,8 +87,9 @@
 
             <input type="submit" value="Login">
         </form>
-        <!-- Add Sign Up link here -->
-        <p>Don't have an account? <a href="{{ url_for('signup') }}" class="signup-link">Sign Up</a></p>
+
+        <!-- Add a sign-up option for those who don't have an account yet -->
+        <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a>.</p>
     </div>
 </body>
 </html>

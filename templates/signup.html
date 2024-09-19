@@ -93,9 +93,9 @@
 
             <input type="submit" value="Sign Up">
         </form>
-        {% if login_link %}
-            <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a>.</p>
-        {% endif %}
+
+        <!-- Add a login option for those who already have an account -->
+        <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a>.</p>
     </div>
 </body>
 </html>

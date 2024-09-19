@@ -27,6 +27,10 @@
             color: red;
             margin-bottom: 20px;
         }
+        p {
+            color: #333;
+            margin-top: 10px;
+        }
         input[type="submit"] {
             background-color: red;
             color: white;
@@ -39,19 +43,14 @@
         input[type="submit"]:hover {
             background-color: darkred;
         }
-        p {
-            color: #333;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
     <div class="delete-container">
-        <h1>Confirm Deletion</h1>
-        <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-        <!-- Delete Account Form -->
+        <h1>Delete Account</h1>
+        <p>Are you sure you want to delete your account, {{ username }}?</p>
         <form action="/delete_account" method="POST">
-            <input type="submit" value="Delete Account">
+            <input type="submit" value="Yes, Delete My Account">
         </form>
     </div>
 </body>
