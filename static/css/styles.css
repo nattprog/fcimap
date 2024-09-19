@@ -114,23 +114,6 @@ html, body {
     margin: 1%;
 }
 
-.RoomPageInfo {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin: 1%;
-}
-
-.RoomPageStatus {
-    display: inline-block;
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin: 1%;
-}
-
 .RoomPageStatus form {
     color: black;
     text-align: left;
@@ -151,15 +134,6 @@ html, body {
     color: black;
 }
 
-.RoomClassSchedule {
-    display: inline-block;
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin: 1%;
-}
-
 #search {
     margin: 15px;
     margin-right: 5px;
@@ -173,3 +147,11 @@ html, body {
 #search:focus {
             border-color: red;
         }
+
+.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .RoomPageInfo {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
