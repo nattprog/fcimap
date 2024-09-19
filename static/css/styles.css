@@ -15,14 +15,10 @@ html, body {
     padding-left: 2%;
 }
 
-.TopNavigationBar ul {
+.TopNavigationBar {
+    display: flex;
+    flex-direction: row;
     list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.TopNavigationBar li {
-    display: inline-block;
     margin: 0;
     padding: 0;
 }
@@ -45,25 +41,25 @@ html, body {
     background-color: #003264;
 }
 
-#account {
-    float: right;
-}
-
 #TopLogo {
-    display: block;
+    display: inline-block;
     padding: 10px;
     margin: 0px;
     background-color: white;
     text-align: left;
     font-size: 30px;
+    padding: 0%;
+    padding-top: 5px;
+    padding-bottom: 5px;
     padding-left: 2%;
 }
-#TopLogo li {
+#TopLogo ul, #TopLogo li {
     font-size: 30px;
     display: inline-block;
     vertical-align: middle;
-    padding-left: 10px;
+    padding: 0%;
     color: black;
+    margin: 0%;
 }
 
 

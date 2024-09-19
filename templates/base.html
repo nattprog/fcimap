@@ -7,10 +7,21 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
 {% block head %}{% endblock %}
+<style>
+
+
+
+@media only screen and (max-width: 800px) {
+/* For mobile phones: */
+.TopNavigationBar {
+    flex-direction: column;
+}
+}
+</style>
 </head>
 
 <header>
-<div class="TopNavigationBar" id="TopLogo">
+<div id="TopLogo">
     <ul>
         <li>
             <img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px">
@@ -20,24 +31,22 @@
         </li>
     </ul>
 </div>
-<nav class="TopNavigationBar">
-    <ul>
-        <li><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></li>
-        <li><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></li>
-        <li class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
-            <form method="POST">
-                <label for="search">Search Room:</label>
-                <input list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
-                <datalist id="search_foo">
-                    {% for i in search_suggestion %}
-                    <option value="{{i}}">
-                    {% endfor %}
-                </datalist>
-                <input type="submit" value="Enter">
-            </form></li>
-        <li id="account"><a href="/account" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}">Account</a></li>
-    </ul>
-</nav>
+<div class="TopNavigationBar">
+    <div><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></div>
+    <div><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></div>
+    <div style="flex: 1;"><div class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
+        <form style="display: flex;" method="POST">
+            <label for="search">Search Room:</label>
+            <input style="flex-grow: 1;" list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
+            <datalist id="search_foo">
+                {% for i in search_suggestion %}
+                <option value="{{i}}">
+                {% endfor %}
+            </datalist>
+            <input type="submit" value="Enter">
+        </form></div></div>
+    <div><a href="/account" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}">Account</a></div>
+</div>
 </header>
 
 {% block content %}
