@@ -6,6 +6,43 @@
 <title>{% block title %}FCI Map{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+<style>
+    /* Dropdown container */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 1000; /* Ensure the dropdown is above other elements */
+    }
+
+    /* Dropdown content */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 150px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1001; /* Higher than other elements to ensure visibility */
+        right: 0; /* Align dropdown to the right edge of the container */
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Add hover effect to the account button */
+    #account:hover {
+        cursor: pointer;
+    }
+</style>
 {% block head %}{% endblock %}
 <style>
 
@@ -46,7 +83,12 @@
             </datalist>
             <input style="size: 2rem;" type="submit" value=" 🔎︎ ">
         </form></div></div>
-    <div><a href="/account" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}">Account</a></div>
+    <div class="dropdown" id="account"><a href="javascript:void(0)" class="dropbtn" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}" onclick="toggleDropdown()">Account</a>
+        <div class="dropdown-content" id="dropdown-content">
+            <a href="/change_password">Change Password</a>
+            <a href="/delete_account">Delete Account</a>
+            <a href="/logout">Logout</a>
+        </div>
 </div>
 <div>
     {% with messages = get_flashed_messages() %}
@@ -61,4 +103,37 @@
 
 {% block content %}
 {% endblock %}
+
+<!-- Footer section -->
+<footer style="text-align: center; background-color: #f1f1f1; padding: 10px; position: fixed; bottom: 0; width: 100%; font-size: 0.9em; color: #333; z-index: 1000;">
+    <a href="https://github.com/nattprog/fcimap" style="color: #007bff; text-decoration: none;">Contact Us</a> | Site created by Amin, Jia Cheng and Nathaniel, 2024
+</footer>
+
+</body>
+</html>
+
+<script>
+    // Function to toggle the dropdown
+    function toggleDropdown() {
+        var dropdownContent = document.getElementById("dropdown-content");
+        if (dropdownContent.style.display === "block") {
+            dropdownContent.style.display = "none";
+        } else {
+            dropdownContent.style.display = "block";
+        }
+    }
+
+    // Close the dropdown if clicked outside of it
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.style.display === "block") {
+                    openDropdown.style.display = "none";
+                }
+            }
+        }
+    }
+</script>
 </html>

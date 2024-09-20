@@ -63,6 +63,13 @@
             color: #333;
             margin-top: 10px;
         }
+        a {
+            color: red;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -80,6 +87,9 @@
 
             <input type="submit" value="Login">
         </form>
+
+        <!-- Add a sign-up option for those who don't have an account yet -->
+        <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a>.</p>
     </div>
 </body>
 </html>
