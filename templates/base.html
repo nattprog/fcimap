@@ -61,6 +61,8 @@
     <ul>
         <li><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></li>
         <li><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></li>
+        <!-- New Chat Room link -->
+        <li><a href="/chat" class="{% if ActivePage == 'chat' %}NavigationActive{% endif %}">Chat Room</a></li>
         <li class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
             <form method="POST">
                 <label for="search">Search Room:</label>
