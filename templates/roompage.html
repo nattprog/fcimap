@@ -2,7 +2,37 @@
 {% block title %}
 {{roomID}}
 {% endblock %}
+{% block head %}
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<script>
+    L_NO_TOUCH = false;
+    L_DISABLE_3D = false;
+</script>
+<style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+
+<meta name="viewport" content="width=device-width,
+    initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<style>
+    #map_fc842e841ad4e3d1b8937629f1f9ec04 {
+        display: flex;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        left: 0.0%;
+        top: 0.0%;
+    }
+    
+</style>
+{% endblock %}
 {% block content %}
+<body>
 <div id="RoomPageMainDiv">
     <div class="RoomPageInfo">
         <h1>{{room.room_name}}</h1>
@@ -74,92 +104,95 @@
             </p>
         </div>
     </div>
-    <div class="mapcontainer" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
 </div>
-
+<div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
+</body>
 
 <script>
-var bounds = [[2.929198, 101.641659], [2.928153, 101.640517]];
+    var bounds = [[2.929198, 101.641659], [2.928153, 101.640517]];
 
-var map_fc842e841ad4e3d1b8937629f1f9ec04 = L.map("map_fc842e841ad4e3d1b8937629f1f9ec04", {
-    center: [2.9287237444877112, 101.64111369303583],  
-    zoom: 20,                       
-    zoomControl: true,              
-    scrollWheelZoom: true,          
-    doubleClickZoom: true,          
-    boxZoom: true,                  
-    maxBounds: bounds,              
-    maxBoundsViscosity: 1.0         
-});
-
-var tile_layer_83dec95f1ac1e96879a56d6b9ff972a2 = L.tileLayer(
-    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-        "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-        "detectRetina": false,
-        "maxNativeZoom": 19,
-        "maxZoom": 22,
-        "minZoom": 20,
-        "noWrap": false,
-        "opacity": 1,
-        "subdomains": "abc",
-        "tms": false
-    }
-);
-
-tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
-
-var movela= 0.00004;
-var movelo= 0.00012;
-
-var enlargeLat = 0.00007;
-var enlargeLng = 0.00007;
-
-var image_bounds = [[2.9283 - movela - enlargeLat, 101.6403 + movelo - enlargeLng],[2.9292 - movela, 101.6417 + movelo]];
-
-var floorImage = "/statics/images/floor0.png";
-L.imageOverlay(floorImage, image_bounds, {
-opacity: 0.7,
-}).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
-
-var emptyicon = L.icon({
-    iconUrl: '/static/images/roomempty.png',
-    iconSize: [24, 24]
-});
-
-var inactiveicon = L.icon({
-    iconUrl: '/static/images/roominactive.png',
-    iconSize: [24, 24]
-});
-
-var occupiedicon = L.icon({
-    iconUrl: '/static/images/roomoccupied.png',
-    iconSize: [24, 24]
-});
-
-var defaulticon = L.icon({
-    iconUrl: '/static/images/roominactive.png',
-    iconSize: [24, 24]
-})
-
-$.getJSON("/get_markers//None", function(markers) {
-markers.forEach(function(marker) {
-    var icon;
-    if (marker.weightage < 0) {
-        icon = emptyicon;
-    } else if (marker.weightage === 0) {
-        icon = inactiveicon;
-    } else if (marker.weightage > 0) {
-        icon = occupiedicon;
-    } else {
-        icon = defaulticon;
-    }
-
-    L.marker([marker.lat, marker.lng], { icon: icon })
-        .bindPopup(marker.popup)
-        .addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+    var map_fc842e841ad4e3d1b8937629f1f9ec04 = L.map("map_fc842e841ad4e3d1b8937629f1f9ec04", {
+        center: [2.9287237444877112, 101.64111369303583],  
+        zoom: 20,                       
+        zoomControl: true,              
+        scrollWheelZoom: true,          
+        doubleClickZoom: true,          
+        boxZoom: true,                  
+        maxBounds: bounds,              
+        maxBoundsViscosity: 1.0         
     });
-});
+
+    var tile_layer_83dec95f1ac1e96879a56d6b9ff972a2 = L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+            "detectRetina": false,
+            "maxNativeZoom": 19,
+            "maxZoom": 22,
+            "minZoom": 20,
+            "noWrap": false,
+            "opacity": 1,
+            "subdomains": "abc",
+            "tms": false
+        }
+    );
+
+    tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
+    var movela= 0.00004;
+    var movelo= 0.00012;
+
+    var enlargeLat = 0.00007;
+    var enlargeLng = 0.00007;
+
+    var image_bounds = [[2.9283 - movela - enlargeLat, 101.6403 + movelo - enlargeLng],[2.9292 - movela, 101.6417 + movelo]];
+
+    var room_name = "{{ room.room_name }}";
+    var floorNumber = room_name.charAt(4); 
+
+    var floorImage = "{{ url_for('static', filename='images/floor') }}" + floorNumber + ".png";
+    L.imageOverlay(floorImage, image_bounds, {
+        opacity: 0.7,
+    }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
+    var emptyicon = L.icon({
+        iconUrl: '/static/images/roomempty.png',
+        iconSize: [24, 24]
+    });
+
+    var inactiveicon = L.icon({
+        iconUrl: '/static/images/roominactive.png',
+        iconSize: [24, 24]
+    });
+
+    var occupiedicon = L.icon({
+        iconUrl: '/static/images/roomoccupied.png',
+        iconSize: [24, 24]
+    });
+
+    var defaulticon = L.icon({
+        iconUrl: '/static/images/roomdefault.png',
+        iconSize: [24, 24]
+    })
+
+    $.getJSON("/get_markers/{{ ActiveFloor }}/None", function(markers) {
+    markers.forEach(function(marker) {
+        var icon;
+        if (marker.weightage < 0) {
+            icon = emptyicon;
+        } else if (marker.weightage === 0) {
+            icon = inactiveicon;
+        } else if (marker.weightage > 0) {
+            icon = occupiedicon;
+        } else {
+            icon = defaulticon;
+        }
+
+        L.marker([marker.lat, marker.lng], { icon: icon })
+            .bindPopup(marker.popup)
+            .addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+        });
+    });
 
 </script>
 {% endblock %}
