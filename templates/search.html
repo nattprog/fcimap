@@ -5,15 +5,17 @@ Search Results
 {% endblock %}
 
 {% block content %}
-<p><em>Results for:</em><b> {{session['search']}}</b></p>
-{% for i in room_name_results_list %}
-<p>
-    <a href="/roompage/{{i.room_name}}">{{i.room_name}}</a>
-</p>
-{% endfor %}
-{% for i in aliases_results_list %}
-<p>
-    <a href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.room_name_aliases}}</a>
-</p>
-{% endfor %}
+<body>
+    <main class="search-div-flex">
+        <div class="search_results">
+            <p><em>Results for:</em><strong> {{session['search']}}</strong></p>
+            {% for i in room_name_results_list %}
+            <a class="search_results_block" href="/roompage/{{i.room_name}}">{{i.room_name}}</a>
+            {% endfor %}
+            {% for i in aliases_results_list %}
+            <a class="search_results_block" href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.room_name_aliases}}</a>
+            {% endfor %}
+        </div>
+    </main>
+</body>
 {% endblock %}

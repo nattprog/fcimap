@@ -42,7 +42,7 @@ html, body {
     border-radius: 10px;
 }
 
-.TopNavigationBar a:hover {
+.TopNavigationBar a:hover, .TopNavigationBar input[type="submit"]:hover {
     background-color: #004489;
     border-radius: 10px;
 }
@@ -149,7 +149,7 @@ html, body {
             border-color: red;
         }
 
-.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .RoomPageInfo {
+.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .RoomPageInfo, .search_results {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -163,4 +163,27 @@ html, body {
     color: black;
     padding: 5px;
     text-align: center;
+}
+
+.search-div-flex {
+    display: flex;
+    margin: 1%;
+    justify-content: center;
+    overflow: auto;
+}
+
+.search_results {
+    overflow: auto;
+}
+
+.search_results_block {
+    display: block;
+    margin: 0%;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+}
+
+.search_results_block:hover {
+    background-color: #f1f1f1;
 }
