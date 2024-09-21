@@ -7,6 +7,7 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f1f1f1;
 }
 
 /*Top Navigation Bar, with specific elements */
@@ -54,7 +55,7 @@ html, body {
     display: inline-block;
     padding: 10px;
     margin: 0px;
-    background-color: white;
+    background-color: #f1f1f1;
     text-align: left;
     font-size: 30px;
     padding: 0%;

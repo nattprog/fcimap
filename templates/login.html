@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    
     <style>
-        body {
+        .mainsect {
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 70vh;
             margin: 0;
         }
         .login-container {
@@ -23,18 +23,18 @@
             text-align: center;
             border-top: 5px solid blue;
         }
-        h1 {
+        .login-container h1 {
             color: red;
             margin-bottom: 20px;
         }
-        label {
+        .login-container label {
             color: #333;
             display: block;
             margin-bottom: 5px;
             text-align: left;
         }
-        input[type="email"],
-        input[type="password"] {
+        .login-container input[type="email"],
+        .login-container input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -43,11 +43,11 @@
             box-sizing: border-box;
             outline: none;
         }
-        input[type="email"]:focus,
-        input[type="password"]:focus {
+        .login-container input[type="email"]:focus,
+        .login-container input[type="password"]:focus {
             border-color: blue;
         }
-        input[type="submit"] {
+        .login-container input[type="submit"] {
             background-color: red;
             color: white;
             padding: 10px;
@@ -56,23 +56,25 @@
             cursor: pointer;
             width: 100%;
         }
-        input[type="submit"]:hover {
+        .login-container input[type="submit"]:hover {
             background-color: blue;
         }
-        p {
+        .login-container p {
             color: #333;
             margin-top: 10px;
         }
-        a {
+        .login-container a {
             color: red;
             text-decoration: none;
         }
-        a:hover {
+        .login-container a:hover {
             text-decoration: underline;
         }
     </style>
-</head>
+{% endblock %}
+{% block content %}
 <body>
+    <main class="mainsect">
     <div class="login-container">
         <h1>Login</h1>
         {% if error %}
@@ -91,5 +93,6 @@
         <!-- Add a sign-up option for those who don't have an account yet -->
         <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a>.</p>
     </div>
+</main>
 </body>
-</html>
+{% endblock %}

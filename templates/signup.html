@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% block head %}
     <style>
-        body {
+        .mainsect {
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 70vh;
             margin: 0;
         }
         .signup-container {
@@ -23,19 +20,19 @@
             text-align: center;
             border-top: 5px solid red;
         }
-        h1 {
+        .signup-container h1 {
             color: blue;
             margin-bottom: 20px;
         }
-        label {
+        .signup-container label {
             color: #333;
             display: block;
             margin-bottom: 5px;
             text-align: left;
         }
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
+        .signup-container input[type="text"],
+        .signup-container input[type="email"],
+        .signup-container input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -44,12 +41,12 @@
             box-sizing: border-box;
             outline: none;
         }
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus {
+        .signup-container input[type="text"]:focus,
+        .signup-container input[type="email"]:focus,
+        .signup-container input[type="password"]:focus {
             border-color: red;
         }
-        input[type="submit"] {
+        .signup-container input[type="submit"] {
             background-color: blue;
             color: white;
             padding: 10px;
@@ -58,23 +55,25 @@
             cursor: pointer;
             width: 100%;
         }
-        input[type="submit"]:hover {
+        .signup-container input[type="submit"]:hover {
             background-color: red;
         }
-        p {
+        .signup-container p {
             color: #333;
             margin-top: 10px;
         }
-        a {
+        .signup-container a {
             color: blue;
             text-decoration: none;
         }
-        a:hover {
+        .signup-container a:hover {
             text-decoration: underline;
         }
     </style>
-</head>
+{% endblock %}
+{% block content %}
 <body>
+    <main class="mainsect">
     <div class="signup-container">
         <h1>Sign Up</h1>
         <form action="/signup" method="POST">
@@ -97,5 +96,6 @@
         <!-- Add a login option for those who already have an account -->
         <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a>.</p>
     </div>
+    </main>
 </body>
-</html>
+{% endblock %}

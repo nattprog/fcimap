@@ -497,6 +497,31 @@ def change_password():
 
     return render_template('change_password.html')
 
+@app.route('/delete_account', methods=['GET', 'POST'])
+def delete_account():
+    if request.method == "POST":
+        try:
+            search = request.form["search"]
+            return redirect(f"/search/{search}")
+        except:
+            pass
+        try:
+            request.form["delete_account"]
+            user = db.session.execute(db.select(User).filter_by(id = session["user_id"])).scalar()
+            with app.app_context():
+                local_obj = db.session.merge(user)
+                db.session.delete(local_obj)
+                db.session.commit()
+            flash("Account deleted.")
+            return redirect(url_for("redirect_home"))
+        except:
+            pass
+    try: 
+        session["user_id"]
+        user = db.session.execute(db.select(User).filter_by(id = session["user_id"])).scalar()
+    except:
+        return redirect(url_for("redirect_home"))
+    return render_template("delete_account.html", username = user.username)
 
 if __name__ == "__main__":
     with app.app_context():
