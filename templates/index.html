@@ -45,7 +45,7 @@ FCI Map
     <h4>Suggested Study Rooms:</h4>
     {% if total_rooms_weightage_sum %}
         {% for i in total_rooms_weightage_sum %}
-            <a href="/roompage/{{i}}" class="search_results_block justify_center">
+            <a href="/roompage/{{i}}" class="room_suggest_block justify_center">
             {% if total_rooms_weightage_sum[i] <= 0 %}
                 {% if total_rooms_weightage_sum[i] <= -5 %}
                 <img class="justify_center" src="{{ url_for('static', filename='images/roomempty.png')}}" style="height: 1.5rem">

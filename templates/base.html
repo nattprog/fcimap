@@ -70,7 +70,7 @@
     <div style="flex: 1;"><div class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
         <form style="display: flex; text-align: center;" method="POST">
             <label style="padding-right: 5px;" for="search">Search Room:</label>
-            <input style="flex-grow: 1;" list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" required>
+            <input style="flex-grow: 1;" list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" maxlength="100" required>
             <datalist id="search_foo">
                 {% if session["search_suggestion"] %}
                     {% for i in session["search_suggestion"]["name"] %}

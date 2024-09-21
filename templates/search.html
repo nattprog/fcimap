@@ -6,15 +6,17 @@ Search Results
 
 {% block content %}
 <body>
-    <main class="search-div-flex">
-        <div class="search_results">
-            <p><em>Results for:</em><strong> {{session['search']}}</strong></p>
+    <main class="search-div-flex" style="height: 70%;">
+        <div class="search_results" style="display: flex; flex-direction: column;">
+            <div style="border-bottom: 1px black solid; padding-bottom: 5px; margin-bottom: 5px;"><em>Results for:</em><strong> {{session['search']}}</strong></div>
+            <div style="flex: 1; overflow-y: auto">
             {% for i in room_name_results_list %}
             <a class="search_results_block" href="/roompage/{{i.room_name}}">{{i.room_name}}</a>
             {% endfor %}
             {% for i in aliases_results_list %}
             <a class="search_results_block" href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.room_name_aliases}}</a>
             {% endfor %}
+            </div>
         </div>
     </main>
 </body>

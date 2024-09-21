@@ -176,11 +176,8 @@ html, body {
     margin: 0%;
     padding: 10px;
     text-decoration: none;
-    color: black;
-}
-
-.search_results_block a{
-    text-decoration: none;
+    color: #000000;
+    background-color: #ffffff;
     border-radius: 10px;
 }
 
@@ -189,7 +186,20 @@ html, body {
     border-radius: 10px;
 }
 
+.room_suggest_block {
+    display: block;
+    margin: 2px;
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    background-color: #0050a2;
+    border-radius: 10px;
+}
 
+.room_suggest_block:hover {
+    background-color: #004489;
+    border-radius: 10px;
+}
 
 .justify_center {
     vertical-align: middle;
