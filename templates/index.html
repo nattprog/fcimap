@@ -10,7 +10,6 @@ FCI Map
     L_NO_TOUCH = false;
     L_DISABLE_3D = false;
 </script>
-<style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -23,12 +22,7 @@ FCI Map
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <style>
     #map_fc842e841ad4e3d1b8937629f1f9ec04 {
-        display: block;
-        position: relative;
         width: 100%;
-        height: 100%;
-        left: 0.0%;
-        top: 0.0%;
     }
     
 </style>
@@ -39,32 +33,30 @@ FCI Map
 
 <div class="container">
 <nav class="FloorNavigationBar">
-<ul>
-    <li><a href="../4" {% if ActiveFloor == "4" %}class="NavigationActive"{% endif %}>4th Floor</a></li>
-    <li><a href="../3" {% if ActiveFloor == "3" %}class="NavigationActive"{% endif %}>3rd Floor</a></li>
-    <li><a href="../2" {% if ActiveFloor == "2" %}class="NavigationActive"{% endif %}>2nd Floor</a></li>
-    <li><a href="../1" {% if ActiveFloor == "1" %}class="NavigationActive"{% endif %}>1st Floor</a></li>
-    <li><a href="../0" {% if ActiveFloor == "0" %}class="NavigationActive"{% endif %}>Ground Floor</a></li>
-</ul>
+    <a href="../4" {% if ActiveFloor == "4" %}class="NavigationActive"{% endif %}>4th Floor</a>
+    <a href="../3" {% if ActiveFloor == "3" %}class="NavigationActive"{% endif %}>3rd Floor</a>
+    <a href="../2" {% if ActiveFloor == "2" %}class="NavigationActive"{% endif %}>2nd Floor</a>
+    <a href="../1" {% if ActiveFloor == "1" %}class="NavigationActive"{% endif %}>1st Floor</a>
+    <a href="../0" {% if ActiveFloor == "0" %}class="NavigationActive"{% endif %}>Ground Floor</a>
 </nav>
 
 <div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
-<div>
+<div class="roomsuggestion">
     <h4>Suggested Study Rooms:</h4>
     {% if total_rooms_weightage_sum %}
         {% for i in total_rooms_weightage_sum %}
+            <a href="/roompage/{{i}}" class="search_results_block justify_center">
             {% if total_rooms_weightage_sum[i] <= 0 %}
-                <a href="/roompage/{{i}}" style="display: block; {% if total_rooms_weightage_sum[i] <= -10 %}border-style: solid{% endif %}; background-color: {% if total_rooms_weightage_sum[i] <= -5 %}#D2FDBB{% else %}#FDFD97{% endif %}; padding: 5px; margin: 2px; text-align: center">{{i}}</a>
+                {% if total_rooms_weightage_sum[i] <= -5 %}
+                <img class="justify_center" src="{{ url_for('static', filename='images/roomempty.png')}}" style="height: 1.5rem">
+                {% else %}
+                <img class="justify_center" src="{{ url_for('static', filename='images/roominactive.png')}}" style="height: 1.5rem">
+                {% endif %}
+                <span class="justify_center" style="height: 2rem; text-align: center;">{{i}}</span></a>
             {% endif %}
         {% endfor %}
     {% endif %}
     <h4>Disclaimer:</h4>
-    <ul>
-        <li style="background-color: #D2FDBB;">Green = Actively Empty</li>
-        <li style="background-color: #FDFD97;">Yellow = Inactive</li>
-        <li style="background-color: #FDAAAA;">Red = Actively Occupied</li>
-        <li>Outlined with a black box = High likelyhood</li>
-    </ul>
     <p style="text-align: left;">All rooms listed have had their CLiC schedules added less than 6 weeks ago OR have had reservations less than a day ago.</p>
     <p>We can not guarantee the availability of these rooms, only provide an educated guess.</p>
 </div>
@@ -74,7 +66,7 @@ FCI Map
 
     var map_fc842e841ad4e3d1b8937629f1f9ec04 = L.map("map_fc842e841ad4e3d1b8937629f1f9ec04", {
         center: [2.9287237444877112, 101.64111369303583],  
-        zoom: 20,                       
+        zoom: 19.5,                       
         zoomControl: true,              
         scrollWheelZoom: true,          
         doubleClickZoom: true,          
@@ -88,9 +80,9 @@ FCI Map
         {
             "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
             "detectRetina": false,
-            "maxNativeZoom": 19,
+            "maxNativeZoom": 20,
             "maxZoom": 22,
-            "minZoom": 20,
+            "minZoom": 19,
             "noWrap": false,
             "opacity": 1,
             "subdomains": "abc",

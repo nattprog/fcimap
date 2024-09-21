@@ -8,6 +8,8 @@ html, body {
     margin: 0;
     padding: 0;
     background-color: #f1f1f1;
+    width: 100%;
+    height: 100%;
 }
 
 /*Top Navigation Bar, with specific elements */
@@ -76,24 +78,16 @@ html, body {
 /*Floor navigation bar*/
 
 .FloorNavigationBar {
-    display: block;
+    display: flex;
+    flex-direction: column;
     background-color: #0050a2;
-    width: 10%;
-    margin: 2%;
+    width: 20%;
     border-radius: 10px;
     text-align: center;
-}
-
-.FloorNavigationBar ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.FloorNavigationBar li {
-    display: block;
-    margin: 0;
-    padding: 0;
+    border-radius: 10px;
+    margin: 1%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    
 }
 
 .FloorNavigationBar a {
@@ -123,8 +117,9 @@ html, body {
 }
 
 .container {
-    height: 100%;
+    height: 70%;
     display: flex;
+    padding: 1%;
 }
 
 .schedule_input_form {
@@ -149,7 +144,7 @@ html, body {
             border-color: red;
         }
 
-.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .RoomPageInfo, .search_results {
+.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .RoomPageInfo, .search_results, .roomsuggestion, .folium-map {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -184,6 +179,18 @@ html, body {
     color: black;
 }
 
+.search_results_block a{
+    text-decoration: none;
+    border-radius: 10px;
+}
+
 .search_results_block:hover {
     background-color: #f1f1f1;
+    border-radius: 10px;
+}
+
+
+
+.justify_center {
+    vertical-align: middle;
 }
