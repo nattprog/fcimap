@@ -412,56 +412,75 @@ def signup_success():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
+    if request.method == "POST":
+        try:
+            search = request.form["search"]
+            return redirect(f"/search/{search}")
+        except:
+            pass
+        try:
+            username = request.form['username']
+            email = request.form['email']
+            password = request.form['password']
 
-        # Password validation
-        if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-            return render_template('signup.html', error="Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
+            # Password validation
+            if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+                return render_template('signup.html', error="Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
 
-        # Check if the username or email already exists
-        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
-        if existing_user:
-            if existing_user.username == username:
-                return render_template('signup.html', error="Username already registered.", login_link=True)
-            elif existing_user.email == email:
-                return render_template('signup.html', error="Email address already registered.", login_link=True)
+            # Check if the username or email already exists
+            existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+            if existing_user:
+                if existing_user.username == username:
+                    return render_template('signup.html', error="Username already registered.", login_link=True)
+                elif existing_user.email == email:
+                    return render_template('signup.html', error="Email address already registered.", login_link=True)
 
-        # Hash the password using pbkdf2:sha256
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+            # Hash the password using pbkdf2:sha256
+            hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-        new_user = User(username=username, email=email, password=hashed_password)
+            new_user = User(username=username, email=email, password=hashed_password)
 
-        db.session.add(new_user)
-        db.session.commit()
+            db.session.add(new_user)
+            db.session.commit()
 
-        return redirect(url_for('signup_success'))
+            return redirect(url_for('signup_success'))
+        except:
+            pass
 
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+    if request.method == "POST":
+        try:
+            search = request.form["search"]
+            return redirect(f"/search/{search}")
+        except:
+            pass
+        try:
+            email = request.form['email']
+            password = request.form['password']
 
-        user = User.query.filter_by(email=email).first()
+            user = User.query.filter_by(email=email).first()
 
-        # Check if the user exists and verify the password
-        if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id
-            return redirect("/")
-        else:
-            return render_template('login.html', error="Invalid email or password.")
+            # Check if the user exists and verify the password
+            if user and check_password_hash(user.password, password):
+                session['user_id'] = user.id
+                flash("Logged in successfully")
+                return redirect("/")
+            else:
+                return render_template('login.html', error="Invalid email or password.")
+        except:
+            pass
 
     return render_template('login.html')
 
 # Logout route
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
+    if "user_id" in session:
+        session.pop('user_id', None)
+        flash("Logged out successfully")
     return redirect(url_for('login'))
 
 # Change password route
@@ -469,31 +488,41 @@ def logout():
 def change_password():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    
+    if request.method == "POST":
+        try:
+            search = request.form["search"]
+            return redirect(f"/search/{search}")
+        except:
+            pass
+        try:
+            current_password = request.form['current_password']
+            new_password = request.form['new_password']
+            confirm_password = request.form['confirm_password']
 
-    if request.method == 'POST':
-        current_password = request.form['current_password']
-        new_password = request.form['new_password']
-        confirm_password = request.form['confirm_password']
+            user = User.query.get(session['user_id'])
 
-        user = User.query.get(session['user_id'])
+            if not check_password_hash(user.password, current_password):
+                return render_template('change_password.html', error="Current password is incorrect.")
 
-        if not check_password_hash(user.password, current_password):
-            return render_template('change_password.html', error="Current password is incorrect.")
+            elif len(new_password) < 8 or not re.search(r'[A-Z]', new_password) or not re.search(r'[a-z]', new_password) or not re.search(r'[0-9]', new_password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
+                return render_template('change_password.html', error="New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
 
-        if len(new_password) < 8 or not re.search(r'[A-Z]', new_password) or not re.search(r'[a-z]', new_password) or not re.search(r'[0-9]', new_password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
-            return render_template('change_password.html', error="New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
+            # Check if new password and confirmation match
+            elif new_password != confirm_password:
+                return render_template('change_password.html', error="New password and confirmation password do not match.")
 
-        # Check if new password and confirmation match
-        if new_password != confirm_password:
-            return render_template('change_password.html', error="New password and confirmation password do not match.")
+            # Hash the new password before storing it in the database
+            else:
+                hashed_password = generate_password_hash(new_password, method='pbkdf2:sha256')
+                user.password = hashed_password
+                db.session.commit()
 
-        # Hash the new password before storing it in the database
-        hashed_password = generate_password_hash(new_password, method='pbkdf2:sha256')
-        user.password = hashed_password
-        db.session.commit()
-
-        # Redirect to the login page after successful password change
-        return redirect(url_for('login'))
+                # Redirect to the login page after successful password change
+                session.pop("user_id", None)
+                return redirect(url_for('login'))
+        except:
+            pass
 
     return render_template('change_password.html')
 
@@ -513,6 +542,7 @@ def delete_account():
                 db.session.delete(local_obj)
                 db.session.commit()
             flash("Account deleted.")
+            session.pop("user_id", None)
             return redirect(url_for("redirect_home"))
         except:
             pass
@@ -521,7 +551,11 @@ def delete_account():
         user = db.session.execute(db.select(User).filter_by(id = session["user_id"])).scalar()
     except:
         return redirect(url_for("redirect_home"))
-    return render_template("delete_account.html", username = user.username)
+    if user:
+        return render_template("delete_account.html", username = user.username)
+    else:
+        session.pop("user_id", None)
+        return redirect(url_for("redirect_home"))
 
 if __name__ == "__main__":
     with app.app_context():
