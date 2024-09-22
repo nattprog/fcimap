@@ -1,17 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Schedule Input
+{% block title %}Discussion
 {% endblock %}
 
 {% block head %}
-{% endblock %}
-
-
-{% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Room</title>
     <style>
@@ -37,7 +30,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            height: 80vh; /* Chat container height to make space for scrolling */
+            height: 70vh; /* Chat container height to make space for scrolling */
         }
 
         /* Heading style */
@@ -61,6 +54,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 16px;
+            resize: none;
         }
 
         .message-form button {
@@ -85,6 +79,7 @@
             flex-direction: column-reverse; /* Reverse the order of the messages */
             overflow-y: scroll; /* Enable scrolling */
             padding-top: 10px;
+            overflow-x: hidden;
         }
 
         .messages {
@@ -119,11 +114,13 @@
             color: white;
         }
     </style>
-</head>
-<body>
+{% endblock %}
 
+
+{% block content %}
+<body>
     <div class="chat-container">
-        <h1>Chat Room</h1>
+        <h1>Room Chat</h1>
 
         <!-- Chat messages section -->
         <div class="messages-container" id="messages-container">
@@ -138,14 +135,9 @@
 
         <!-- Form to submit new message -->
         <form class="message-form" id="message-form">
-            <textarea id="message" name="message" placeholder="Enter your message..." required></textarea><br>
+            <textarea id="message" name="message" placeholder="Enter your message..." maxlength="1000" required></textarea><br>
             <button type="submit">Send</button>
         </form>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        <p>Site created by Amin, Jia Cheng and Nathaniel, 2024</p>
     </div>
 
     <!-- Include jQuery for simple AJAX (optional but easier) -->
@@ -199,9 +191,4 @@
         });
     </script>
 </body>
-</html>
-
-</html>
-
-
 {% endblock %}

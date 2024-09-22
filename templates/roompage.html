@@ -44,6 +44,7 @@
                 <img class="justify_center" src="{{ url_for('static', filename='images/roomoccupied.png')}}" style="height: 1.5rem"><span> Occupied</span>
                 {% endif %}
             {% else %}
+            <span> No data</span>
             {% endif %}
         </span>
         </div><br/>
@@ -65,7 +66,7 @@
             {% for class_in_session in class_in_session_list %}
             {{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}<br/>
             {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}<br/><br/>   
-            Schedule last updated: {{class_in_session.datetime_start(strftime="%B %d, %Y")}}
+            Schedule last updated: {{class_in_session.datetime_start(strftime="%b %d, %Y")}}
             {% endfor %}
             </span>
             {% endif %}
@@ -75,8 +76,8 @@
             {% if custom_in_session_list %}
             <span class="scrollbox">
             {% for custom_in_session in custom_in_session_list %}
-                <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_in_session.datetime_start(strftime="%B %d, %Y %I:%M%p")}} - 
-                {% if custom_in_session.datetime_start(strftime="%B %d") != custom_in_session.datetime_end(strftime="%B %d") %}{{custom_in_session.datetime_end(strftime="%B %d, %Y")}}{% endif %}
+                <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_in_session.datetime_start(strftime="%b %d, %Y %I:%M%p")}} - 
+                {% if custom_in_session.datetime_start(strftime="%b %d") != custom_in_session.datetime_end(strftime="%b %d") %}{{custom_in_session.datetime_end(strftime="%b %d, %Y")}}{% endif %}
                 {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</span>
                 {% if custom_in_session.availability_weightage_value > 0 %}Occupied{% elif custom_in_session.availability_weightage_value <= 0 %}Empty{% endif %} | {{custom_in_session.schedule_description}}<br/><br/>
                 {% endfor %}
@@ -96,9 +97,9 @@
             {% endif %}
             </div>
             <div class="RoomInfo">
-                <p><strong>Block:</strong> {{room.room_block}}<br/>
+                <strong>Block:</strong> {{room.room_block}}<br/>
                 <strong>Floor:</strong> {% if room.room_floor == 0 %}Ground{% else %}{{room.room_floor}}{% endif %}<br/>
-                <strong>Room:</strong> {{room.room_number}}</p>
+                <strong>Room:</strong> {{room.room_number}}<br/><br/>
             </div>
         </div>
         <div class="folium-map2" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
@@ -124,8 +125,8 @@
             {% if custom_schedule_list %}
             <section class="scrollbox">
             {% for custom_single in custom_schedule_list %}
-            <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_single.datetime_start(strftime="%B %d, %Y | %I:%M%p")}} - 
-            {% if custom_single.datetime_start(strftime="%B %d") != custom_single.datetime_end(strftime="%B %d") %}{{custom_single.datetime_end(strftime="%B %d, %Y")}}{% endif %}
+            <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_single.datetime_start(strftime="%b %d, %Y | %I:%M%p")}} - 
+            {% if custom_single.datetime_start(strftime="%b %d") != custom_single.datetime_end(strftime="%b %d") %}{{custom_single.datetime_end(strftime="%b %d, %Y")}}{% endif %}
             {{custom_single.datetime_end(strftime="%I:%M%p")}}</span>
             <span>{% if custom_single.availability_weightage_value > 0 %}Occupied{% elif custom_single.availability_weightage_value <= 0 %}Empty{% endif %} | {{custom_single.schedule_description}}</span><br/>
             {% endfor %}

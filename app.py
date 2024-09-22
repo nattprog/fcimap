@@ -412,6 +412,8 @@ def search(search):
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
     if request.method == "POST":
         try:
             search = request.form["search"]
@@ -435,6 +437,9 @@ def schedule_input():
 def clic_add_tutorial():
     return render_template("clic_add_tutorial.html", ActivePage="schedule_input")
 
+
+# ------------------------------------------------------- # Amin's work below
+
 # Chat Room Route:
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
@@ -451,7 +456,8 @@ def chat():
     # Fetch all chat messages with associated user details
     messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
     
-    return render_template('chat.html', messages=messages)
+    return render_template('chat.html', ActivePage="chat", messages=messages)
+
 #JSON format
 @app.route('/get_messages', methods=['GET'])
 def get_messages():
@@ -462,8 +468,6 @@ def get_messages():
     ]
     return jsonify({'messages': messages_list})
 
-
-# -------------------------------------------------------
 
 @app.route('/signup_success')
 def signup_success():

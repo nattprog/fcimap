@@ -63,6 +63,7 @@
 <div class="TopNavigationBar">
     <div><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></div>
     <div><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></div>
+    <div><a href="/chat" class="{% if ActivePage == 'chat' %}NavigationActive{% endif %}">Room Chat</a></div>
     <div style="flex: 1;"><div class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
         <form style="display: flex; text-align: center;" method="POST">
             <label style="padding-right: 5px;" for="search">Search Room:</label>
@@ -79,7 +80,6 @@
             </datalist>
             <input type="submit" value=" 🔎︎ ">
         </form></div></div>
-    <div><a href="/chat" class="{% if ActivePage == 'chat' %}NavigationActive{% endif %}">Chat Room</a></div>
     <div class="dropdown" id="account"><a href="javascript:void(0)" class="dropbtn {% if ActivePage == 'account' %}NavigationActive{% endif %}" onclick="toggleDropdown()">Account</a>
         <div class="dropdown-content" id="dropdown-content">
             {% if "user_id" in session %}
