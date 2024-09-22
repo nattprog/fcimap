@@ -2,7 +2,6 @@ from flask import Flask, redirect, url_for, render_template, session, request, j
 from flask_sqlalchemy import SQLAlchemy
 import datetime, pytz, re
 from werkzeug.security import generate_password_hash, check_password_hash
-import re
 
 # Flask and sqlalchemy config
 app = Flask(__name__)
@@ -641,4 +640,4 @@ def delete_account():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run()
