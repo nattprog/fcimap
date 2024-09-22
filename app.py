@@ -318,7 +318,9 @@ def get_markers(floor, room_name="None"):
                 if i.room_name in total_rooms_weightage_sum:
                     weightage = total_rooms_weightage_sum[i.room_name]
                 else: weightage = None
-                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a><br/>{i.popup}", "weightage":weightage})
+                if i.popup == None:
+                    popup = ""
+                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href='/roompage/{i.room_name}'>{i.room_name}</a><br/>{popup}", "weightage":weightage})
     if room_name!="None":
         pass
     else:
@@ -400,7 +402,6 @@ def room_page(room_name):
             custom_in_session_list.append(custom_single)
 
     total_rooms_weightage_sum = return_dict_all_rooms_weightage(fci_room_name=room.room_name) # returns dict containing data of how available a room is
-    print(total_rooms_weightage_sum)
     return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list, total_rooms_weightage_sum = total_rooms_weightage_sum)
 
 @app.route("/account/", methods=["GET", "POST"])
