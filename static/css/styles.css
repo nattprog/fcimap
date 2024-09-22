@@ -304,3 +304,9 @@ html, body {
         text-align: center;
     }
     }
+
+.mapcontainer {
+    height: 300px; 
+    width: 50%; 
+    margin-top: 20px;
+}
