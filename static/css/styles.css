@@ -1,5 +1,10 @@
 /*The Whole page html element*/
 
+h1, h2, h3, h4, h5, h6 {
+    padding: 0;
+    margin: 0;
+}
+
 * {
     box-sizing: border-box  
 }
@@ -135,7 +140,7 @@ html, body {
     margin: 15px;
     margin-right: 5px;
     margin-left: 5px;
-    border: 2px solid blue;
+    border: 2px solid #0050a2;
     border-radius: 5px;
     box-sizing: border-box;
     outline: none;
@@ -145,7 +150,7 @@ html, body {
             border-color: red;
         }
 
-.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .RoomPageInfo, .search_results, .roomsuggestion, .folium-map {
+.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .RoomPageInfo, .search_results, .roomsuggestion, .folium-map, .main_sect_tut_text {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -216,10 +221,82 @@ html, body {
     margin: 1%;
 }
 
+.main_sect_tut {
+    display: flex;
+    margin: 1%;
+}
+
+.main_sect_tut_vid {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 1%;
+}
+
+.vid1, .vid2 {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.vid1 {
+    margin-bottom: inherit;
+    text-align: center;
+}
+.vid2 {
+    margin-top: inherit;
+    text-align: center;
+}
+
+.textarea {
+    border: 2px solid #d0d0d0;
+    border-radius: 5px;
+    box-sizing: border-box;
+    outline: none;
+    resize: none;
+    width: 100%;
+    margin: 1% 0%;
+}
+
+.textarea:focus, .textarea:hover {
+    border-color: #0050a2;
+}
+
+.buttons-radio {
+    border: 2px solid #0050a2;
+    border-radius: 5px;
+    box-sizing: border-box;
+    outline: none;
+    resize: none;
+}
+
+.schedule_input_main_div a, .main_sect_tut a {
+    color: blue;
+    text-decoration: none;
+}
+.schedule_input_main_div a:hover, .main_sect_tut a:hover {
+    text-decoration: underline;
+}
+
+.schedule_input_main_div input, .schedule_input_main_div select {
+    padding: 10px;
+}
+
+.schedule_input_main_div input[type="submit"], .schedule_input_main_div input[type="reset"], .backtoscheduleinput {
+    background-color: #0050a2;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
 
 @media only screen and (max-width: 800px) {
     /* For mobile phones: */
-    .TopNavigationBar, .container, .FloorNavigationBar, .folium-map, .roomsuggestion, .schedule_input_main_div{
+    .TopNavigationBar, .container, .FloorNavigationBar, .folium-map, .roomsuggestion, .schedule_input_main_div, .main_sect_tut{
         flex-direction: column;
         width: initial;
     }

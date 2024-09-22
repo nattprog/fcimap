@@ -7,13 +7,13 @@
     <div class="RoomPageInfo">
         <h1>{{room.room_name}}</h1>
         {% if room.room_name_aliases %}
-        <span><strong>Aliases:</strong></span></br>
+        <span><strong>Aliases:</strong></span><br/>
         {% for i in room.room_name_aliases %}
-        {{ i.room_name_aliases }}</br>
+        {{ i.room_name_aliases }}<br/>
         {% endfor %}
         {% endif %}
-        <p><strong>Block:</strong> {{room.room_block}}</br>
-        <strong>Floor:</strong> {% if room.room_floor == 0 %}Ground{% else %}{{room.room_floor}}{% endif %}</br>
+        <p><strong>Block:</strong> {{room.room_block}}<br/>
+        <strong>Floor:</strong> {% if room.room_floor == 0 %}Ground{% else %}{{room.room_floor}}{% endif %}<br/>
         <strong>Room:</strong> {{room.room_number}}</p>
     </div>
     <div class="RoomPageStatus">
@@ -23,9 +23,9 @@
             <div {% if total_rooms_weightage_sum %}style="display: block; {% if (total_rooms_weightage_sum[room.room_name] <= -10) or total_rooms_weightage_sum[room.room_name] >= 10 %}border-style: solid{% endif %}; background-color: {% if total_rooms_weightage_sum[room.room_name] <= -5 %}#D2FDBB{% elif (-5 < total_rooms_weightage_sum[room.room_name]) and (total_rooms_weightage_sum[room.room_name] < 5)  %}#FDFD97{% elif total_rooms_weightage_sum[room.room_name] >= 5 %}#FDAAAA{% endif %}; padding: 5px; margin: 2px"{% endif %}>
             <form method="POST">
                 <input type="radio" id="empty" name="room_status" value="-5" required>
-                <label for="empty">Empty</label></br>
+                <label for="empty">Empty</label><br/>
                 <input type="radio" id="occupied" name="room_status" value="+5" required>
-                <label for="occupied">Occupied</label></br></br>
+                <label for="occupied">Occupied</label><br/><br/>
                 <input type="submit" value="Submit">
             </form>
             </div>
@@ -34,8 +34,8 @@
             {% if class_in_session_list %}
             <h4>Class in session:</h4>
             {% for class_in_session in class_in_session_list %}
-            <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}</br>
-            {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}</br></br>   
+            <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}<br/>
+            {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}<br/><br/>   
             Schedule last updated: {{class_in_session.datetime_start(strftime="%B %d, %Y")}}</p>
             {% endfor %}
             {% endif %}
@@ -44,8 +44,8 @@
             {% if custom_in_session_list %}
             <h4>Meeting in session:</h4>
             {% for custom_in_session in custom_in_session_list %}
-            <p>{{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</br>
-                {% if custom_in_session.availability_weightage_value > 0 %}Occupied{% elif custom_in_session.availability_weightage_value < 0 %}Empty{% endif %} | {{custom_in_session.schedule_description}}</br></br>
+            <p>{{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}<br/>
+                {% if custom_in_session.availability_weightage_value > 0 %}Occupied{% elif custom_in_session.availability_weightage_value < 0 %}Empty{% endif %} | {{custom_in_session.schedule_description}}<br/><br/>
                 {% endfor %}
                 {% endif %}
             </p>
@@ -61,7 +61,7 @@
             <p>{{schedule_single.datetime_start(strftime="%A")}}</p>
             {% endif %}
             {{ schedule_single.class_subject_code }}  {{ schedule_single.class_section }}  {{schedule_single.schedule_description}}  {{schedule_single.datetime_start(strftime="%I:%M%p")}} - {{schedule_single.datetime_end(strftime="%I:%M%p")}}
-            </br>
+            <br/>
             {% endfor %}
             {% endif %}
         </div>
@@ -71,7 +71,7 @@
             {% for custom_single in custom_schedule_list %}
             <p>{{custom_single.datetime_start(strftime="%B %d, %Y | %I:%M%p")}} - 
             {% if custom_single.datetime_start(strftime="%B %d") != custom_single.datetime_end(strftime="%B %d") %}{{custom_single.datetime_end(strftime="%B %d, %Y")}}{% endif %}
-            {{custom_single.datetime_end(strftime="%I:%M%p")}}</br>
+            {{custom_single.datetime_end(strftime="%I:%M%p")}}<br/>
             {% if custom_single.availability_weightage_value > 0 %}Occupied{% elif custom_single.availability_weightage_value < 0 %}Empty{% endif %} | {{custom_single.schedule_description}}
             {% endfor %}
             {% endif %}

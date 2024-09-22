@@ -296,7 +296,7 @@ def get_markers(floor, room_name="None"):
                 if i.room_name in total_rooms_weightage_sum:
                     weightage = total_rooms_weightage_sum[i.room_name]
                 else: weightage = None
-                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a></br>{i.popup}", "weightage":weightage})
+                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a><br/>{i.popup}", "weightage":weightage})
     return jsonify(markers)
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
@@ -420,7 +420,7 @@ def schedule_input():
 
 @app.route("/schedule_input/clic_add_tutorial/")
 def clic_add_tutorial():
-    return render_template("clic_add_tutorial.html")
+    return render_template("clic_add_tutorial.html", ActivePage="schedule_input")
 
 # -------------------------------------------------------
 
