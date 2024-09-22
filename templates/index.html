@@ -128,6 +128,36 @@ FCI Map
         iconSize: [24, 24]
     })
 
+    var toiletsicon = L.icon({
+        iconUrl: '/static/images/amenitytoilets.png',
+        iconSize: [24, 24]
+    })
+
+    var toiletficon = L.icon({
+        iconUrl: '/static/images/amenitytoiletf.png',
+        iconSize: [24, 24]
+    })
+
+    var toiletmicon = L.icon({
+        iconUrl: '/static/images/amenitytoiletm.png',
+        iconSize: [24, 24]
+    })
+
+    var stairssicon = L.icon({
+        iconUrl: '/static/images/amenitystairs.png',
+        iconSize: [24, 24]
+    })
+
+    var elevatoricon = L.icon({
+        iconUrl: '/static/images/amenityelevator.png',
+        iconSize: [24, 24]
+    })
+
+    var watericon = L.icon({
+        iconUrl: '/static/images/amenitywater.png',
+        iconSize: [24, 24]
+    })
+
     $.getJSON("/get_markers/{{ ActiveFloor }}/None", function(markers) {
     markers.forEach(function(marker) {
         var icon;
@@ -137,6 +167,18 @@ FCI Map
             icon = inactiveicon;
         } else if (marker.weightage > 0) {
             icon = occupiedicon;
+        } else if (marker.popup === "Toilets") {
+            icon = toiletsicon
+        } else if (marker.popup === "Toilet(F)") {
+            icon = toiletficon
+        } else if (marker.popup === "Toilet(M)") {
+            icon = toiletmicon
+        } else if (marker.popup === "Stairs") {
+            icon = stairssicon
+        } else if (marker.popup === "Elevator") {
+            icon = elevatoricon
+        } else if (marker.popup === "Water Station") {
+            icon = watericon
         } else {
             icon = defaulticon;
         }
