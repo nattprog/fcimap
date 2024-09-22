@@ -54,8 +54,7 @@ rows="20" cols="30" maxlength="2000" style="resize: none;" required></textarea>
     <label for="occupied">Occupied</label>
     </div><br/>
     <label for="custom_schedule_textarea"><strong>Description:</strong></label><br/>
-    <textarea class="textarea" id="custom_schedule_textarea" name="custom_schedule_textarea" placeholder="Description here" rows="4" cols="30" maxlength="100" required>{% if session['custom_schedule_textarea'] %}{{session['custom_schedule_textarea']}}{% endif %}</textarea><br/><br/>
-
+    <textarea class="textarea" id="custom_schedule_textarea" name="custom_schedule_textarea" placeholder="Description here" rows="4" cols="30" maxlength="100" required>{% if session['custom_schedule_textarea'] %}{{session['custom_schedule_textarea']}}{% endif %}</textarea><br/>
         <input type="submit" value="Submit">
         <input type="reset" value="Reset">
     </form>
