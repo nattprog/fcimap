@@ -151,6 +151,7 @@
     var floorNumber = room_name.charAt(4); 
 
     var floorImage = "{{ url_for('static', filename='images/floor') }}" + floorNumber + ".png";
+    
     L.imageOverlay(floorImage, image_bounds, {
         opacity: 0.7,
     }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
@@ -175,7 +176,7 @@
         iconSize: [24, 24]
     })
 
-    $.getJSON("/get_markers/{{ ActiveFloor }}/None", function(markers) {
+    $.getJSON("/get_markers/None/{{ room.room_name }}", function(markers) {
     markers.forEach(function(marker) {
         var icon;
         if (marker.weightage < 0) {
