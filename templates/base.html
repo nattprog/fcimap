@@ -44,17 +44,6 @@
     }
 </style>
 {% block head %}{% endblock %}
-<style>
-
-
-
-@media only screen and (max-width: 800px) {
-/* For mobile phones: */
-.TopNavigationBar {
-    flex-direction: column;
-}
-}
-</style>
 </head>
 
 <header>
@@ -81,9 +70,9 @@
                     {% endfor %}
                 {% endif %}
             </datalist>
-            <input class="topnavsubmit" type="submit" value=" 🔎︎ ">
+            <input type="submit" value=" 🔎︎ ">
         </form></div></div>
-    <div class="dropdown" id="account"><a href="javascript:void(0)" class="dropbtn" class="{% if ActivePage == 'account' %}NavigationActive{% endif %}" onclick="toggleDropdown()">Account</a>
+    <div class="dropdown" id="account"><a href="javascript:void(0)" class="dropbtn {% if ActivePage == 'account' %}NavigationActive{% endif %}" onclick="toggleDropdown()">Account</a>
         <div class="dropdown-content" id="dropdown-content">
             {% if "user_id" in session %}
             <a href="/logout">Logout</a>

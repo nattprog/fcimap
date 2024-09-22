@@ -22,7 +22,8 @@ FCI Map
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <style>
     #map_fc842e841ad4e3d1b8937629f1f9ec04 {
-        width: 100%;
+        min-height: 60vh;
+        min-width: 60vw;
     }
     
 </style>
@@ -40,7 +41,7 @@ FCI Map
     <a href="../0" {% if ActiveFloor == "0" %}class="NavigationActive"{% endif %}>Ground Floor</a>
 </nav>
 
-<div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
+<div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" style="flex:1"></div>
 <div class="roomsuggestion">
     <h4>Suggested Study Rooms:</h4>
     {% if total_rooms_weightage_sum %}

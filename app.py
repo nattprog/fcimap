@@ -421,7 +421,7 @@ def clic_add_tutorial():
 
 @app.route('/signup_success')
 def signup_success():
-    return render_template('signup_success.html')
+    return render_template('signup_success.html', ActivePage="account")
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -460,7 +460,7 @@ def signup():
         except:
             pass
 
-    return render_template('signup.html')
+    return render_template('signup.html', ActivePage="account")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -486,7 +486,7 @@ def login():
         except:
             pass
 
-    return render_template('login.html')
+    return render_template('login.html', ActivePage="account")
 
 # Logout route
 @app.route('/logout')
@@ -537,7 +537,7 @@ def change_password():
         except:
             pass
 
-    return render_template('change_password.html')
+    return render_template('change_password.html', ActivePage="account")
 
 @app.route('/delete_account', methods=['GET', 'POST'])
 def delete_account():
@@ -565,7 +565,7 @@ def delete_account():
     except:
         return redirect(url_for("redirect_home"))
     if user:
-        return render_template("delete_account.html", username = user.username)
+        return render_template("delete_account.html", ActivePage="account", username = user.username)
     else:
         session.pop("user_id", None)
         return redirect(url_for("redirect_home"))
