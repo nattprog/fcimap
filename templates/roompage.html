@@ -8,7 +8,6 @@
     L_NO_TOUCH = false;
     L_DISABLE_3D = false;
 </script>
-<style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -21,96 +20,121 @@
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <style>
     #map_fc842e841ad4e3d1b8937629f1f9ec04 {
-        display: flex;
-        position: relative;
-        width: 100%;
-        height: 100%;
-        left: 0.0%;
-        top: 0.0%;
+        min-height: 50vh;
+        min-width: 40vw;
+        max-height: 80vh;
+        flex: 1;
     }
     
 </style>
 {% endblock %}
 {% block content %}
 <body>
-<div id="RoomPageMainDiv">
-    <div class="RoomPageInfo">
-        <h1>{{room.room_name}}</h1>
-        {% if room.room_name_aliases %}
-        <span><strong>Aliases:</strong></span><br/>
-        {% for i in room.room_name_aliases %}
-        {{ i.room_name_aliases }}<br/>
-        {% endfor %}
-        {% endif %}
-        <p><strong>Block:</strong> {{room.room_block}}<br/>
-        <strong>Floor:</strong> {% if room.room_floor == 0 %}Ground{% else %}{{room.room_floor}}{% endif %}<br/>
-        <strong>Room:</strong> {{room.room_number}}</p>
-    </div>
+<div class="RoomPageMainDiv" {% if 'user_id' in session %}{% else %}style="justify-content: center;"{% endif %}>
     <div class="RoomPageStatus">
         <div>
-            <h4>Status:</h4>
-        </div>
-            <div {% if total_rooms_weightage_sum %}style="display: block; {% if (total_rooms_weightage_sum[room.room_name] <= -10) or total_rooms_weightage_sum[room.room_name] >= 10 %}border-style: solid{% endif %}; background-color: {% if total_rooms_weightage_sum[room.room_name] <= -5 %}#D2FDBB{% elif (-5 < total_rooms_weightage_sum[room.room_name]) and (total_rooms_weightage_sum[room.room_name] < 5)  %}#FDFD97{% elif total_rooms_weightage_sum[room.room_name] >= 5 %}#FDAAAA{% endif %}; padding: 5px; margin: 2px"{% endif %}>
+            <h3>Availability:</h3>
+            <span class="room_suggest_block justify_center" style="margin: 0;">
+            {% if total_rooms_weightage_sum %}
+                {% if total_rooms_weightage_sum[room.room_name] <= -5 %}
+                <img class="justify_center" src="{{ url_for('static', filename='images/roomempty.png')}}" style="height: 1.5rem"><span> Empty</span>
+                {% elif total_rooms_weightage_sum[room.room_name] == 0 %}
+                <img class="justify_center" src="{{ url_for('static', filename='images/roominactive.png')}}" style="height: 1.5rem"><span> Inactive</span>
+                {% elif total_rooms_weightage_sum[room.room_name] >= 5 %}
+                <img class="justify_center" src="{{ url_for('static', filename='images/roomoccupied.png')}}" style="height: 1.5rem"><span> Occupied</span>
+                {% endif %}
+            {% else %}
+            {% endif %}
+        </span>
+        </div><br/>
+        <div>
+            <h3>Report availability:</h3>
             <form method="POST">
+                <div class="textarea">
                 <input type="radio" id="empty" name="room_status" value="-5" required>
                 <label for="empty">Empty</label><br/>
                 <input type="radio" id="occupied" name="room_status" value="+5" required>
-                <label for="occupied">Occupied</label><br/><br/>
-                <input type="submit" value="Submit">
+                <label for="occupied">Occupied</label></div>
+                <input type="submit" value="Submit" class="roompage_submit">
             </form>
-            </div>
+        </div><br/>
         <div>
-            <p>{{current_time_single.strftime("%B %d, %Y %I:%M%p")}}</p>
+            <h3>Current class:</h3>
             {% if class_in_session_list %}
-            <h4>Class in session:</h4>
+            <span class="scrollbox">
             {% for class_in_session in class_in_session_list %}
-            <p>{{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}<br/>
+            {{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}<br/>
             {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}<br/><br/>   
-            Schedule last updated: {{class_in_session.datetime_start(strftime="%B %d, %Y")}}</p>
+            Schedule last updated: {{class_in_session.datetime_start(strftime="%B %d, %Y")}}
             {% endfor %}
+            </span>
             {% endif %}
-        </div>
+        </div><br/>
         <div>
+            <h3>Current events:</h3>
             {% if custom_in_session_list %}
-            <h4>Meeting in session:</h4>
+            <span class="scrollbox">
             {% for custom_in_session in custom_in_session_list %}
-            <p>{{custom_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{custom_in_session.datetime_end(strftime="%I:%M%p")}}<br/>
-                {% if custom_in_session.availability_weightage_value > 0 %}Occupied{% elif custom_in_session.availability_weightage_value < 0 %}Empty{% endif %} | {{custom_in_session.schedule_description}}<br/><br/>
+                <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_in_session.datetime_start(strftime="%B %d, %Y %I:%M%p")}} - 
+                {% if custom_in_session.datetime_start(strftime="%B %d") != custom_in_session.datetime_end(strftime="%B %d") %}{{custom_in_session.datetime_end(strftime="%B %d, %Y")}}{% endif %}
+                {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</span>
+                {% if custom_in_session.availability_weightage_value > 0 %}Occupied{% elif custom_in_session.availability_weightage_value <= 0 %}Empty{% endif %} | {{custom_in_session.schedule_description}}<br/><br/>
                 {% endfor %}
+                </span>
                 {% endif %}
-            </p>
-            
         </div>
     </div>
+    <div class="room_info_map" {% if 'user_id' in session %}style="flex:1;"{% else %}style="flex:0"{% endif %}">
+        <div class="RoomPageInfo">
+            <div class="RoomName">
+            <h1>{{room.room_name}}</h1>
+            {% if room.room_name_aliases %}
+            <span><strong>Aliases:</strong></span><br/>
+            {% for i in room.room_name_aliases %}
+            {{ i.room_name_aliases }}<br/>
+            {% endfor %}
+            {% endif %}
+            </div>
+            <div class="RoomInfo">
+                <p><strong>Block:</strong> {{room.room_block}}<br/>
+                <strong>Floor:</strong> {% if room.room_floor == 0 %}Ground{% else %}{{room.room_floor}}{% endif %}<br/>
+                <strong>Room:</strong> {{room.room_number}}</p>
+            </div>
+        </div>
+        <div class="folium-map2" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
+    </div>
+    {% if 'user_id' in session %}
     <div class="RoomClassSchedule">
         <div>
+            <h3>CLiC schedule:</h3><br/>
             {% if class_schedule_list %}
-            <h4>Classes in this room:</h4>
+            <section class="scrollbox">
             {% for schedule_single in class_schedule_list %}
             {% if loop.first  or (schedule_single.datetime_start("%A") != loop.previtem.datetime_start("%A"))%}
-            <p>{{schedule_single.datetime_start(strftime="%A")}}</p>
+            <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{schedule_single.datetime_start(strftime="%A")}}</span>
             {% endif %}
-            {{ schedule_single.class_subject_code }}  {{ schedule_single.class_section }}  {{schedule_single.schedule_description}}  {{schedule_single.datetime_start(strftime="%I:%M%p")}} - {{schedule_single.datetime_end(strftime="%I:%M%p")}}
+            {{ schedule_single.class_subject_code }} {{ schedule_single.class_section }} ({{schedule_single.schedule_description}}) {{schedule_single.datetime_start(strftime="%I:%M%p")}} - {{schedule_single.datetime_end(strftime="%I:%M%p")}}
             <br/>
             {% endfor %}
+            </section>
             {% endif %}
         </div>
         <div>
+            <br/><h3>Upcoming events:</h3><br/>
             {% if custom_schedule_list %}
-            <h4>Meetings in this room:</h4>
+            <section class="scrollbox">
             {% for custom_single in custom_schedule_list %}
-            <p>{{custom_single.datetime_start(strftime="%B %d, %Y | %I:%M%p")}} - 
+            <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_single.datetime_start(strftime="%B %d, %Y | %I:%M%p")}} - 
             {% if custom_single.datetime_start(strftime="%B %d") != custom_single.datetime_end(strftime="%B %d") %}{{custom_single.datetime_end(strftime="%B %d, %Y")}}{% endif %}
-            {{custom_single.datetime_end(strftime="%I:%M%p")}}<br/>
-            {% if custom_single.availability_weightage_value > 0 %}Occupied{% elif custom_single.availability_weightage_value < 0 %}Empty{% endif %} | {{custom_single.schedule_description}}
+            {{custom_single.datetime_end(strftime="%I:%M%p")}}</span>
+            <span>{% if custom_single.availability_weightage_value > 0 %}Occupied{% elif custom_single.availability_weightage_value <= 0 %}Empty{% endif %} | {{custom_single.schedule_description}}</span><br/>
             {% endfor %}
             {% endif %}
-            </p>
+            </section>
         </div>
     </div>
+    {% endif %}
 </div>
-<p>We can not guarantee the availability of these rooms, only provide an educated guess.</p>
-<div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
 </body>
 
 <script>
@@ -118,7 +142,7 @@
 
     var map_fc842e841ad4e3d1b8937629f1f9ec04 = L.map("map_fc842e841ad4e3d1b8937629f1f9ec04", {
         center: [2.9287237444877112, 101.64111369303583],  
-        zoom: 20,                       
+        zoom: 19,                       
         zoomControl: true,              
         scrollWheelZoom: true,          
         doubleClickZoom: true,          
@@ -132,9 +156,9 @@
         {
             "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
             "detectRetina": false,
-            "maxNativeZoom": 19,
+            "maxNativeZoom": 18,
             "maxZoom": 22,
-            "minZoom": 20,
+            "minZoom": 19,
             "noWrap": false,
             "opacity": 1,
             "subdomains": "abc",
@@ -153,12 +177,12 @@
     var image_bounds = [[2.9283 - movela - enlargeLat, 101.6403 + movelo - enlargeLng],[2.9292 - movela, 101.6417 + movelo]];
 
     var room_name = "{{ room.room_name }}";
-    var floorNumber = room_name.charAt(4); 
+    var floorNumber = "{{ room.room_floor }}"; 
 
     var floorImage = "{{ url_for('static', filename='images/floor') }}" + floorNumber + ".png";
     
     L.imageOverlay(floorImage, image_bounds, {
-        opacity: 0.7,
+        opacity: 1.0,
     }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
 
     var emptyicon = L.icon({

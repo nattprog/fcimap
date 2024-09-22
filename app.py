@@ -287,6 +287,7 @@ def redirect_home():
 
 @app.route("/get_markers/<floor>/<room_name>") # creates data for markers
 def get_markers(floor, room_name="None"):
+    total_rooms_weightage_sum = return_dict_all_rooms_weightage()
     if room_name!="None":
         query = db.session.execute(db.select(fci_room).filter_by(room_name = room_name)).scalars()
     else: query = db.session.execute(db.select(fci_room).filter_by(room_floor = floor)).scalars()
@@ -371,6 +372,7 @@ def room_page(room_name):
             custom_in_session_list.append(custom_single)
 
     total_rooms_weightage_sum = return_dict_all_rooms_weightage(fci_room_name=room.room_name) # returns dict containing data of how available a room is
+    print(total_rooms_weightage_sum)
     return render_template("roompage.html", room = room, class_schedule_list = class_schedule_list, class_in_session_list = class_in_session_list, current_time_single = current_time_single, custom_schedule_list = custom_schedule_list, custom_in_session_list = custom_in_session_list, total_rooms_weightage_sum = total_rooms_weightage_sum)
 
 @app.route("/account/", methods=["GET", "POST"])

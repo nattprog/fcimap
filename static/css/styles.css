@@ -13,6 +13,7 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
+    padding-bottom: 1rem;
     background-color: #f1f1f1;
     justify-content: center;
 }
@@ -50,7 +51,7 @@ html, body {
 }
 
 .TopNavigationBar a:hover, .TopNavigationBar input[type="submit"]:hover {
-    background-color: #004489;
+    background-color: #2180de;
     border-radius: 10px;
 }
 
@@ -69,6 +70,7 @@ html, body {
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: 2%;
+    margin-top: 0.5rem;
 }
 #TopLogo ul, #TopLogo li {
     font-size: 30px;
@@ -91,7 +93,6 @@ html, body {
     padding: 0%;
     border-radius: 10px;
     text-align: center;
-    border-radius: 10px;
     margin: 1%;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     
@@ -108,12 +109,16 @@ html, body {
 }
 
 .FloorNavigationBar a:hover {
-    background-color: #004489;
+    background-color: #2180de;
 }
 
-#RoomPageMainDiv {
+.RoomPageMainDiv {
     display: flex;
     margin: 1%;
+}
+
+.RoomPageStatus {
+    min-width: 20%;
 }
 
 .RoomPageStatus form {
@@ -121,6 +126,10 @@ html, body {
     text-align: left;
     padding: 0%;
     margin: 0%;
+}
+
+.RoomClassSchedule {
+    min-width: 20%;
 }
 
 .container {
@@ -151,7 +160,7 @@ html, body {
             border-color: red;
         }
 
-.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .RoomPageInfo, .search_results, .roomsuggestion, .folium-map, .main_sect_tut_text {
+.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .room_info_map, .search_results, .roomsuggestion, .folium-map, .main_sect_tut_text {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -206,10 +215,11 @@ html, body {
     color: white;
     background-color: #0050a2;
     border-radius: 10px;
+    width: 100%;
 }
 
 .room_suggest_block:hover {
-    background-color: #004489;
+    background-color: #2180de;
     border-radius: 10px;
 }
 
@@ -259,6 +269,7 @@ html, body {
     resize: none;
     width: 100%;
     margin: 1% 0%;
+    padding: 5px;
 }
 
 .textarea:focus, .textarea:hover {
@@ -293,21 +304,87 @@ html, body {
     border-radius: 5px;
     text-decoration: none;
     cursor: pointer;
+    font-size: 1rem;
+}
+
+.schedule_input_main_div input[type="submit"]:hover, .schedule_input_main_div input[type="reset"]:hover{
+    background-color: #2180de;
+}
+
+.folium-map2 {
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.RoomPageInfo {
+    display: flex;
+}
+
+.room_info_map {
+    background-color: #003264;
+    color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RoomInfo {
+    padding-inline: 2rem;
+}
+
+.RoomName, .RoomInfo {
+    width: 50%;
+}
+
+.scrollbox {
+    display: flex;
+    flex-direction: column;
+    max-height: 30vh; 
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    border: 2px solid #d0d0d0; 
+    border-radius: 5px; 
+    padding: 5px;
+}
+
+.folium-map {
+    height: 70vh;
+}
+
+.roompage_submit {
+    background-color: #0050a2;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.roompage_submit:hover {
+    background-color: #2180de;
 }
 
 @media only screen and (max-width: 800px) {
     /* For mobile phones: */
-    .TopNavigationBar, .container, .FloorNavigationBar, .folium-map, .roomsuggestion, .schedule_input_main_div, .main_sect_tut{
+    .TopNavigationBar, .container, .FloorNavigationBar, .folium-map, .roomsuggestion, .schedule_input_main_div, .main_sect_tut, .RoomPageMainDiv, .RoomPageInfo {
         flex-direction: column;
         width: initial;
     }
     .FloorNavigationBar {
         text-align: center;
     }
+    .RoomName, .RoomInfo {
+        width: initial;
+    }
+    .RoomInfo {
+        padding-inline: 0;
     }
 
-.mapcontainer {
-    height: 300px; 
-    width: 50%; 
-    margin-top: 20px;
-}
+    }
+

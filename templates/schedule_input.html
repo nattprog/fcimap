@@ -23,7 +23,7 @@ September 17, 2024
 etc."
 rows="20" cols="30" maxlength="2000" style="resize: none;" required></textarea>
         <br>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" style="width: 100%;">
     </form>
     <form class="custom_schedule_form" method="POST">
         <h2>Custom input</h2><br/>
@@ -38,7 +38,7 @@ rows="20" cols="30" maxlength="2000" style="resize: none;" required></textarea>
                 </datalist>
         <label for="custom_schedule_datetime"><strong>Starting Date and Time:</strong></label><br/>
         <input class="textarea" type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time.strftime('%Y-%m-%dT%H:%M')}}" max="{{current_time_max.strftime('%Y-%m-%dT%H:%M')}}" value="{% if session['custom_schedule_datetime'] %}{{session['custom_schedule_datetime']}}{% endif %}" required><br/><br/>
-    <label for="custom_schedule_hours"><strong>Length of stay (hours):</strong></label><br/>
+    <label for="custom_schedule_hours"><strong>Duration (hours):</strong></label><br/>
     <select class="textarea" name="custom_schedule_hours" id="custom_schedule_hours" required>
         <option value="1" {% if session['custom_schedule_hours'] == '1' %}selected{% endif %}>1 Hour</option>
         <option value="2" {% if session['custom_schedule_hours'] == '2' %}selected{% endif %}>2 Hours</option>
@@ -55,8 +55,7 @@ rows="20" cols="30" maxlength="2000" style="resize: none;" required></textarea>
     </div><br/>
     <label for="custom_schedule_textarea"><strong>Description:</strong></label><br/>
     <textarea class="textarea" id="custom_schedule_textarea" name="custom_schedule_textarea" placeholder="Description here" rows="4" cols="30" maxlength="100" required>{% if session['custom_schedule_textarea'] %}{{session['custom_schedule_textarea']}}{% endif %}</textarea><br/>
-        <input type="submit" value="Submit">
-        <input type="reset" value="Reset">
+        <input type="submit" value="Submit" style="width: 100%;">
     </form>
 </div>
 {% endblock %}
