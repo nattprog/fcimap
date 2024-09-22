@@ -238,6 +238,17 @@ class fci_room(db.Model):
     lng = db.Column(db.Float)
     popup = db.Column(db.String(50))
 
+# ChatMessage Model NEW
+class ChatMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    # Relationship to get the username
+    user = db.relationship('User', backref=db.backref('messages', lazy=True))
+
+
 # Database table for room availability, from CLiC schedule
 class room_availability_schedule(db.Model):
     __tablename__ = "room_availability_schedule"
@@ -423,6 +434,34 @@ def schedule_input():
 @app.route("/schedule_input/clic_add_tutorial/")
 def clic_add_tutorial():
     return render_template("clic_add_tutorial.html", ActivePage="schedule_input")
+
+# Chat Room Route:
+@app.route('/chat', methods=['GET', 'POST'])
+def chat():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        message = request.form['message']
+        user_id = session['user_id']
+        new_message = ChatMessage(message=message, user_id=user_id)
+        db.session.add(new_message)
+        db.session.commit()
+    
+    # Fetch all chat messages with associated user details
+    messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    
+    return render_template('chat.html', messages=messages)
+#JSON format
+@app.route('/get_messages', methods=['GET'])
+def get_messages():
+    messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    messages_list = [
+        {'user': {'username': message.user.username}, 'message': message.message, 'timestamp': message.timestamp}
+        for message in messages
+    ]
+    return jsonify({'messages': messages_list})
+
 
 # -------------------------------------------------------
 
