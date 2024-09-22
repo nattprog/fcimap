@@ -211,17 +211,19 @@ def search_suggestion_maker():
         search_suggestion["aliases"].append(i.room_name_aliases)
     session["search_suggestion"] = search_suggestion
 
-def in_session_weightage_total(room_name):
-    current_time_single = current_time()
-    query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room_name)).all()
-    weightage_total = 0
-    for i in range(len(query)):
-        for ii in range(len(query[i])):
-            if (query[i][ii].input_from_scheduleORcustomORbutton == "schedule") and (int(query[i][ii].datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(query[i][ii].datetime_end(strftime="%H%M%S%f"))):
-                weightage_total += int(query[i][ii].availability_weightage_value)
-            elif float(query[i][ii].epoch_start) < float(current_time_single.timestamp()) <= float(query[i][ii].epoch_end):
-                weightage_total += int(query[i][ii].availability_weightage_value)
-    return weightage_total
+# def in_session_weightage_total(room_name):
+#     current_time_single = current_time()
+#     query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room_name)).all()
+#     weightage_total = None
+#     if query:
+#         weightage_total = 0
+#         for i in range(len(query)):
+#             for ii in range(len(query[i])):
+#                 if (query[i][ii].input_from_scheduleORcustomORbutton == "schedule") and (int(query[i][ii].datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(query[i][ii].datetime_end(strftime="%H%M%S%f"))):
+#                     weightage_total += int(query[i][ii].availability_weightage_value)
+#                 elif float(query[i][ii].epoch_start) < float(current_time_single.timestamp()) <= float(query[i][ii].epoch_end):
+#                     weightage_total += int(query[i][ii].availability_weightage_value)
+#     return weightage_total
 
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
@@ -291,12 +293,15 @@ def get_markers(floor, room_name="None"):
     markers = []
     for i in query:
             if i.lat and i.lng:
-                weightage = in_session_weightage_total(i.room_name)
-                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a></br>{i.popup}", "weightage":int(weightage)})
+                if i.room_name in total_rooms_weightage_sum:
+                    weightage = total_rooms_weightage_sum[i.room_name]
+                else: weightage = None
+                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a></br>{i.popup}", "weightage":weightage})
     return jsonify(markers)
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
+    global total_rooms_weightage_sum
     delete_old_schedule()
     if request.method == "POST":
         try:

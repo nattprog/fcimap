@@ -4,13 +4,6 @@
 {% endblock %}
 
 {% block head %}
-<style>
-.schedule_input_main_div{
-    display: flex;
-    margin: 1%;
-}
-
-</style>
 {% endblock %}
 
 
@@ -26,7 +19,7 @@ September 16, 2024
 September 17, 2024
 8:00am - 10:00am		CQAR2006 : CSP1123 - LEC (TC4L)
 etc."
-rows="10" cols="50" maxlength="2000" required></textarea>
+rows="20" cols="30" maxlength="2000" required></textarea>
         <br>
         <input type="submit" value="Submit">
         <p><a href="/schedule_input/clic_add_tutorial/">Click here for a guide</a></p>
@@ -60,7 +53,7 @@ rows="10" cols="50" maxlength="2000" required></textarea>
     <label for="occupied">Occupied</label></br></br>
 
     <label for="custom_schedule_textarea">Enter description of activity:</label></br>
-    <textarea id="custom_schedule_textarea" name="custom_schedule_textarea" placeholder="Yap here" rows="4" cols="50" maxlength="100" required>{% if session['custom_schedule_textarea'] %}{{session['custom_schedule_textarea']}}{% endif %}</textarea></br></br>
+    <textarea id="custom_schedule_textarea" name="custom_schedule_textarea" placeholder="Yap here" rows="4" cols="30" maxlength="100" required>{% if session['custom_schedule_textarea'] %}{{session['custom_schedule_textarea']}}{% endif %}</textarea></br></br>
 
         <input type="submit" value="Submit">
         <input type="reset" value="Reset">

@@ -81,6 +81,7 @@ html, body {
     flex-direction: column;
     background-color: #0050a2;
     width: 10%;
+    min-width: 5rem;
     padding: 0%;
     border-radius: 10px;
     text-align: center;
@@ -188,6 +189,7 @@ html, body {
 
 .roomsuggestion {
     width: 15%;
+    min-width: 10rem;
 }
 
 .room_suggest_block {
@@ -209,14 +211,19 @@ html, body {
     vertical-align: middle;
 }
 
+.schedule_input_main_div{
+    display: flex;
+    margin: 1%;
+}
+
+
 @media only screen and (max-width: 800px) {
     /* For mobile phones: */
-    .TopNavigationBar, .container, .FloorNavigationBar, .folium-map, .roomsuggestion {
+    .TopNavigationBar, .container, .FloorNavigationBar, .folium-map, .roomsuggestion, .schedule_input_main_div{
         flex-direction: column;
         width: initial;
     }
     .FloorNavigationBar {
-        
         text-align: center;
     }
     }
