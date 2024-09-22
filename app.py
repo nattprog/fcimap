@@ -290,6 +290,16 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
+class fci_amenity(db.Model):
+    __tablename__ = "fci_amenity"
+    amenity_name = db.Column(db.String(50), primary_key=True,  nullable=False )
+    amenity_block = db.Column(db.String(1), nullable=False)
+    amenity_floor = db.Column(db.Integer, nullable=False)
+    amenity_number = db.Column(db.Integer, nullable=False)
+    lat = db.Column(db.Float)
+    lng = db.Column(db.Float)
+    popup = db.Column(db.String(50))
+
 # -------------------------------------------------------
 
 @app.route("/")
@@ -309,6 +319,13 @@ def get_markers(floor, room_name="None"):
                     weightage = total_rooms_weightage_sum[i.room_name]
                 else: weightage = None
                 markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href=\"/roompage/{i.room_name}\">{i.room_name}</a><br/>{i.popup}", "weightage":weightage})
+    if room_name!="None":
+        pass
+    else:
+        queryamenity = db.session.execute(db.select(fci_amenity).filter_by(amenity_floor = floor)).scalars()
+        for i in queryamenity:
+            if i.lat and i.lng:
+                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"{i.popup}", "weightage":None})
     return jsonify(markers)
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
