@@ -463,12 +463,20 @@ def chat():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    if request.method == 'POST':
-        message = request.form['message']
-        user_id = session['user_id']
-        new_message = ChatMessage(message=message, user_id=user_id)
-        db.session.add(new_message)
-        db.session.commit()
+    if request.method == "POST":
+        try:
+            search = request.form["search"]
+            return redirect(f"/search/{search}")
+        except:
+            pass
+        try:
+            message = request.form['message']
+            user_id = session['user_id']
+            new_message = ChatMessage(message=message, user_id=user_id)
+            db.session.add(new_message)
+            db.session.commit()
+        except:
+            pass
     
     # Fetch all chat messages with associated user details
     messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
