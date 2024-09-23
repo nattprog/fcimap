@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime, pytz, re
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
+from flask_migrate import Migrate
 
 # Flask and sqlalchemy config
 app = Flask(__name__)
@@ -10,6 +11,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app, session_options={"autoflush": False})
 app.config["SECRET_KEY"] = 'sessionsecretkey'
+
+# Initialize Flask-Migrate
+migrate = Migrate(app, db)
 
 # Declare variables
 malaysiaTZ = pytz.timezone("Asia/Kuala_Lumpur")
@@ -136,11 +140,12 @@ class fci_room(db.Model):
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.datetime.now(pytz.timezone('Asia/Kuala_Lumpur')))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     
     # Relationship to get the username
-    user = db.relationship('User', backref=db.backref('messages', lazy=True))
+    user = db.relationship('User', backref=db.backref('messages', cascade='all, delete-orphan', lazy=True))
+
 
 
 # Database table for room availability, from CLiC schedule
@@ -392,7 +397,9 @@ def chat():
     # Fetch all chat messages with associated user details
     messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
     
-    return render_template('chat.html', messages=messages)
+    # Pass Malaysia time zone to the template
+    return render_template('chat.html', messages=messages, malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur'))
+
 #JSON format
 @app.route('/get_messages', methods=['GET'])
 def get_messages():
@@ -463,6 +470,23 @@ def login():
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
+# delete account
+@app.route('/delete_account', methods=['GET', 'POST'])
+def delete_account():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+    
+    if request.method == 'POST':
+        if user:
+            db.session.delete(user)  # This will also delete all associated chat messages
+            db.session.commit()
+            session.pop('user_id', None)  # Clear the session after deletion
+            return redirect(url_for('login'))
+
+    return render_template('delete_account.html')
+
 
 # Change password route
 @app.route('/change_password', methods=['GET', 'POST'])
