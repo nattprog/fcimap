@@ -23,7 +23,7 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     schedule_input = schedule_input.replace("\n", " ")
 
     dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
-    times_schedule = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*([A-Z]*\d*)\s*-\s*(\w*)\s*\((\w*)\)"
+    times_schedule = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*([A-Z]*\d*)\s*-\s*(TUT|LEC|LAB)\s*\((\w{0,6})\)"
     times_custom = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*(Class/Tutorial|Club\sActivity/Event|Examination|Final\sExam|External\sEvent|Meeting/Discussion|Others|Presentation|Training/Conference)"
     # regex string to find in the input. 
 
@@ -327,7 +327,7 @@ def get_markers(floor, room_name="None"):
         queryamenity = db.session.execute(db.select(fci_amenity).filter_by(amenity_floor = floor)).scalars()
         for i in queryamenity:
             if i.lat and i.lng:
-                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"{i.popup}", "weightage":None})
+                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"{escape(i.popup)}", "weightage":None})
     return jsonify(markers)
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
@@ -416,7 +416,7 @@ def search(search):
             return redirect(f"/search/{search}")
         except:
             pass
-    session["search"] = search
+    session["search"] = escape(search)
     room_name_results = db.session.execute(db.select(fci_room).filter(fci_room.room_name.icontains(search))).scalars() # searches in unique room names
     room_name_results_list = []
     for i in room_name_results:
