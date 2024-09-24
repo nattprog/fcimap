@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, render_template, session, request, j
 from flask_sqlalchemy import SQLAlchemy
 import datetime, pytz, re
 from werkzeug.security import generate_password_hash, check_password_hash
+from markupsafe import escape
 
 # Flask and sqlalchemy config
 app = Flask(__name__)
@@ -488,7 +489,7 @@ def chat():
 def get_messages():
     messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
     messages_list = [
-        {'user': {'username': message.user.username}, 'message': message.message, 'timestamp': message.timestamp}
+        {'user': {'username': escape(message.user.username)}, 'message': escape(message.message), 'timestamp': message.timestamp}
         for message in messages
     ]
     return jsonify({'messages': messages_list})
