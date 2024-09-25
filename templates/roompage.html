@@ -64,7 +64,7 @@
             {% if class_in_session_list %}
             <span class="scrollbox">
             {% for class_in_session in class_in_session_list %}
-            {{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  {{class_in_session.schedule_description}}<br/>
+            {{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  ({{class_in_session.schedule_description}})<br/>
             {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}<br/><br/>   
             Schedule last updated: {{class_in_session.datetime_start(strftime="%b %d, %Y")}}
             {% endfor %}
