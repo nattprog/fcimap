@@ -222,6 +222,9 @@
         L.marker([marker.lat, marker.lng], { icon: icon })
             .bindPopup(marker.popup)
             .addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
+            map_fc842e841ad4e3d1b8937629f1f9ec04.setView([marker.lat, marker.lng], 20);
+            
         });
     });
 
