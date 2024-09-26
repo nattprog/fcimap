@@ -305,6 +305,10 @@ class fci_amenity(db.Model):
 def redirect_home():
     return redirect("/map/0")
 
+@app.route("/info")
+def info():
+    return render_template("info.html")
+
 @app.route("/get_markers/<floor>/<room_name>") # creates data for markers
 def get_markers(floor, room_name="None"):
     total_rooms_weightage_sum = return_dict_all_rooms_weightage()

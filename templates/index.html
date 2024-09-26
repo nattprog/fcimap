@@ -17,6 +17,7 @@ FCI Map
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
 
 <meta name="viewport" content="width=device-width,
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -42,6 +43,30 @@ FCI Map
 </nav>
 
 <div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" style="flex:1"></div>
+
+
+<div class="modal fade" id="iconModal" tabindex="-1" role="dialog" aria-labelledby="iconModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="iconModalLabel">Icon Descriptions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li>
+                    <li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li>
+                    <li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li>
+                </ul>
+                <a href="{{ url_for('info') }}" class="btn btn-primary">More Details</a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="roomsuggestion">
     <h4>Suggested Study Rooms:</h4><br/>
     <div style="display: flex; flex-direction: column; max-height: 30vh; overflow-y: auto; overflow-x: hidden;">
@@ -94,6 +119,17 @@ FCI Map
     );
 
     tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
+    var iconButton = L.control({position: 'topright'});
+    iconButton.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        div.innerHTML = '<img src="/static/images/info.png" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/>';
+        div.onclick = function(){
+            $('#iconModal').modal('show');
+        };
+        return div;
+    };
+    iconButton.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
 
     var movela= 0.00004;
     var movelo= 0.00012;
