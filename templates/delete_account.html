@@ -1,0 +1,57 @@
+{% extends "base.html "%}
+{% block title %}Delete Account{% endblock %}
+{% block head %}
+    <style>
+        .mainsect {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+            margin: 0;
+        }
+        .delete-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            border-top: 5px solid red;
+        }
+        .delete-container h1 {
+            color: red;
+            margin-bottom: 20px;
+        }
+        .delete-container p {
+            color: #333;
+            margin-top: 10px;
+        }
+        .delete-container input[type="submit"] {
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .delete-container input[type="submit"]:hover {
+            background-color: darkred;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+<body>
+    <main class="mainsect">
+    <div class="delete-container">
+        <h1>Delete Account</h1>
+        <p>Are you sure you want to delete your account, {{ username }}?</p>
+        <form action="/delete_account" name="delete_account" method="POST">
+            <input type="submit" name="delete_account" value="Yes, Delete My Account">
+        </form>
+    </div>
+    </main>
+</body>
+{% endblock %}

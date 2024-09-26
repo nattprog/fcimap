@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up Successful</title>
+{% extends "base.html" %}
+{% block title %}Successful Sign Up{% endblock %}
+{% block head %}
     <style>
-        body {
+        .mainsect {
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 70vh;
             margin: 0;
         }
         .success-container {
@@ -23,27 +20,30 @@
             text-align: center;
             border-top: 5px solid green;
         }
-        h1 {
-            color: blue;
+        .success-container h1 {
+            color: #0050a2;
             margin-bottom: 20px;
         }
-        p {
+        .success-container p {
             color: #333;
             margin-top: 10px;
         }
-        a {
-            color: red;
+        .success-container a {
+            color: #ec1b2e;
             text-decoration: none;
         }
-        a:hover {
+        .success-container a:hover {
             text-decoration: underline;
         }
     </style>
-</head>
+{% endblock %}
+{% block content %}
 <body>
+    <main class="mainsect">
     <div class="success-container">
         <h1>Sign Up Successful</h1>
         <p>Your email has been registered. You can now <a href="{{ url_for('login') }}">log in</a>.</p>
     </div>
+    </main>
 </body>
-</html>
+{% endblock %}
