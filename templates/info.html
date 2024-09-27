@@ -9,32 +9,44 @@ Icon Descriptions
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center">Icon Descriptions</h2>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="icon-box">
-                <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
-                <h5>Empty Room</h5>
-                <p>This room is empty</p>
+<body>
+<main class="infocontainer">
+    <div class="infomain">
+    <div class="container mt-5">
+        <h2 class="text-center">Icon Descriptions
+            </h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="icon-box">
+                    <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
+                    <h5>Empty Room
+                        </h5>
+                    <p>This room is empty
+                        </p>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="icon-box">
-                <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
-                <h5>Occupied Room</h5>
-                <p>
-                Indicates that the room is currently in use and cannot be reserved
-            </p>
+            <div class="col-md-4">
+                <div class="icon-box">
+                    <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
+                    <h5>Occupied Room
+                        </h5>
+                    <p>
+                    Indicates that the room is currently in use and cannot be reserved
+                </p>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="icon-box">
-                <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
-                <h5>Inactive Room</h5>
-                <p>Room is inactive for now.</p>
+            <div class="col-md-4">
+                <div class="icon-box">
+                    <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
+                    <h5>Inactive Room
+                    </h5>
+                    <p>Room is inactive for now.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+</main>
+</body>
 {% endblock %}

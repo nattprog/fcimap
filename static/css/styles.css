@@ -1,390 +1,471 @@
-/*The Whole page html element*/
+/* CSS reset */
 
-h1, h2, h3, h4, h5, h6 {
-    padding: 0;
-    margin: 0;
-}
-
-* {
-    line-height: normal;
-    box-sizing: border-box  
-}
-html, body {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
-    padding: 0;
-    padding-bottom: 1rem;
-    background-color: #f1f1f1;
-    justify-content: center;
-}
-
-/*Top Navigation Bar, with specific elements */
-.TopNavigationBar {
-    background-color: #0050a2;
-    color: white;
-    margin-left: 2%;
-    margin-right: 2%;
-    display: flex;
-    flex-direction: row;
-    border-radius: 10px;
-}
-
-.TopNavigationBar input[type="submit"] {
-    background-color: #0050a2;
-    padding: 0%;
-    margin: 0%;
-    color: white;
-    font-size: 1.8rem;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.TopNavigationBar a, .TopNavigationBar label {
-    text-decoration: none;
-    text-align: center;
-    align-content: center;
-    color: white;
-    display: block;
-    margin: 0;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.TopNavigationBar a:hover, .TopNavigationBar input[type="submit"]:hover {
-    background-color: #2180de;
-    border-radius: 10px;
-}
-
-.NavigationActive {
-    background-color: #003264;
-}
-
-#TopLogo {
-    display: inline-block;
-    padding: 10px;
-    margin: 0px;
-    background-color: #f1f1f1;
-    text-align: left;
-    font-size: 30px;
-    padding: 0%;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 2%;
-    margin-top: 0.5rem;
-}
-#TopLogo ul, #TopLogo li {
-    font-size: 30px;
-    display: inline-block;
-    vertical-align: middle;
-    padding: 0%;
-    color: black;
-    margin: 0%;
-}
-
-
-/*Floor navigation bar*/
-
-.FloorNavigationBar {
-    display: flex;
-    flex-direction: column;
-    background-color: #0050a2;
-    width: 10%;
-    min-width: 5rem;
-    padding: 0%;
-    border-radius: 10px;
-    text-align: center;
-    margin: 1%;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    
-}
-
-.FloorNavigationBar a {
-    text-decoration: none;
-    text-align: right;
-    color: white;
-    display: block;
-    margin: 0;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.FloorNavigationBar a:hover {
-    background-color: #2180de;
-}
-
-.RoomPageMainDiv {
-    display: flex;
-    margin: 1%;
-}
-
-.RoomPageStatus {
-    min-width: 20%;
-}
-
-.RoomPageStatus form {
-    color: black;
-    text-align: left;
-    padding: 0%;
-    margin: 0%;
-}
-
-.RoomClassSchedule {
-    min-width: 20%;
-}
-
-.container {
-    height: 70%;
-    display: flex;
-    padding: 1%;
-}
-
-.schedule_input_form {
-    color: black;
-}
-
-.custom_schedule_form {
-    color: black;
-}
-
-#search {
-    margin: 15px;
-    margin-right: 5px;
-    margin-left: 5px;
-    border: 2px solid #0050a2;
-    border-radius: 5px;
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
+*, *::before, *::after {
     box-sizing: border-box;
-    outline: none;
-}
-
-#search:focus {
-            border-color: red;
-        }
-
-.box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .room_info_map, .search_results, .roomsuggestion, .folium-map, .main_sect_tut_text {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin: 1%;
-}
-
-.flash_message {
-    display: block;
-    background-color: rgb(231, 231, 231);
-    color: black;
-    padding: 5px;
-    text-align: center;
-}
-
-.search-div-flex {
-    display: flex;
-    margin: 1%;
-    justify-content: center;
-    overflow: auto;
-}
-
-.search_results {
-    overflow: auto;
-}
-
-.search_results_block {
-    display: block;
-    margin: 0%;
-    padding: 10px;
-    text-decoration: none;
-    color: #000000;
-    background-color: #ffffff;
-    border-radius: 10px;
-}
-
-.search_results_block:hover {
-    background-color: #f1f1f1;
-    border-radius: 10px;
-}
-
-.roomsuggestion {
-    width: 15%;
-    min-width: 10rem;
-}
-
-.room_suggest_block {
-    display: block;
-    margin: 2px;
-    padding: 10px;
-    text-decoration: none;
-    color: white;
-    background-color: #0050a2;
-    border-radius: 10px;
-    width: 100%;
-}
-
-.room_suggest_block:hover {
-    background-color: #2180de;
-    border-radius: 10px;
-}
-
-.justify_center {
-    vertical-align: middle;
-}
-
-.schedule_input_main_div{
-    display: flex;
-    margin: 1%;
-}
-
-.main_sect_tut {
-    display: flex;
-    margin: 1%;
-}
-
-.main_sect_tut_vid {
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin: 1%;
-}
-
-.vid1, .vid2 {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
-
-.vid1 {
-    margin-bottom: inherit;
-    text-align: center;
-}
-.vid2 {
-    margin-top: inherit;
-    text-align: center;
-}
-
-.textarea {
-    border: 2px solid #d0d0d0;
-    border-radius: 5px;
-    box-sizing: border-box;
-    outline: none;
-    resize: none;
-    width: 100%;
-    margin: 1% 0%;
-    padding: 5px;
-}
-
-.textarea:focus, .textarea:hover {
-    border-color: #0050a2;
-}
-
-.buttons-radio {
-    border: 2px solid #0050a2;
-    border-radius: 5px;
-    box-sizing: border-box;
-    outline: none;
-    resize: none;
-}
-
-.schedule_input_main_div a, .main_sect_tut a {
-    color: blue;
-    text-decoration: none;
-}
-.schedule_input_main_div a:hover, .main_sect_tut a:hover {
-    text-decoration: underline;
-}
-
-.schedule_input_main_div input, .schedule_input_main_div select {
-    padding: 10px;
-}
-
-.schedule_input_main_div input[type="submit"], .schedule_input_main_div input[type="reset"], .backtoscheduleinput {
-    background-color: #0050a2;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.schedule_input_main_div input[type="submit"]:hover, .schedule_input_main_div input[type="reset"]:hover{
-    background-color: #2180de;
-}
-
-.folium-map2 {
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    width: 100%;
-}
-
-.RoomPageInfo {
-    display: flex;
-}
-
-.room_info_map {
-    background-color: #003264;
-    color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.RoomInfo {
-    padding-inline: 2rem;
-}
-
-.RoomName, .RoomInfo {
-    width: 50%;
-}
-
-.scrollbox {
-    display: flex;
-    flex-direction: column;
-    max-height: 30vh; 
-    overflow-y: auto; 
-    overflow-x: hidden; 
-    border: 2px solid #d0d0d0; 
-    border-radius: 5px; 
-    padding: 5px;
-}
-
-.folium-map {
-    height: 70vh;
-}
-
-.roompage_submit {
-    background-color: #0050a2;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-    width: 100%;
-    font-size: 1rem;
-}
-
-.roompage_submit:hover {
-    background-color: #2180de;
-}
-
-@media only screen and (max-width: 800px) {
-    /* For mobile phones: */
-    .TopNavigationBar, .container, .FloorNavigationBar, .folium-map, .roomsuggestion, .schedule_input_main_div, .main_sect_tut, .RoomPageMainDiv, .RoomPageInfo {
-        flex-direction: column;
-        width: initial;
-    }
-    .FloorNavigationBar {
-        text-align: center;
-    }
-    .RoomName, .RoomInfo {
-        width: initial;
-    }
-    .RoomInfo {
-        padding-inline: 0;
-    }
-
-    }
-
+  }
+  
+  
+  /*
+    2. Remove default margin
+  */
+  * {
+    margin: 0;
+  }
+  
+  
+  /*
+    Typographic tweaks!
+    3. Add accessible line-height
+    4. Improve text rendering
+  */
+  body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  
+  /*
+    5. Improve media defaults
+  */
+  img, picture, video, canvas, svg {
+    max-width: 100%;
+  }
+  
+  
+  /*
+    6. Remove built-in form typography styles
+  */
+  input, button, textarea, select {
+    font: inherit;
+  }
+  
+  
+  /*
+    7. Avoid text overflows
+  */
+  p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+  }
+  
+  
+  /*
+    8. Create a root stacking context
+  */
+  #root, #__next {
+    isolation: isolate;
+  }
+  
+  /*The Whole page html element*/
+  
+  h1, h2, h3, h4, h5, h6 {
+      padding: 0;
+      margin: 0;
+      font-weight: bold;
+      line-height: initial;
+      font-size: initial;
+  }
+  
+  * {
+      line-height: normal;
+      box-sizing: border-box  
+  }
+  html, body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      padding-bottom: 1rem;
+      background-color: #f1f1f1;
+      justify-content: center;
+  }
+  
+  /*Top Navigation Bar, with specific elements */
+  .TopNavigationBar {
+      background-color: #0050a2;
+      color: white;
+      margin-left: 2%;
+      margin-right: 2%;
+      display: flex;
+      flex-direction: row;
+      border-radius: 10px;
+  }
+  
+  .TopNavigationBar input[type="submit"] {
+      background-color: #0050a2;
+      padding: 0%;
+      margin: 0%;
+      color: white;
+      font-size: 1.8rem;
+      border-radius: 10px;
+      cursor: pointer;
+  }
+  
+  .TopNavigationBar a, .TopNavigationBar label {
+      text-decoration: none;
+      text-align: center;
+      align-content: center;
+      color: white;
+      display: block;
+      margin: 0;
+      padding: 20px;
+      border-radius: 10px;
+  }
+  
+  .TopNavigationBar a:hover, .TopNavigationBar input[type="submit"]:hover {
+      background-color: #2180de;
+      border-radius: 10px;
+  }
+  
+  .NavigationActive {
+      background-color: #003264;
+  }
+  
+  #TopLogo {
+      display: inline-block;
+      padding: 10px;
+      margin: 0px;
+      background-color: #f1f1f1;
+      text-align: left;
+      font-size: 30px;
+      padding: 0%;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      padding-left: 2%;
+      margin-top: 0.5rem;
+  }
+  #TopLogo ul, #TopLogo li {
+      font-size: 30px;
+      display: inline-block;
+      vertical-align: middle;
+      padding: 0%;
+      color: black;
+      margin: 0%;
+  }
+  
+  
+  /*Floor navigation bar*/
+  
+  .FloorNavigationBar {
+      display: flex;
+      flex-direction: column;
+      background-color: #0050a2;
+      width: 10%;
+      min-width: 5rem;
+      padding: 0%;
+      border-radius: 10px;
+      text-align: center;
+      margin: 1%;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      
+  }
+  
+  .FloorNavigationBar a {
+      text-decoration: none;
+      text-align: right;
+      color: white;
+      display: block;
+      margin: 0;
+      padding: 20px;
+      border-radius: 10px;
+  }
+  
+  .FloorNavigationBar a:hover {
+      background-color: #2180de;
+  }
+  
+  .RoomPageMainDiv {
+      display: flex;
+      margin: 1%;
+  }
+  
+  .RoomPageStatus {
+      min-width: 20%;
+  }
+  
+  .RoomPageStatus form {
+      color: black;
+      text-align: left;
+      padding: 0%;
+      margin: 0%;
+  }
+  
+  .RoomClassSchedule {
+      min-width: 20%;
+  }
+  
+  .container {
+      height: 70%;
+      display: flex;
+      padding: 1%;
+      width: 100%;
+      max-width: 100%;
+  }
+  
+  .schedule_input_form {
+      color: black;
+  }
+  
+  .custom_schedule_form {
+      color: black;
+  }
+  
+  #search {
+      margin: 15px;
+      margin-right: 5px;
+      margin-left: 5px;
+      border: 2px solid #0050a2;
+      border-radius: 5px;
+      box-sizing: border-box;
+      outline: none;
+  }
+  
+  #search:focus {
+              border-color: red;
+          }
+  
+  .box_shadow, .schedule_input_form, .custom_schedule_form, .RoomClassSchedule, .RoomPageStatus, .room_info_map, .search_results, .roomsuggestion, .folium-map, .main_sect_tut_text, .infomain {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      margin: 1%;
+  }
+  
+  .flash_message {
+      display: block;
+      background-color: rgb(231, 231, 231);
+      color: black;
+      padding: 5px;
+      text-align: center;
+  }
+  
+  .search-div-flex {
+      display: flex;
+      margin: 1%;
+      justify-content: center;
+      overflow: auto;
+  }
+  
+  .search_results {
+      overflow: auto;
+  }
+  
+  .search_results_block {
+      display: block;
+      margin: 0%;
+      padding: 10px;
+      text-decoration: none;
+      color: #000000;
+      background-color: #ffffff;
+      border-radius: 10px;
+  }
+  
+  .search_results_block:hover {
+      background-color: #f1f1f1;
+      border-radius: 10px;
+  }
+  
+  .roomsuggestion {
+      width: 15%;
+      min-width: 10rem;
+  }
+  
+  .room_suggest_block {
+      display: block;
+      margin: 2px;
+      padding: 10px;
+      text-decoration: none;
+      color: white;
+      background-color: #0050a2;
+      border-radius: 10px;
+      width: 100%;
+  }
+  
+  .room_suggest_block:hover {
+      background-color: #2180de;
+      border-radius: 10px;
+  }
+  
+  .justify_center {
+      vertical-align: middle;
+  }
+  
+  .schedule_input_main_div{
+      display: flex;
+      margin: 1%;
+  }
+  
+  .main_sect_tut {
+      display: flex;
+      margin: 1%;
+  }
+  
+  .main_sect_tut_vid {
+      display: flex;
+      flex-direction: column;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      margin: 1%;
+  }
+  
+  .vid1, .vid2 {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .vid1 {
+      margin-bottom: inherit;
+      text-align: center;
+  }
+  .vid2 {
+      margin-top: inherit;
+      text-align: center;
+  }
+  
+  .textarea {
+      border: 2px solid #d0d0d0;
+      border-radius: 5px;
+      box-sizing: border-box;
+      outline: none;
+      resize: none;
+      width: 100%;
+      margin: 1% 0%;
+      padding: 5px;
+  }
+  
+  .textarea:focus, .textarea:hover {
+      border-color: #0050a2;
+  }
+  
+  .buttons-radio {
+      border: 2px solid #0050a2;
+      border-radius: 5px;
+      box-sizing: border-box;
+      outline: none;
+      resize: none;
+  }
+  
+  .schedule_input_main_div a, .main_sect_tut a {
+      color: blue;
+      text-decoration: none;
+  }
+  .schedule_input_main_div a:hover, .main_sect_tut a:hover {
+      text-decoration: underline;
+  }
+  
+  .schedule_input_main_div input, .schedule_input_main_div select {
+      padding: 10px;
+  }
+  
+  .schedule_input_main_div input[type="submit"], .schedule_input_main_div input[type="reset"], .backtoscheduleinput {
+      background-color: #0050a2;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 1rem;
+  }
+  
+  .schedule_input_main_div input[type="submit"]:hover, .schedule_input_main_div input[type="reset"]:hover{
+      background-color: #2180de;
+  }
+  
+  .folium-map2 {
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+  }
+  
+  .RoomPageInfo {
+      display: flex;
+  }
+  
+  .room_info_map {
+      background-color: #003264;
+      color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+  }
+  
+  .RoomInfo {
+      padding-inline: 2rem;
+  }
+  
+  .RoomName, .RoomInfo {
+      width: 50%;
+  }
+  
+  .scrollbox {
+      display: flex;
+      flex-direction: column;
+      max-height: 30vh; 
+      overflow-y: auto; 
+      overflow-x: hidden; 
+      border: 2px solid #d0d0d0; 
+      border-radius: 5px; 
+      padding: 5px;
+  }
+  
+  .folium-map {
+      height: 70vh;
+  }
+  
+  .roompage_submit {
+      background-color: #0050a2;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+  }
+  
+  .roompage_submit:hover {
+      background-color: #2180de;
+  }
+  
+  .infocontainer {
+      height: 70%;
+      display: flex;
+      padding: 1%;
+      width: 100%;
+      max-width: 100%;
+      justify-content: center;
+  }
+  
+  .infomain {
+      display: flex;
+      justify-content: center;
+      padding: 1%;
+  }
+  
+  @media only screen and (max-width: 800px) {
+      /* For mobile phones: */
+      .TopNavigationBar, .container, .FloorNavigationBar, .folium-map, .roomsuggestion, .schedule_input_main_div, .main_sect_tut, .RoomPageMainDiv, .RoomPageInfo {
+          flex-direction: column;
+          width: initial;
+      }
+      .FloorNavigationBar {
+          text-align: center;
+      }
+      .RoomName, .RoomInfo {
+          width: initial;
+      }
+      .RoomInfo {
+          padding-inline: 0;
+      }
+  
+      }
+  
+  
