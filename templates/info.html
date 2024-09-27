@@ -72,105 +72,108 @@ Icon Descriptions
 <main class="infocontainer">
     <div class="infomain">
         <div class="container mt-5">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="icon-box frame-empty">
-                        <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
-                        <h5>Empty Room</h5>
-                        <p class="content">
-                            This room is empty and can be used for any activities you would like to organize. If you want to know more details, click the show button to see more about what you can do in an empty room.
-                        </p>
-                        <button class="show-more">Show More</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="icon-box frame-occupied">
-                        <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
-                        <h5>Occupied Room</h5>
-                        <p class="content">
-                            Indicates that the room is currently in use and cannot be reserved for any other activities until it is available.
-                        </p>
-                        <button class="show-more">Show More</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="icon-box frame-inactive">
-                        <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
-                        <h5>Inactive Room</h5>
-                        <p class="content">
-                            Room is inactive for now. It might be under maintenance or reserved for future events, so it is currently unavailable.
-                        </p>
-                        <button class="show-more">Show More</button>
-                    </div>
-                </div>
-            </div>
- 
-            <div class="row">
-                 <div class="col-md-4">
-                    <div class="icon-box frame-reserved">
-                        <img src="{{ url_for('static', filename='images/roomdefault.png') }}" alt="Unknown" class="icon-image">
-                        <h5>Unknown</h5>
-                         <p class="content">
-                             unknown 
-                         </p>
-                        <button class="show-more">Show More</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="icon-box frame-maintenance">
-                        <img src="{{ url_for('static', filename='images/amenityelevator.png') }}" alt="Elevator" class="icon-image">
-                        <h5>Elevator</h5>
-                        <p class="content">
-                            abc
-                         </p>
-                        <button class="show-more">Show More</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="icon-box frame-closed">
-                        <img src="{{ url_for('static', filename='images/amenitystairs.png') }}" alt="Stairs" class="icon-image">
-                        <h5>Stairs</h5>
-                        <p class="content">
-                            efg
-                        </p>
-                        <button class="show-more">Show More</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="icon-box frame-meeting">
-                        <img src="{{ url_for('static', filename='images/amenitytoiletf.png') }}" alt="Toilet(F)" class="icon-image">
-                        <h5>Toilet(Female)</h5>
-                        <p class="content">
-                            hij
-                        </p>
-                        <button class="show-more">Show More</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="icon-box frame-study">
-                         <img src="{{ url_for('static', filename='images/amenitytoiletm.png') }}" alt="Toilet(M)" class="icon-image">
-                         <h5>Toilet(Male)</h5>
-                         <p class="content">
-                             klm
-                        </p>
-                        <button class="show-more">Show More</button>
-                    </div>
-                </div>
+            <section>
+                <div class="row">
                     <div class="col-md-4">
-                    <div class="icon-box frame-lab">
-                        <img src="{{ url_for('static', filename='images/amenitytoilets.png') }}" alt="Toilet" class="icon-image">
-                        <h5>Lab Room</h5>
-                        <p class="content">
-                            nop
-                        </p>
-                         <button class="show-more">Show More</button>
-                     </div>
-                 </div>
-            </div>
+                        <div class="icon-box frame-empty">
+                            <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
+                            <h5>Empty Room</h5>
+                            <p class="content">
+                                This room is empty and can be used for any activities you would like to organize. If you want to know more details, click the show button to see more about what you can do in an empty room.
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-occupied">
+                            <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
+                            <h5>Occupied Room</h5>
+                            <p class="content">
+                                Indicates that the room is currently in use and cannot be reserved for any other activities until it is available.
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-inactive">
+                            <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
+                            <h5>Inactive Room</h5>
+                            <p class="content">
+                                Room is inactive for now. It might be under maintenance or reserved for future events, so it is currently unavailable.
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="icon-box frame-reserved">
+                            <img src="{{ url_for('static', filename='images/roomdefault.png') }}" alt="Unknown" class="icon-image">
+                            <h5>Unknown</h5>
+                            <p class="content">
+                                unknown 
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-maintenance">
+                            <img src="{{ url_for('static', filename='images/amenityelevator.png') }}" alt="Elevator" class="icon-image">
+                            <h5>Elevator</h5>
+                            <p class="content">
+                                abc
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-closed">
+                            <img src="{{ url_for('static', filename='images/amenitystairs.png') }}" alt="Stairs" class="icon-image">
+                            <h5>Stairs</h5>
+                            <p class="content">
+                                efg
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="icon-box frame-meeting">
+                            <img src="{{ url_for('static', filename='images/amenitytoiletf.png') }}" alt="Toilet(F)" class="icon-image">
+                            <h5>Toilet(Female)</h5>
+                            <p class="content">
+                                hij
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-study">
+                            <img src="{{ url_for('static', filename='images/amenitytoiletm.png') }}" alt="Toilet(M)" class="icon-image">
+                            <h5>Toilet(Male)</h5>
+                            <p class="content">
+                                klm
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                        <div class="col-md-4">
+                        <div class="icon-box frame-lab">
+                            <img src="{{ url_for('static', filename='images/amenitytoilets.png') }}" alt="Toilet" class="icon-image">
+                            <h5>Lab Room</h5>
+                            <p class="content">
+                                nop
+                            </p>
+                            <button class="show-more">Show More</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
+    </div>
     </div>
 </main>
 
