@@ -1,6 +1,8 @@
 # FCI Map
-A Interactive Map website for Multimedia University's Faculty of Computing and Informatics (FCI)/n
+A Interactive Map website for Multimedia University's Faculty of Computing and Informatics (FCI)
+
 Check it out!
+
 https://fcimap.pythonanywhere.com
 
 > Beta release: 
