@@ -5,48 +5,192 @@ Icon Descriptions
 {% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/icon_descriptions.css') }}">
+<style>
+.icon-box {
+    width: 250px; 
+    height: 300px;
+    padding: 20px;
+    margin-bottom: 30px;
+    overflow: hidden;  
+    text-align: center;
+    position: relative;
+    display: block;
+    flex-direction: column;
+    justify-content: space-between; 
+}
+
+.icon-box .content {
+    max-height: 80px;  
+    overflow: hidden;  
+    text-overflow: ellipsis;
+    transition: max-height 0.3s ease-out;  
+}
+
+.icon-box .show-more {
+    background-color: #007bff;  
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.icon-box .show-more:hover {
+    background-color: #0056b3;  
+}
+
+.frame-empty {
+    border: 5px solid #4CAF50;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 128, 0, 0.3);
+}
+
+.frame-occupied {
+    border: 5px solid #FF0000;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+}
+
+.frame-inactive {
+    border: 5px solid #FFC107;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+.icon-image {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+</style>
 {% endblock %}
 
 {% block content %}
 <body>
 <main class="infocontainer">
     <div class="infomain">
-    <div class="container mt-5">
-        <h2 class="text-center">Icon Descriptions
-            </h2>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="icon-box">
-                    <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
-                    <h5>Empty Room
-                        </h5>
-                    <p>This room is empty
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="icon-box frame-empty">
+                        <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
+                        <h5>Empty Room</h5>
+                        <p class="content">
+                            This room is empty and can be used for any activities you would like to organize. If you want to know more details, click the show button to see more about what you can do in an empty room.
                         </p>
+                        <button class="show-more">Show More</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="icon-box frame-occupied">
+                        <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
+                        <h5>Occupied Room</h5>
+                        <p class="content">
+                            Indicates that the room is currently in use and cannot be reserved for any other activities until it is available.
+                        </p>
+                        <button class="show-more">Show More</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="icon-box frame-inactive">
+                        <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
+                        <h5>Inactive Room</h5>
+                        <p class="content">
+                            Room is inactive for now. It might be under maintenance or reserved for future events, so it is currently unavailable.
+                        </p>
+                        <button class="show-more">Show More</button>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="icon-box">
-                    <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
-                    <h5>Occupied Room
-                        </h5>
-                    <p>
-                    Indicates that the room is currently in use and cannot be reserved
-                </p>
+ 
+            <div class="row">
+                 <div class="col-md-4">
+                    <div class="icon-box frame-reserved">
+                        <img src="{{ url_for('static', filename='images/roomdefault.png') }}" alt="Unknown" class="icon-image">
+                        <h5>Unknown</h5>
+                         <p class="content">
+                             unknown 
+                         </p>
+                        <button class="show-more">Show More</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="icon-box frame-maintenance">
+                        <img src="{{ url_for('static', filename='images/amenityelevator.png') }}" alt="Elevator" class="icon-image">
+                        <h5>Elevator</h5>
+                        <p class="content">
+                            abc
+                         </p>
+                        <button class="show-more">Show More</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="icon-box frame-closed">
+                        <img src="{{ url_for('static', filename='images/amenitystairs.png') }}" alt="Stairs" class="icon-image">
+                        <h5>Stairs</h5>
+                        <p class="content">
+                            efg
+                        </p>
+                        <button class="show-more">Show More</button>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="icon-box">
-                    <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
-                    <h5>Inactive Room
-                    </h5>
-                    <p>Room is inactive for now.
-                    </p>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="icon-box frame-meeting">
+                        <img src="{{ url_for('static', filename='images/amenitytoiletf.png') }}" alt="Toilet(F)" class="icon-image">
+                        <h5>Toilet(Female)</h5>
+                        <p class="content">
+                            hij
+                        </p>
+                        <button class="show-more">Show More</button>
+                    </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="icon-box frame-study">
+                         <img src="{{ url_for('static', filename='images/amenitytoiletm.png') }}" alt="Toilet(M)" class="icon-image">
+                         <h5>Toilet(Male)</h5>
+                         <p class="content">
+                             klm
+                        </p>
+                        <button class="show-more">Show More</button>
+                    </div>
+                </div>
+                    <div class="col-md-4">
+                    <div class="icon-box frame-lab">
+                        <img src="{{ url_for('static', filename='images/amenitytoilets.png') }}" alt="Toilet" class="icon-image">
+                        <h5>Lab Room</h5>
+                        <p class="content">
+                            nop
+                        </p>
+                         <button class="show-more">Show More</button>
+                     </div>
+                 </div>
             </div>
         </div>
     </div>
-</div>
 </main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const showMoreButtons = document.querySelectorAll(".show-more");
+        
+        showMoreButtons.forEach((button) => {
+            button.addEventListener("click", function () {
+                const content = this.previousElementSibling;
+                if (content.style.maxheight) {
+                    content.style.maxheight = null;
+                    this.textContent = "Show More";
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px"; 
+                    this.textContent = "Show Less";
+                }
+            });
+        });
+    });
+</script>
 </body>
 {% endblock %}
