@@ -20,10 +20,9 @@ Icon Descriptions
 }
 
 .icon-box .content {
-    max-height: 80px;  
+    max-height: 0;
     overflow: hidden;  
-    text-overflow: ellipsis;
-    transition: max-height 0.3s ease-out;  
+    transition: max-height 0.5s ease-out; 
 }
 
 .icon-box .show-more {
@@ -110,6 +109,8 @@ Icon Descriptions
     font-size: 20px; 
     margin-left: 10px; 
     transition: transform 0.3s; 
+    cursor: pointer;
+    display: inline-block;
 }
 
 </style>
@@ -126,8 +127,8 @@ Icon Descriptions
                         <div class="icon-box frame-empty">
                             <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
                             <h5>Empty Room</h5>
-                            <span class="arrow" style="cursor: pointer;">&#x25BC;</span>
-                            <p class="content" style="display: none;"> 
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content"> 
                                 This room is empty and can be used for any activities you would like to organize. 
                                 It offers plenty of space and a quiet atmosphere, 
                                 making it suitable for a wide range of purposes.
@@ -138,7 +139,8 @@ Icon Descriptions
                         <div class="icon-box frame-occupied">
                             <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
                             <h5>Occupied Room</h5>
-                            <p class="content" style="display: none;"> 
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content"> 
                                 This room is currently occupied and in use for a session, 
                                 so it's best not to enter and disturb the ongoing activities.
                             </p>
@@ -148,6 +150,7 @@ Icon Descriptions
                         <div class="icon-box frame-inactive">
                             <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
                             <h5>Inactive Room</h5>
+                            <span class="arrow">&#x25BC;</span>
                             <p class="content">
                                 This room appears occupied, though the activity seems minimal. 
                                 While it's clear that someone is inside,
@@ -162,6 +165,7 @@ Icon Descriptions
                         <div class="icon-box frame-unknown">
                             <img src="{{ url_for('static', filename='images/roomdefault.png') }}" alt="Unknown" class="icon-image">
                             <h5>Unknown</h5>
+                            <span class="arrow">&#x25BC;</span>
                             <p class="content">
                                 The status of this room is unclear. 
                                 It may be in use, but there's no definite sign of activity, 
@@ -173,6 +177,7 @@ Icon Descriptions
                         <div class="icon-box frame-elevator">
                             <img src="{{ url_for('static', filename='images/amenityelevator.png') }}" alt="Elevator" class="icon-image">
                             <h5>Elevator</h5>
+                            <span class="arrow">&#x25BC;</span>
                             <p class="content">
                                 Inside the elevator, you might experience brief but fascinating encounters with strangers or enjoy a moment of peaceful solitude. 
                                 Even better, it helps you avoid the awkward scenario of sweating profusely from climbing stairs.
@@ -183,6 +188,7 @@ Icon Descriptions
                         <div class="icon-box frame-stairs">
                             <img src="{{ url_for('static', filename='images/amenitystairs.png') }}" alt="Stairs" class="icon-image">
                             <h5>Stairs</h5>
+                            <span class="arrow">&#x25BC;</span>
                             <p class="content">
                                 As you walk up the stairs, you might encounter fellow climbers, and perhaps share a few words and stories about life. 
                                 Each step on the stairs is a form of exercise, 
@@ -197,6 +203,7 @@ Icon Descriptions
                         <div class="icon-box frame-toilet">
                             <img src="{{ url_for('static', filename='images/amenitytoilets.png') }}" alt="Toilet" class="icon-image">
                             <h5>Toilet</h5>
+                            <span class="arrow">&#x25BC;</span>
                             <p class="content">
                                 A place you can reflect on life, organize your thoughts. 
                                 This independent little haven lets you temporarily detach from external pressures.
@@ -221,6 +228,7 @@ Icon Descriptions
                         <div class="icon-box frame-waterstation">
                             <img src="{{ url_for('static', filename='images/amenitywater.png') }}" alt="Water Station" class="icon-image">
                             <h5>Water Station</h5>
+                            <span class="arrow">&#x25BC;</span>
                             <p class="content">
                                 The water station offers hot, cold, and room temperature options to meet different needs, 
                                 encouraging students to stay hydrated throughout the day.
@@ -240,12 +248,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     arrows.forEach((arrow) => {
         arrow.addEventListener("click", function () {
-            const content = this.nextElementSibling; 
-            const isHidden = content.style.display === "none";
+            const content = this.parentElement.querySelector(".content");
+            const isExpanded = content.style.maxHeight && content.style.maxHeight !== "0px";
 
-            content.style.display = isHidden ? "block" : "none";
-
-            this.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
+            if (isExpanded) {
+                content.style.maxHeight = "0";  
+                this.style.transform = "rotate(0deg)";  
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";  
+                this.style.transform = "rotate(180deg)"; 
+            }
         });
     });
 });
