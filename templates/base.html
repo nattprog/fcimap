@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}FCI Map{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='/images/favicon.ico')}}"/>
 <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
@@ -60,19 +63,19 @@
 </head>
 
 <header>
-<div id="TopLogo">
+<a id="TopLogo" href="/">
     <ul>
         <li><img src="https://www.mmu.edu.my/wp-content/themes/mmu2018/assets/images/logo-mmu2x.png" alt="MMU logo" width="150px"></li>
         <li><b>FCI Map</b></li>
     </ul>
-</div>
+</a>
 <div class="TopNavigationBar">
-    <div><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">Home</a></div>
-    <div><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">Add Schedule</a></div>
-    <div><a href="/chat" class="{% if ActivePage == 'chat' %}NavigationActive{% endif %}">Room Chat</a></div>
+    <div><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">HOME</a></div>
+    <div><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">ADD SCHEDULE</a></div>
+    <div><a href="/chat" class="{% if ActivePage == 'chat' %}NavigationActive{% endif %}">ROOM CHAT</a></div>
     <div style="flex: 1;"><div class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
         <form style="display: flex; text-align: center;" method="POST">
-            <label style="padding-right: 5px;" for="search">Search:</label>
+            <label style="padding-right: 5px;" for="search">SEARCH:</label>
             <input style="flex-grow: 1; font-size: small;" list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" maxlength="100" required>
             <datalist id="search_foo">
                 {% if session["search_suggestion"] %}
@@ -86,7 +89,7 @@
             </datalist>
             <input type="submit" value=" 🔎︎ ">
         </form></div></div>
-        <div class="dropdown" id="account"><a href="javascript:void(0)" class="dropbtn {% if ActivePage == 'account' %}NavigationActive{% endif %}" onclick="toggleDropdown()">Account</a>
+        <div class="dropdown" id="account"><a href="javascript:void(0)" class="dropbtn {% if ActivePage == 'account' %}NavigationActive{% endif %}" onclick="toggleDropdown()">ACCOUNT</a>
             <div class="dropdown-content" id="dropdown-content">
                 {% if "user_id" in session %}
                 <a href="/logout">Logout</a>
