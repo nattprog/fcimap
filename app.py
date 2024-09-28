@@ -367,7 +367,7 @@ def room_page(room_name):
             fci_room_name = room_name
             epoch_start = current_time_single.timestamp()
             epoch_end = (current_time_single + datetime.timedelta(hours=1)).timestamp()
-            persistence_weeks = 1
+            persistence_weeks = 0
             input_from_scheduleORcustomORbutton = "button"
             availability_weightage_value = int(room_status)
             incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
