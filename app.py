@@ -430,8 +430,13 @@ def search(search):
     for i in subject_results:
         if i.class_subject_code and i.class_section:
             subject_results_list.append(i)
+    custom_results = db.session.execute(db.select(room_availability_schedule).filter(room_availability_schedule.schedule_description.icontains(search))).scalars() # searches according to description
+    custom_results_list = []
+    for i in custom_results:
+        if (not i.class_subject_code) and (not i.class_section):
+            custom_results_list.append(i)
     # returns list of unique room names results and list of aliases. Unique room names will be displayed first(jinja in search.html), then aliases results
-    return render_template("search.html", ActivePage = "search", room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list, subject_results_list = subject_results_list)
+    return render_template("search.html", ActivePage = "search", room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list, subject_results_list = subject_results_list, custom_results_list = custom_results_list)
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():

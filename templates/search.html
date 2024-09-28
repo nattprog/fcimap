@@ -16,6 +16,9 @@
             <a class="search_results_block" href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.class_subject_code}}  {{i.class_section}}  ({{i.schedule_description}})<br/>
                 {{i.datetime_start(strftime="%A, %I:%M%p")}} - {{i.datetime_end(strftime="%I:%M%p")}}</a>
             {% endfor %}
+            {% for i in custom_results_list %}
+            <a class="search_results_block" href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.schedule_description}}<br/>{{i.datetime_start(strftime="%b %d, %Y | %I:%M%p")}} - {% if i.datetime_start(strftime="%b %d") != i.datetime_end(strftime="%b %d") %}{{i.datetime_end(strftime="%b %d, %Y")}}{% endif %}{{i.datetime_end(strftime="%I:%M%p")}}</a>
+            {% endfor %}
             </div>
         </div>
     </main>
