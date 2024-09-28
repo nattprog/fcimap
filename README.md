@@ -13,4 +13,6 @@ Features:
 - Suggestions of empty classrooms based on availability calculations
 - Room chat
 
-> Beta release: Sun Sep 22 22:57:05 UTC 2024
+> Beta release: 2024-09-22 22:57:06 UTC
+
+> Project submission ver. release: 2024-09-28 16:10:52 UTC
