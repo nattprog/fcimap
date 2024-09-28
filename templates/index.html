@@ -27,6 +27,14 @@ FCI Map
         min-height: 60vh;
         min-width: 60vw;
     }
+
+    .btn-primary {
+        background-color: #0050a2; 
+    }
+
+    .modal-backdrop {
+    display: none; 
+    }
     
 </style>
 {% endblock %}
@@ -46,7 +54,7 @@ FCI Map
 <div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" style="flex:1"></div>
 
 
-<div class="modal fade" id="iconModal" tabindex="-1" role="dialog" aria-labelledby="iconModalLabel" aria-hidden="true">
+<div class="modal fade" id="iconModal" tabindex="-1" role="dialog" aria-labelledby="iconModalLabel" aria-hidden="true" data-backdrop="false" data-keyboard="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -65,12 +73,11 @@ FCI Map
                 <a href="{{ url_for('info') }}" class="btn btn-primary">More Details</a>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
-        </div>
-        
-    </div>
 
+        </div>
+
+    </div>
 </div>
 
 <div class="roomsuggestion">
@@ -131,11 +138,32 @@ FCI Map
         var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
         div.innerHTML = '<img src="/static/images/info.png" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/>';
         div.onclick = function(){
+
+            var buttonPosition = $(div).offset();
+
+            div.onclick = function () {
             $('#iconModal').modal('show');
+            };
+
+            $('#iconModal').modal({
+                backdrop: 'static',  
+                keyboard: true,
+                show: true   
+            });
+
+            $('#iconModal .modal-dialog').css({
+                position: 'absolute', 
+                top: buttonPosition.top + 30 + 'px',  
+                left: buttonPosition.left - 199 + 'px',     
+                margin: '0'                           
+            });
+            $('.leaflet-interactive').css({ pointerEvents: 'auto' });
+
         };
         return div;
     };
     iconButton.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
 
     var movela= 0.00004;
     var movelo= 0.00012;

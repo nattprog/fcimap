@@ -106,6 +106,12 @@ Icon Descriptions
     box-shadow: 0 6px 18px rgba(80, 132, 193, 0.4);  
 }
 
+.arrow {
+    font-size: 20px; 
+    margin-left: 10px; 
+    transition: transform 0.3s; 
+}
+
 </style>
 {% endblock %}
 
@@ -120,21 +126,22 @@ Icon Descriptions
                         <div class="icon-box frame-empty">
                             <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
                             <h5>Empty Room</h5>
-                            <p class="content">
+                            <span class="arrow" style="cursor: pointer;">&#x25BC;</span>
+                            <p class="content" style="display: none;"> 
                                 This room is empty and can be used for any activities you would like to organize. 
-                                If you want to know more details, click the show button to see more about what you can do in an empty room.
+                                It offers plenty of space and a quiet atmosphere, 
+                                making it suitable for a wide range of purposes.
                             </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="icon-box frame-occupied">
                             <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
                             <h5>Occupied Room</h5>
-                            <p class="content">
-                                Indicates that the room is currently in use and cannot be reserved for any other activities until it is available.
+                            <p class="content" style="display: none;"> 
+                                This room is currently occupied and in use for a session, 
+                                so it's best not to enter and disturb the ongoing activities.
                             </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -142,11 +149,10 @@ Icon Descriptions
                             <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
                             <h5>Inactive Room</h5>
                             <p class="content">
-                                This icon represents a space that appears unoccupied or dormant, suggesting minimal activity. 
-                                While it indicates that the room is not in active use, there is still a subtle possibility that a few people remain inside, 
-                                perhaps quietly engaged or waiting.
+                                This room appears occupied, though the activity seems minimal. 
+                                While it's clear that someone is inside,
+                                and it seems to be a good place to study.
                             </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                 </div>
@@ -157,9 +163,10 @@ Icon Descriptions
                             <img src="{{ url_for('static', filename='images/roomdefault.png') }}" alt="Unknown" class="icon-image">
                             <h5>Unknown</h5>
                             <p class="content">
-                                unknown 
+                                The status of this room is unclear. 
+                                It may be in use, but there's no definite sign of activity, 
+                                so entering could disturb someone or it might be empty
                             </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -167,9 +174,9 @@ Icon Descriptions
                             <img src="{{ url_for('static', filename='images/amenityelevator.png') }}" alt="Elevator" class="icon-image">
                             <h5>Elevator</h5>
                             <p class="content">
-                                abc
+                                Inside the elevator, you might experience brief but fascinating encounters with strangers or enjoy a moment of peaceful solitude. 
+                                Even better, it helps you avoid the awkward scenario of sweating profusely from climbing stairs.
                             </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -177,42 +184,35 @@ Icon Descriptions
                             <img src="{{ url_for('static', filename='images/amenitystairs.png') }}" alt="Stairs" class="icon-image">
                             <h5>Stairs</h5>
                             <p class="content">
-                                efg
+                                As you walk up the stairs, you might encounter fellow climbers, and perhaps share a few words and stories about life. 
+                                Each step on the stairs is a form of exercise, 
+                                not only working out your leg muscles but also enhancing your cardiovascular fitness, allowing you to gain health while ascending.
                             </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-4">
+                        <div class="icon-box frame-toilet">
+                            <img src="{{ url_for('static', filename='images/amenitytoilets.png') }}" alt="Toilet" class="icon-image">
+                            <h5>Toilet</h5>
+                            <p class="content">
+                                A place you can reflect on life, organize your thoughts. 
+                                This independent little haven lets you temporarily detach from external pressures.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                         <div class="icon-box frame-toiletf">
                             <img src="{{ url_for('static', filename='images/amenitytoiletf.png') }}" alt="Toilet(F)" class="icon-image">
                             <h5>Toilet(Female)</h5>
-                            <p class="content">
-                                hij
-                            </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="icon-box frame-toiletm">
                             <img src="{{ url_for('static', filename='images/amenitytoiletm.png') }}" alt="Toilet(M)" class="icon-image">
                             <h5>Toilet(Male)</h5>
-                            <p class="content">
-                                klm
-                            </p>
-                            <button class="show-more">Show More</button>
-                        </div>
-                    </div>
-                        <div class="col-md-4">
-                        <div class="icon-box frame-toilet">
-                            <img src="{{ url_for('static', filename='images/amenitytoilets.png') }}" alt="Toilet" class="icon-image">
-                            <h5>Toilet</h5>
-                            <p class="content">
-                                nop
-                            </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                 </div>
@@ -222,9 +222,9 @@ Icon Descriptions
                             <img src="{{ url_for('static', filename='images/amenitywater.png') }}" alt="Water Station" class="icon-image">
                             <h5>Water Station</h5>
                             <p class="content">
-                                hij
+                                The water station offers hot, cold, and room temperature options to meet different needs, 
+                                encouraging students to stay hydrated throughout the day.
                             </p>
-                            <button class="show-more">Show More</button>
                         </div>
                     </div>
                 </div>
@@ -235,22 +235,20 @@ Icon Descriptions
 </main>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const showMoreButtons = document.querySelectorAll(".show-more");
-        
-        showMoreButtons.forEach((button) => {
-            button.addEventListener("click", function () {
-                const content = this.previousElementSibling;
-                if (content.style.maxheight) {
-                    content.style.maxheight = null;
-                    this.textContent = "Show More";
-                } else {
-                    content.style.maxHeight = content.scrollHeight + "px"; 
-                    this.textContent = "Show Less";
-                }
-            });
+document.addEventListener("DOMContentLoaded", function () {
+    const arrows = document.querySelectorAll(".arrow");
+
+    arrows.forEach((arrow) => {
+        arrow.addEventListener("click", function () {
+            const content = this.nextElementSibling; 
+            const isHidden = content.style.display === "none";
+
+            content.style.display = isHidden ? "block" : "none";
+
+            this.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
         });
     });
+});
 </script>
 </body>
 {% endblock %}
