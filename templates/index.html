@@ -17,6 +17,8 @@ FCI Map
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"> -->
+
 
 <meta name="viewport" content="width=device-width,
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -27,6 +29,54 @@ FCI Map
     }
     
 </style>
+<style>
+    /* Popup container - can be anything you want */
+    .popup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    /* The actual popup */
+    .popup .popuptext {
+      visibility: hidden;
+      width: 180px;
+      background-color: white;
+      color: black;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      top: 24px;
+      right: 24px;
+    }
+    
+    /* Toggle this class - hide and show the popup */
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s;
+    }
+    
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+      from {opacity: 0;} 
+      to {opacity: 1;}
+    }
+    
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity:1 ;}
+    }
+
+        .additionalinfo {
+        background-color: red;
+        z-index: 1000;
+    }
+    </style>
 {% endblock %}
 
 {% block content%}
@@ -42,6 +92,8 @@ FCI Map
 </nav>
 
 <div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" style="flex:1"></div>
+
+
 <div class="roomsuggestion">
     <h4>Suggested Study Rooms:</h4><br/>
     <div style="display: flex; flex-direction: column; max-height: 30vh; overflow-y: auto; overflow-x: hidden;">
@@ -94,6 +146,20 @@ FCI Map
     );
 
     tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
+    var iconButton = L.control({position: 'topright'});
+    iconButton.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        div.innerHTML = '<div class="popup" onclick="myFunction()"><img src="/static/images/info.png" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/><section class="popuptext" id="myPopup"><h5>Icon Descriptions</h5><ul><li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li><li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li><li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li></ul><a href="/info" class="additionalinfo" style="background-color:#0050a2; color:white; width:100%; height:unset; line-height:normal; padding: 5px; margin:0; border-radius:5px;">More Details</a></section></div>';
+        div.onclick = function(){
+            var popup = document.getElementById("myPopup");
+            popup.classList.toggle("show");
+            
+        };
+        return div;
+    };
+    iconButton.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+
 
     var movela= 0.00004;
     var movelo= 0.00012;

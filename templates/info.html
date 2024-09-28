@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}
+Icon Descriptions
+{% endblock %}
+
+{% block head %}
+<style>
+.icon-box {
+    width: 250px; 
+    padding: 20px;
+    margin-bottom: 30px;
+    overflow: hidden;  
+    text-align: center;
+    position: relative;
+    display: block;
+    flex-direction: column;
+    justify-content: space-between; 
+}
+
+.icon-box .content {
+    max-height: 0;
+    overflow: hidden;  
+    transition: max-height 0.5s ease-out; 
+}
+
+.icon-box .show-more {
+    background-color: #007bff;  
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.icon-box .show-more:hover {
+    background-color: #0056b3;  
+}
+
+.frame-empty {
+    border: 5px solid #4CAF50;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 128, 0, 0.3);
+}
+
+.frame-occupied {
+    border: 5px solid #FF0000;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+}
+
+.frame-inactive {
+    border: 5px solid #FFC107;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+.icon-image {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.frame-unknown {
+    border: 5px solid #0000F5; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 245, 0.4); 
+}
+
+.frame-toiletm {
+    border: 5px solid #75FBFD; 
+    border-radius: 15px;  
+    box-shadow: 0 4px 12px rgba(117, 251, 253, 0.6); 
+}
+
+.frame-toiletf {
+    border: 5px solid #EA33F7;  
+    border-radius: 15px;  
+    box-shadow: 0 6px 15px rgba(234, 51, 247, 0.5);  
+}
+
+.frame-elevator {
+    border: 5px solid #4B77D1;
+    border-radius: 15px; 
+    box-shadow: 0 6px 12px rgba(75, 119, 209, 0.4); 
+}
+
+.frame-stairs {
+    border: 5px solid #4B77D1;
+    border-radius: 15px; 
+    box-shadow: 0 6px 12px rgba(75, 119, 209, 0.4); 
+}
+
+.frame-toilet {
+    border: 5px solid #75FB4C;  
+    border-radius: 15px;  
+    box-shadow: 0 6px 15px rgba(117, 251, 76, 0.5);  
+}
+
+.frame-waterstation {
+    border: 5px solid #5084C1; 
+    border-radius: 15px; 
+    box-shadow: 0 6px 18px rgba(80, 132, 193, 0.4);  
+}
+
+.arrow {
+    font-size: 20px; 
+    margin-left: 10px; 
+    transition: transform 0.3s; 
+    cursor: pointer;
+    display: inline-block;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<body>
+<main class="infocontainer">
+    <div class="infomain">
+        <div class="container mt-5">
+            <section>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="icon-box frame-empty">
+                            <img src="{{ url_for('static', filename='images/roomempty.png') }}" alt="Empty Room" class="icon-image">
+                            <h5>Empty Room</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content"> 
+                                This room is empty and can be used for any activities you would like to organize. 
+                                It offers plenty of space and a quiet atmosphere, 
+                                making it suitable for a wide range of purposes.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-occupied">
+                            <img src="{{ url_for('static', filename='images/roomoccupied.png') }}" alt="Occupied Room" class="icon-image">
+                            <h5>Occupied Room</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content"> 
+                                This room is currently occupied and in use for a session, 
+                                so it's best not to enter and disturb the ongoing activities.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-inactive">
+                            <img src="{{ url_for('static', filename='images/roominactive.png') }}" alt="Inactive Room" class="icon-image">
+                            <h5>Inactive Room</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content">
+                                This room appears occupied, though the activity seems minimal. 
+                                While it's clear that someone is inside,
+                                and it seems to be a good place to study.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="icon-box frame-unknown">
+                            <img src="{{ url_for('static', filename='images/roomdefault.png') }}" alt="Unknown" class="icon-image">
+                            <h5>Unknown</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content">
+                                The status of this room is unclear. 
+                                It may be in use, but there's no definite sign of activity, 
+                                so entering could disturb someone or it might be empty.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-elevator">
+                            <img src="{{ url_for('static', filename='images/amenityelevator.png') }}" alt="Elevator" class="icon-image">
+                            <h5>Elevator</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content">
+                                Inside the elevator, you might experience brief but fascinating encounters with strangers or enjoy a moment of peaceful solitude. 
+                                Even better, it helps you avoid the awkward scenario of sweating profusely from climbing stairs.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-stairs">
+                            <img src="{{ url_for('static', filename='images/amenitystairs.png') }}" alt="Stairs" class="icon-image">
+                            <h5>Stairs</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content">
+                                As you walk up the stairs, you might encounter fellow climbers, and perhaps share a few words and stories about life. 
+                                Each step on the stairs is a form of exercise, 
+                                not only working out your leg muscles but also enhancing your cardiovascular fitness, allowing you to gain health while ascending.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="icon-box frame-toilet">
+                            <img src="{{ url_for('static', filename='images/amenitytoilets.png') }}" alt="Toilet" class="icon-image">
+                            <h5>Toilet</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content">
+                                A place you can reflect on life, organize your thoughts. 
+                                This independent little haven lets you temporarily detach from external pressures.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-toiletf">
+                            <img src="{{ url_for('static', filename='images/amenitytoiletf.png') }}" alt="Toilet(F)" class="icon-image">
+                            <h5>Toilet(Female)</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content">
+                                A place you can reflect on life, organize your thoughts. 
+                                This independent little haven lets you temporarily detach from external pressures.
+                                Notice: Only females are allowed to enter.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-toiletm">
+                            <img src="{{ url_for('static', filename='images/amenitytoiletm.png') }}" alt="Toilet(M)" class="icon-image">
+                            <h5>Toilet(Male)</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content">
+                                A place you can reflect on life, organize your thoughts. 
+                                This independent little haven lets you temporarily detach from external pressures.
+                                Notice: Only males are allowed to enter.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row"></div>
+                    <div class="col-md-4">
+                        <div class="icon-box frame-waterstation">
+                            <img src="{{ url_for('static', filename='images/amenitywater.png') }}" alt="Water Station" class="icon-image">
+                            <h5>Water Station</h5>
+                            <span class="arrow">&#x25BC;</span>
+                            <p class="content">
+                                The water station offers hot, cold, and room temperature options to meet different needs, 
+                                encouraging students to stay hydrated throughout the day.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    </div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const arrows = document.querySelectorAll(".arrow");
+
+    arrows.forEach((arrow) => {
+        arrow.addEventListener("click", function () {
+            const content = this.parentElement.querySelector(".content");
+            const isExpanded = content.style.maxHeight && content.style.maxHeight !== "0px";
+
+            if (isExpanded) {
+                content.style.maxHeight = "0";  
+                this.style.transform = "rotate(0deg)";  
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";  
+                this.style.transform = "rotate(180deg)"; 
+            }
+        });
+    });
+});
+</script>
+</body>
+{% endblock %}
