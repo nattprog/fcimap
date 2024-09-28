@@ -581,21 +581,21 @@ def logout():
         flash("Logged out successfully")
     return redirect(url_for('login'))
 # delete account
-@app.route('/delete_account', methods=['GET', 'POST'])
-def delete_account():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
+# @app.route('/delete_account', methods=['GET', 'POST'])
+# def delete_account():
+#     if 'user_id' not in session:
+#         return redirect(url_for('login'))
 
-    user = User.query.get(session['user_id'])
+#     user = User.query.get(session['user_id'])
     
-    if request.method == 'POST':
-        if user:
-            db.session.delete(user)  # This will also delete all associated chat messages
-            db.session.commit()
-            session.pop('user_id', None)  # Clear the session after deletion
-            return redirect(url_for('login'))
+#     if request.method == 'POST':
+#         if user:
+#             db.session.delete(user)  # This will also delete all associated chat messages
+#             db.session.commit()
+#             session.pop('user_id', None)  # Clear the session after deletion
+#             return redirect(url_for('login'))
 
-    return render_template('delete_account.html')
+#     return render_template('delete_account.html')
 
 
 # Change password route
