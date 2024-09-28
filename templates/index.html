@@ -27,16 +27,56 @@ FCI Map
         min-height: 60vh;
         min-width: 60vw;
     }
-
-    .btn-primary {
-        background-color: #0050a2; 
-    }
-
-    .modal-backdrop {
-    display: none; 
-    }
     
 </style>
+<style>
+    /* Popup container - can be anything you want */
+    .popup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    /* The actual popup */
+    .popup .popuptext {
+      visibility: hidden;
+      width: 180px;
+      background-color: white;
+      color: black;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      top: 24px;
+      right: 24px;
+    }
+    
+    /* Toggle this class - hide and show the popup */
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s;
+    }
+    
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+      from {opacity: 0;} 
+      to {opacity: 1;}
+    }
+    
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity:1 ;}
+    }
+
+        .additionalinfo {
+        background-color: red;
+        z-index: 1000;
+    }
+    </style>
 {% endblock %}
 
 {% block content%}
@@ -53,32 +93,6 @@ FCI Map
 
 <div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" style="flex:1"></div>
 
-
-<div class="modal fade" id="iconModal" tabindex="-1" role="dialog" aria-labelledby="iconModalLabel" aria-hidden="true" data-backdrop="false" data-keyboard="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="iconModalLabel">Icon Descriptions</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <ul>
-                    <li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room
-                    </li>
-                    <li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room
-                    </li>
-                    <li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room
-                    </li>
-                </ul>
-                <a href="{{ url_for('info') }}" class="btn btn-primary">More Details</a>
-            </div>
-            <div class="modal-footer">
-            </div>
-
-        </div>
-
-    </div>
-</div>
 
 <div class="roomsuggestion">
     <h4>Suggested Study Rooms:</h4><br/>
@@ -136,29 +150,11 @@ FCI Map
     var iconButton = L.control({position: 'topright'});
     iconButton.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        div.innerHTML = '<img src="/static/images/info.png" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/>';
+        div.innerHTML = '<div class="popup" onclick="myFunction()"><img src="/static/images/info.png" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/><section class="popuptext" id="myPopup"><h5>Icon Descriptions</h5><ul><li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li><li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li><li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li></ul><a href="/info" class="additionalinfo" style="background-color:#0050a2; color:white; width:100%; height:unset; line-height:normal; padding: 5px; margin:0; border-radius:5px;">More Details</a></section></div>';
         div.onclick = function(){
-
-            var buttonPosition = $(div).offset();
-
-            div.onclick = function () {
-            $('#iconModal').modal('show');
-            };
-
-            $('#iconModal').modal({
-                backdrop: 'static',  
-                keyboard: true,
-                show: true   
-            });
-
-            $('#iconModal .modal-dialog').css({
-                position: 'absolute', 
-                top: buttonPosition.top + 30 + 'px',  
-                left: buttonPosition.left - 199 + 'px',     
-                margin: '0'                           
-            });
-            $('.leaflet-interactive').css({ pointerEvents: 'auto' });
-
+            var popup = document.getElementById("myPopup");
+            popup.classList.toggle("show");
+            
         };
         return div;
     };
