@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app, session_options={"autoflush": False})
-app.config["SECRET_KEY"] = 'sessionsecretkey'
+app.config["SECRET_KEY"] = 'f8695bd59f8d4121b877d34ae6efeb3d'
 
 # Initialize Flask-Migrate
 migrate = Migrate(app, db)
