@@ -111,16 +111,19 @@
     <div class="chat-container">
         <h1>Room Chat</h1>
 
-        <!-- Chat messages section -->
-        <div class="messages-container" id="messages-container">
-            <div class="messages" id="messages">
-                {% for message in messages %}
-                    <div class="message">
-                        <p><strong>{{ message.user.username }}:</strong> {{ message.message }} <small>({{ message.timestamp }})</small></p>
+                <!-- Chat messages section -->
+                <div class="messages-container" id="messages-container">
+                    <div class="messages" id="messages">
+                        {% for message in messages %}
+                            <div class="message">
+                                <p><strong>{{ message.user.username }}:</strong> 
+                                {{ message.message }} 
+                                <small>({{ message.timestamp.astimezone(malaysiaTZ) }})</small></p>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            </div>
-        </div>
+                </div>
+        
 
         <!-- Form to submit new message -->
         <form class="message-form" id="message-form">
@@ -129,7 +132,9 @@
         </form>
     </div>
 
-    <!-- Include jQuery for simple AJAX (optional but easier) -->
+
+
+    <!-- Include jQuery for simple AJAX -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
