@@ -6,7 +6,7 @@ Check it out!
 
 Features:
 - Interactive map with room and amenities markers
-- Room search
+- Room, room alias and subject code search
 - Room info database
 - Crowdsourced class schedule for each room
 - Real time crowdsourced reports of rooms' availabilities
