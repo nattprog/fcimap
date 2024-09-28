@@ -281,13 +281,14 @@ text-align: center;
     text-decoration: none;
     color: white;
     background-color: #0050a2;
-    border-radius: 10px;
+    border-radius: 5px;
     width: 100%;
 }
 
 .room_suggest_block:hover {
     background-color: #2180de;
-    border-radius: 10px;
+    border-radius: 5px;
+    color: white;
 }
 
 .justify_center {
@@ -379,7 +380,7 @@ text-align: center;
 }
 
 .folium-map2 {
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     width: 100%;
     min-height: 50vh;
@@ -397,6 +398,7 @@ text-align: center;
     padding: 20px;
     display: flex;
     flex-direction: column;
+    min-height: 70vh;
 }
 
 .RoomInfo {

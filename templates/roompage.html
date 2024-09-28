@@ -27,6 +27,54 @@
     }
     
 </style>
+<style>
+    /* Popup container - can be anything you want */
+    .popup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    /* The actual popup */
+    .popup .popuptext {
+      visibility: hidden;
+      width: 180px;
+      background-color: white;
+      color: black;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      top: 24px;
+      right: 24px;
+    }
+    
+    /* Toggle this class - hide and show the popup */
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s;
+    }
+    
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+      from {opacity: 0;} 
+      to {opacity: 1;}
+    }
+    
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity:1 ;}
+    }
+
+        .additionalinfo {
+        background-color: red;
+        z-index: 1000;
+    }
+    </style>
 {% endblock %}
 {% block content %}
 <body>
@@ -34,7 +82,7 @@
     <div class="RoomPageStatus">
         <div>
             <h3>Availability:</h3>
-            <span class="room_suggest_block justify_center" style="margin: 0;">
+            <a class="room_suggest_block justify_center" style="margin: 0;" onclick="infoFunction()">
             {% if total_rooms_weightage_sum %}
                 {% if total_rooms_weightage_sum[room.room_name] <= -5 %}
                 <img class="justify_center" src="{{ url_for('static', filename='images/roomempty.png')}}" style="height: 1.5rem"><span> Empty</span>
@@ -46,7 +94,7 @@
             {% else %}
             <span> No data</span>
             {% endif %}
-        </span>
+            </a>
         </div><br/>
         <div>
             <h3>Report availability:</h3>
@@ -181,6 +229,19 @@
     var floorNumber = "{{ room.room_floor }}"; 
 
     var floorImage = "{{ url_for('static', filename='images/floor') }}" + floorNumber + ".png";
+
+    var iconButton = L.control({position: 'topright'});
+    iconButton.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        div.innerHTML = '<div class="popup" onclick="myFunction()"><img src="/static/images/info.png" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/><section class="popuptext" id="myPopup"><h5>Icon Descriptions</h5><ul><li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li><li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li><li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li></ul><a href="/info" class="additionalinfo" style="background-color:#0050a2; color:white; width:100%; height:unset; line-height:normal; padding: 5px; margin:0; border-radius:5px;">More Details</a></section></div>';
+        div.onclick = function(){
+            var popup = document.getElementById("myPopup");
+            popup.classList.toggle("show");
+            
+        };
+        return div;
+    };
+    iconButton.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
     
     L.imageOverlay(floorImage, image_bounds, {
         opacity: 1.0,
@@ -228,5 +289,11 @@
         });
     });
 
+</script>
+<script>
+    function infoFunction() {
+    var popup = document.getElementById("myPopup");
+        popup.classList.toggle("show");
+    }
 </script>
 {% endblock %}
