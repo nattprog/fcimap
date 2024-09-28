@@ -223,9 +223,9 @@ class fci_room(db.Model):
     room_number = db.Column(db.Integer, nullable=False)
     room_classes_schedule = db.relationship("room_availability_schedule", backref="fci_room", lazy=True)
     room_name_aliases = db.relationship("room_aliases", backref="fci_room", lazy=True)
-    lat = db.Column(db.Float)
-    lng = db.Column(db.Float)
-    popup = db.Column(db.String(50))
+    lat = db.Column(db.Float, nullable=True)
+    lng = db.Column(db.Float, nullable=True)
+    popup = db.Column(db.String(50), nullable=True)
 
 # ChatMessage Model NEW
 class ChatMessage(db.Model):
@@ -252,7 +252,7 @@ class room_availability_schedule(db.Model):
     persistence_weeks = db.Column(db.Integer, nullable=False, default=0) # must set automatically, allow user choice from input
     input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
     availability_weightage_value = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     def datetime_start(self, strftime=None): # gives datetime object of start and end, strftime string optional and will return a custom date and time string
         if strftime:
             return datetime.datetime.fromtimestamp(float(self.epoch_start)).astimezone(malaysiaTZ).strftime(strftime)
@@ -318,9 +318,7 @@ def get_markers(floor, room_name="None"):
                 if i.room_name in total_rooms_weightage_sum:
                     weightage = total_rooms_weightage_sum[i.room_name]
                 else: weightage = None
-                if i.popup == None:
-                    popup = ""
-                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href='/roompage/{i.room_name}'>{i.room_name}</a><br/>{popup}", "weightage":weightage})
+                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href='/roompage/{i.room_name}'>{i.room_name}</a>", "weightage":weightage})
     if room_name!="None":
         pass
     else:
