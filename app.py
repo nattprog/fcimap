@@ -294,6 +294,11 @@ class fci_amenity(db.Model):
 
 @app.route("/")
 def redirect_home():
+    if "user_id" in session:
+        user = db.session.execute(db.select(User).filter_by(id = session["user_id"])).scalar()
+        if not user:
+            session.pop("user_id", None)
+            return redirect(url_for("redirect_home"))
     return redirect("/map/0")
 
 @app.route("/info")
@@ -491,7 +496,7 @@ def chat():
     messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
     
     # Pass Malaysia time zone to the template
-    return render_template('chat.html', messages=messages, malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur'))
+    return render_template('chat.html', messages=messages, ActivePage="chat", malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur'))
 
 #JSON format
 @app.route('/get_messages', methods=['GET'])
