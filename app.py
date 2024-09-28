@@ -312,6 +312,12 @@ def redirect_home():
 
 @app.route("/info")
 def info():
+    if request.method == "POST":
+        try:
+            search = request.form["search"]
+            return redirect(f"/search/{search}")
+        except:
+            pass
     return render_template("info.html")
 
 @app.route("/get_markers/<floor>/<room_name>") # creates data for markers

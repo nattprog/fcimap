@@ -50,6 +50,7 @@
       position: absolute;
       top: 24px;
       right: 24px;
+      cursor: default;
     }
     
     /* Toggle this class - hide and show the popup */
@@ -70,15 +71,14 @@
       to {opacity:1 ;}
     }
 
-        .additionalinfo {
-        background-color: red;
-        z-index: 1000;
+    .AddInfo {
+        cursor: pointer;
     }
     </style>
 {% endblock %}
 {% block content %}
 <body>
-<div class="RoomPageMainDiv" {% if 'user_id' in session %}{% else %}style="justify-content: center;"{% endif %}>
+<div class="RoomPageMainDiv">
     <div class="RoomPageStatus">
         <div>
             <h3>Availability:</h3>
@@ -133,7 +133,7 @@
                 {% endif %}
         </div>
     </div>
-    <div class="room_info_map" {% if 'user_id' in session %}style="flex:1;"{% else %}style="flex:0"{% endif %}">
+    <div class="room_info_map" style="flex:1;">
         <div class="RoomPageInfo">
             <div class="RoomName">
             <h1>{{room.room_name}}</h1>
@@ -152,7 +152,6 @@
         </div>
         <div class="folium-map2" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
     </div>
-    {% if 'user_id' in session %}
     <div class="RoomClassSchedule">
         <div>
             <h3>CLiC schedule:</h3><br/>
@@ -182,7 +181,6 @@
             </section>
         </div>
     </div>
-    {% endif %}
 </div>
 </body>
 
@@ -232,8 +230,8 @@
 
     var iconButton = L.control({position: 'topright'});
     iconButton.onAdd = function(map) {
-        var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        div.innerHTML = '<div class="popup" onclick="myFunction()"><img src="/static/images/info.png" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/><section class="popuptext" id="myPopup"><h5>Icon Descriptions</h5><ul><li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li><li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li><li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li></ul><a href="/info" class="additionalinfo" style="background-color:#0050a2; color:white; width:100%; height:unset; line-height:normal; padding: 5px; margin:0; border-radius:5px;">More Details</a></section></div>';
+        var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom'); //I swear there's no other way to do this. Folium's stylesheet messes it up
+        div.innerHTML = '<div class="popup" onclick="myFunction()"><img src="/static/images/info.png" class="AddInfo" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/><section class="popuptext" id="myPopup"><h5>Icon Descriptions</h5><ul><li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li><li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li><li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li></ul><a href="/info" style="background-color:#0050a2; color:white; width:100%; height:unset; line-height:normal; padding: 5px; margin:0; border-radius:5px;">More Details</a></section></div>';
         div.onclick = function(){
             var popup = document.getElementById("myPopup");
             popup.classList.toggle("show");
