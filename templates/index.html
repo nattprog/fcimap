@@ -1,9 +1,5 @@
 {% extends "base.html" %}
-
-{% block title %}
-FCI Map
-{% endblock %}
-
+{% block title %}FCI Map{% endblock %}
 {% block head %}
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <script>
@@ -24,8 +20,8 @@ FCI Map
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <style>
     #map_fc842e841ad4e3d1b8937629f1f9ec04 {
-        min-height: 60vh;
-        min-width: 60vw;
+        min-height: 70vh;
+        min-width: 40vw;
     }
     
 </style>
@@ -52,13 +48,14 @@ FCI Map
       position: absolute;
       top: 24px;
       right: 24px;
+      cursor: default;
     }
     
     /* Toggle this class - hide and show the popup */
     .popup .show {
       visibility: visible;
-      -webkit-animation: fadeIn 1s;
-      animation: fadeIn 1s;
+      -webkit-animation: fadeIn 0.5s;
+      animation: fadeIn 0.5s;
     }
     
     /* Add animation (fade in the popup) */
@@ -71,11 +68,10 @@ FCI Map
       from {opacity: 0;}
       to {opacity:1 ;}
     }
-
-        .additionalinfo {
-        background-color: red;
-        z-index: 1000;
+    .AddInfo {
+        cursor: pointer;
     }
+    </style>
     </style>
 {% endblock %}
 
@@ -150,7 +146,7 @@ FCI Map
     var iconButton = L.control({position: 'topright'});
     iconButton.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        div.innerHTML = '<div class="popup" onclick="myFunction()"><img src="/static/images/info.png" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/><section class="popuptext" id="myPopup"><h5>Icon Descriptions</h5><ul><li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li><li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li><li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li></ul><a href="/info" class="additionalinfo" style="background-color:#0050a2; color:white; width:100%; height:unset; line-height:normal; padding: 5px; margin:0; border-radius:5px;">More Details</a></section></div>';
+        div.innerHTML = '<div class="popup" onclick="myFunction()" style="font-size:small;"><img src="/static/images/info.png" class="AddInfo" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/><section class="popuptext" id="myPopup"><h5>Icon Descriptions</h5><ul><li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li><li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li><li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li></ul><a href="/info" class="additionalinfo" style="background-color:#0050a2; color:white; width:100%; height:unset; line-height:normal; padding: 5px; margin:0; border-radius:5px;">More Details</a></section></div>';
         div.onclick = function(){
             var popup = document.getElementById("myPopup");
             popup.classList.toggle("show");

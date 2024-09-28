@@ -1,9 +1,5 @@
 {% extends "base.html" %}
-
-{% block title %}
-Search Results
-{% endblock %}
-
+{% block title %}Search Results{% endblock %}
 {% block content %}
 <body>
     <main class="search-div-flex" style="height: 70vh;">
@@ -15,6 +11,13 @@ Search Results
             {% endfor %}
             {% for i in aliases_results_list %}
             <a class="search_results_block" href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.room_name_aliases}}</a>
+            {% endfor %}
+            {% for i in subject_results_list %}
+            <a class="search_results_block" href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.class_subject_code}}  {{i.class_section}}  ({{i.schedule_description}})<br/>
+                {{i.datetime_start(strftime="%A, %I:%M%p")}} - {{i.datetime_end(strftime="%I:%M%p")}}</a>
+            {% endfor %}
+            {% for i in custom_results_list %}
+            <a class="search_results_block" href="/roompage/{{i.fci_room_name}}">{{i.fci_room_name}} | {{i.schedule_description}}<br/>{{i.datetime_start(strftime="%b %d, %Y | %I:%M%p")}} - {% if i.datetime_start(strftime="%b %d") != i.datetime_end(strftime="%b %d") %}{{i.datetime_end(strftime="%b %d, %Y")}}{% endif %}{{i.datetime_end(strftime="%I:%M%p")}}</a>
             {% endfor %}
             </div>
         </div>

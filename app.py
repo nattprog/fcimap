@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app, session_options={"autoflush": False})
-app.config["SECRET_KEY"] = 'sessionsecretkey'
+app.config["SECRET_KEY"] = 'f8695bd59f8d4121b877d34ae6efeb3d'
 
 # Initialize Flask-Migrate
 migrate = Migrate(app, db)
@@ -214,20 +214,6 @@ def search_suggestion_maker():
         search_suggestion["aliases"].append(i.room_name_aliases)
     session["search_suggestion"] = search_suggestion
 
-# def in_session_weightage_total(room_name):
-#     current_time_single = current_time()
-#     query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room_name)).all()
-#     weightage_total = None
-#     if query:
-#         weightage_total = 0
-#         for i in range(len(query)):
-#             for ii in range(len(query[i])):
-#                 if (query[i][ii].input_from_scheduleORcustomORbutton == "schedule") and (int(query[i][ii].datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(query[i][ii].datetime_end(strftime="%H%M%S%f"))):
-#                     weightage_total += int(query[i][ii].availability_weightage_value)
-#                 elif float(query[i][ii].epoch_start) < float(current_time_single.timestamp()) <= float(query[i][ii].epoch_end):
-#                     weightage_total += int(query[i][ii].availability_weightage_value)
-#     return weightage_total
-
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
     __tablename__ = "fci_room"
@@ -237,9 +223,9 @@ class fci_room(db.Model):
     room_number = db.Column(db.Integer, nullable=False)
     room_classes_schedule = db.relationship("room_availability_schedule", backref="fci_room", lazy=True)
     room_name_aliases = db.relationship("room_aliases", backref="fci_room", lazy=True)
-    lat = db.Column(db.Float)
-    lng = db.Column(db.Float)
-    popup = db.Column(db.String(50))
+    lat = db.Column(db.Float, nullable=True)
+    lng = db.Column(db.Float, nullable=True)
+    popup = db.Column(db.String(50), nullable=True)
 
 # ChatMessage Model NEW
 class ChatMessage(db.Model):
@@ -266,7 +252,7 @@ class room_availability_schedule(db.Model):
     persistence_weeks = db.Column(db.Integer, nullable=False, default=0) # must set automatically, allow user choice from input
     input_from_scheduleORcustomORbutton = db.Column(db.String(50), nullable=False) # must set automatically
     availability_weightage_value = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     def datetime_start(self, strftime=None): # gives datetime object of start and end, strftime string optional and will return a custom date and time string
         if strftime:
             return datetime.datetime.fromtimestamp(float(self.epoch_start)).astimezone(malaysiaTZ).strftime(strftime)
@@ -308,10 +294,21 @@ class fci_amenity(db.Model):
 
 @app.route("/")
 def redirect_home():
+    if "user_id" in session:
+        user = db.session.execute(db.select(User).filter_by(id = session["user_id"])).scalar()
+        if not user:
+            session.pop("user_id", None)
+            return redirect(url_for("redirect_home"))
     return redirect("/map/0")
 
 @app.route("/info")
 def info():
+    if request.method == "POST":
+        try:
+            search = request.form["search"]
+            return redirect(f"/search/{search}")
+        except:
+            pass
     return render_template("info.html")
 
 @app.route("/get_markers/<floor>/<room_name>") # creates data for markers
@@ -326,9 +323,7 @@ def get_markers(floor, room_name="None"):
                 if i.room_name in total_rooms_weightage_sum:
                     weightage = total_rooms_weightage_sum[i.room_name]
                 else: weightage = None
-                if i.popup == None:
-                    popup = ""
-                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href='/roompage/{i.room_name}'>{i.room_name}</a><br/>{popup}", "weightage":weightage})
+                markers.append({"lat":float(i.lat), "lng":float(i.lng), "popup":f"<a href='/roompage/{i.room_name}'>{i.room_name}</a>", "weightage":weightage})
     if room_name!="None":
         pass
     else:
@@ -375,7 +370,7 @@ def room_page(room_name):
             fci_room_name = room_name
             epoch_start = current_time_single.timestamp()
             epoch_end = (current_time_single + datetime.timedelta(hours=1)).timestamp()
-            persistence_weeks = 1
+            persistence_weeks = 0
             input_from_scheduleORcustomORbutton = "button"
             availability_weightage_value = int(room_status)
             incoming_to_DB = room_availability_schedule(fci_room_name = fci_room_name, epoch_start = epoch_start, epoch_end = epoch_end, persistence_weeks = persistence_weeks, input_from_scheduleORcustomORbutton = input_from_scheduleORcustomORbutton, availability_weightage_value = availability_weightage_value)
@@ -433,8 +428,18 @@ def search(search):
     aliases_results_list = []
     for i in aliases_results:
         aliases_results_list.append(i)
+    subject_results = db.session.execute(db.select(room_availability_schedule).filter(room_availability_schedule.class_subject_code.icontains(search))).scalars() # searches according to subject code
+    subject_results_list = []
+    for i in subject_results:
+        if i.class_subject_code and i.class_section:
+            subject_results_list.append(i)
+    custom_results = db.session.execute(db.select(room_availability_schedule).filter(room_availability_schedule.schedule_description.icontains(search))).scalars() # searches according to description
+    custom_results_list = []
+    for i in custom_results:
+        if (not i.class_subject_code) and (not i.class_section):
+            custom_results_list.append(i)
     # returns list of unique room names results and list of aliases. Unique room names will be displayed first(jinja in search.html), then aliases results
-    return render_template("search.html", ActivePage = "search", room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list )
+    return render_template("search.html", ActivePage = "search", room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list, subject_results_list = subject_results_list, custom_results_list = custom_results_list)
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
@@ -491,7 +496,7 @@ def chat():
     messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
     
     # Pass Malaysia time zone to the template
-    return render_template('chat.html', messages=messages, malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur'))
+    return render_template('chat.html', messages=messages, ActivePage="chat", malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur'))
 
 #JSON format
 @app.route('/get_messages', methods=['GET'])
