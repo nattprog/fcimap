@@ -214,20 +214,6 @@ def search_suggestion_maker():
         search_suggestion["aliases"].append(i.room_name_aliases)
     session["search_suggestion"] = search_suggestion
 
-# def in_session_weightage_total(room_name):
-#     current_time_single = current_time()
-#     query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = room_name)).all()
-#     weightage_total = None
-#     if query:
-#         weightage_total = 0
-#         for i in range(len(query)):
-#             for ii in range(len(query[i])):
-#                 if (query[i][ii].input_from_scheduleORcustomORbutton == "schedule") and (int(query[i][ii].datetime_start(strftime="%H%M%S%f")) < int(current_time_single.strftime("%H%M%S%f")) <= int(query[i][ii].datetime_end(strftime="%H%M%S%f"))):
-#                     weightage_total += int(query[i][ii].availability_weightage_value)
-#                 elif float(query[i][ii].epoch_start) < float(current_time_single.timestamp()) <= float(query[i][ii].epoch_end):
-#                     weightage_total += int(query[i][ii].availability_weightage_value)
-#     return weightage_total
-
 # Database for block, floor and number of rooms.
 class fci_room(db.Model):
     __tablename__ = "fci_room"
@@ -439,8 +425,13 @@ def search(search):
     aliases_results_list = []
     for i in aliases_results:
         aliases_results_list.append(i)
+    subject_results = db.session.execute(db.select(room_availability_schedule).filter(room_availability_schedule.class_subject_code.icontains(search))).scalars() # searches according to subject code
+    subject_results_list = []
+    for i in subject_results:
+        if i.class_subject_code and i.class_section:
+            subject_results_list.append(i)
     # returns list of unique room names results and list of aliases. Unique room names will be displayed first(jinja in search.html), then aliases results
-    return render_template("search.html", ActivePage = "search", room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list )
+    return render_template("search.html", ActivePage = "search", room_name_results_list = room_name_results_list, aliases_results_list = aliases_results_list, subject_results_list = subject_results_list)
 
 @app.route("/schedule_input/", methods=["GET", "POST"])
 def schedule_input():
