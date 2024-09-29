@@ -5,13 +5,14 @@ Check it out!
 ## https://fcimap.pythonanywhere.com
 
 Features:
-- Interactive map with room and amenities markers
+- Interactive map, with room and amenities markers
+- Databases of room data, name aliases, class and event schedules
 - Room, room alias and subject code search
-- Room info database
 - Crowdsourced class schedule for each room
-- Real time crowdsourced reports of rooms' availabilities
-- Suggestions of empty classrooms based on availability calculations
-- Room chat
+- Real time rooms' activities
+- Suggestions of empty classrooms based on activity calculations
+- Bonus registered user features
+- Fun room chat
 
 > Beta release: 2024-09-22 22:57:06 UTC
 
