@@ -124,6 +124,10 @@ html, body {
     border-radius: 10px;
 }
 
+.searchbar {
+    border-radius: 10px;
+}
+
 .NavigationActive {
     background-color: #003264;
 }

@@ -73,7 +73,7 @@
     <div><a href="/" class="{% if ActivePage == 'index' %}NavigationActive{% endif %}">HOME</a></div>
     <div><a href="/schedule_input/" class="{% if ActivePage == 'schedule_input' %}NavigationActive{% endif %}">ADD SCHEDULE</a></div>
     <div><a href="/chat" class="{% if ActivePage == 'chat' %}NavigationActive{% endif %}">ROOM CHAT</a></div>
-    <div style="flex: 1;"><div class="{% if ActivePage == 'search' %}NavigationActive{% endif %}">
+    <div style="flex: 1;"><div class="searchbar {% if ActivePage == 'search' %}NavigationActive{% endif %}">
         <form style="display: flex; text-align: center;" method="POST">
             <label style="padding-right: 5px;" for="search">SEARCH:</label>
             <input style="flex-grow: 1; font-size: small;" list="search_foo" name="search" id="search" placeholder="{% if session['search'] %}{{session['search']}}{% else %}Enter Search{% endif %}" maxlength="100" required>
