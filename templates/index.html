@@ -84,15 +84,15 @@
     <a href="../3" {% if ActiveFloor == "3" %}class="NavigationActive"{% endif %}>3rd Floor</a>
     <a href="../2" {% if ActiveFloor == "2" %}class="NavigationActive"{% endif %}>2nd Floor</a>
     <a href="../1" {% if ActiveFloor == "1" %}class="NavigationActive"{% endif %}>1st Floor</a>
-    <a href="../0" {% if ActiveFloor == "0" %}class="NavigationActive"{% endif %}>Ground Floor</a>
+    <a href="../0" {% if ActiveFloor == "0" %}class="NavigationActive"{% endif %}>Ground</a>
 </nav>
 
 <div class="folium-map" id="map_fc842e841ad4e3d1b8937629f1f9ec04" style="flex:1"></div>
 
 
 <div class="roomsuggestion">
-    <h4>Suggested Study Rooms:</h4><br/>
-    <div style="display: flex; flex-direction: column; max-height: 30vh; overflow-y: auto; overflow-x: hidden;">
+    <h3>Suggested Rooms:</h3><br/>
+    <div style="display: flex; flex-direction: column; max-height: 30vh; overflow-y: auto; overflow-x: hidden; font-size: 0.9rem;">
     {% if total_rooms_weightage_sum %}
         {% for i in total_rooms_weightage_sum %}
             {% if total_rooms_weightage_sum[i] <= 0 %}
