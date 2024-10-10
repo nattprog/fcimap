@@ -38,7 +38,7 @@ Development start to first official deployment: 15 August 2024 - 28 September 20
 
 
 ## Special thanks:<br/>
-- Mr. Willie, for pushing us to achieve more than we ever could've imagined.
+- Mr. Willie, for pushing us to achieve more than we could've ever imagined.
 - Each and every one of our friends and classmates who gave their overwhelming love and support, and insightful suggestions and tips.<br/>
 (extra special love and thanks to the $${\color{red}'panic'}$$ and $${\color{red}'simp'}$$ groups <3 )
 
