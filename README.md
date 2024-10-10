@@ -21,6 +21,12 @@ Database: SQLite through Sqlalchemy<br/>
 Frontend: HTML & CSS, JS<br/>
 
 
+## Releases:
+> Beta release: 2024-09-22 22:57:06 UTC
+
+> Project submission ver. release: 2024-09-28 16:10:52 UTC
+
+
 ## Project background:<br/>
 A Mini IT project of MMU's Foundation in IT.
 
@@ -49,9 +55,3 @@ Development start to first official deployment: 15 August 2024 - 28 September 20
 
 <img src='https://github.com/user-attachments/assets/c8ce245d-09bc-4c15-a4d0-35a4bd60f94e' width='50%'/><br/>
 (Post-final-presentation pic, 1 October 2024)
-
-
-## Releases:
-> Beta release: 2024-09-22 22:57:06 UTC
-
-> Project submission ver. release: 2024-09-28 16:10:52 UTC
