@@ -1,6 +1,6 @@
 .venv
 __pycache__
 .DS_Store
-\instance
+database.db
 \excelsheetsForDatabase
 \static\clic_add_schedule_tutorial
