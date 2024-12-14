@@ -525,10 +525,13 @@ def signup():
             username = request.form['username']
             email = request.form['email']
             password = request.form['password']
+            confirmpassword = request.form['confirmpassword']
 
             # Password validation
-            if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-                return render_template('signup.html', error="Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
+            if len(password) < 4: #or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password)
+                return render_template('signup.html', error="Password must be at least 4 characters long.") #  contain an uppercase letter, a lowercase letter, a number, and a special character.
+            elif password != confirmpassword:
+                return render_template('signup.html', error="Passwords do not match.")
 
             # Check if the username or email already exists
             existing_user = User.query.filter((User.username == username) | (User.email == email)).first()

@@ -35,7 +35,7 @@
         .signup-container input[type="password"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 0.2rem;
             border: 2px solid #0050a2;
             border-radius: 5px;
             box-sizing: border-box;
@@ -85,6 +85,9 @@
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
+
+            <label for="confirmpassword">Confirm Password:</label>
+            <input type="password" id="confirmpassword" name="confirmpassword" required>
 
             {% if error %}
                 <p style="color:red;">{{ error }}</p>
