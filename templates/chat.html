@@ -5,129 +5,142 @@
 
 {% block head %}
 <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Room</title>
-    <style>
-        /* Container for the chat room */
-        .chat-container {
-            width: 100%;
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            height: 70vh; /* Chat container height to make space for scrolling */
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Room</title>
+<style>
+    /* Container for the chat room */
+    .chat-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        height: 70vh;
+        /* Chat container height to make space for scrolling */
+    }
 
-        /* Heading style */
-        h1 {
-            text-align: center;
-            color: #004080; /* Assuming dark blue theme */
-        }
+    /* Heading style */
+    h1 {
+        text-align: center;
+        color: #004080;
+        /* Assuming dark blue theme */
+    }
 
-        /* Form for new message */
-        .message-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-        }
+    /* Form for new message */
+    .message-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
 
-        .message-form textarea {
-            width: 100%;
-            height: 80px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-            resize: none;
-        }
+    .message-form textarea {
+        width: 100%;
+        height: 80px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        resize: none;
+    }
 
-        .message-form button {
-            align-self: flex-end;
-            padding: 10px 20px;
-            background-color: #0050a2; /* Assuming dark blue */
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .message-form button {
+        align-self: flex-end;
+        padding: 10px 20px;
+        background-color: #0050a2;
+        /* Assuming dark blue */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 
-        .message-form button:hover {
-            background-color: #2180de; /* Darker blue on hover */
-        }
+    .message-form button:hover {
+        background-color: #2180de;
+        /* Darker blue on hover */
+    }
 
-        /* Chat messages section */
-        .messages-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column-reverse; /* Reverse the order of the messages */
-            overflow-y: scroll; /* Enable scrolling */
-            padding-top: 10px;
-            overflow-x: hidden;
-        }
+    /* Chat messages section */
+    .messages-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column-reverse;
+        /* Reverse the order of the messages */
+        overflow-y: scroll;
+        /* Enable scrolling */
+        padding-top: 10px;
+        overflow-x: hidden;
+    }
 
-        .messages {
-            border-top: 2px solid #004080; /* Blue border separating form and messages */
-            padding-top: 20px;
-        }
+    .messages {
+        border-top: 2px solid #004080;
+        /* Blue border separating form and messages */
+        padding-top: 20px;
+    }
 
-        /* Each message */
-        .message {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #f0f8ff; /* Light blue background for each message */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    /* Each message */
+    .message {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        background-color: #f0f8ff;
+        /* Light blue background for each message */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-        .message strong {
-            color: #004080; /* Blue text for usernames */
-        }
+    .message strong {
+        color: #004080;
+        /* Blue text for usernames */
+    }
 
-        .message small {
-            color: #666; /* Grey color for timestamps */
-            font-size: 12px;
-        }
+    .message small {
+        color: #666;
+        /* Grey color for timestamps */
+        font-size: 12px;
+    }
 
-        /* Footer alignment */
-        .footer {
-            margin-top: auto;
-            text-align: center;
-            padding: 10px;
-            background-color: #004080;
-            color: white;
-        }
-    </style>
+    /* Footer alignment */
+    .footer {
+        margin-top: auto;
+        text-align: center;
+        padding: 10px;
+        background-color: #004080;
+        color: white;
+    }
+</style>
 {% endblock %}
 
 
 {% block content %}
+
 <body>
     <div class="chat-container">
         <h1>Room Chat</h1>
 
-                <!-- Chat messages section -->
-                <div class="messages-container" id="messages-container">
-                    <div class="messages" id="messages">
-                        {% for message in messages %}
-                            <div class="message">
-                                <p><strong>{{ message.user.username }}:</strong> 
-                                {{ message.message }} 
-                                <small>({{ message.timestamp.astimezone(malaysiaTZ) }})</small></p>
-                            </div>
-                        {% endfor %}
-                    </div>
+        <!-- Chat messages section -->
+        <div class="messages-container" id="messages-container">
+            <div class="messages" id="messages">
+                {% for message in messages %}
+                <div class="message">
+                    <p><strong>{{ message.user.username }}:</strong>
+                        {{ message.message }}
+                        <small>({{ message.timestamp.astimezone(malaysiaTZ) }})</small>
+                    </p>
                 </div>
-        
+                {% endfor %}
+            </div>
+        </div>
+
 
         <!-- Form to submit new message -->
         <form class="message-form" id="message-form">
-            <textarea id="message" name="message" placeholder="Enter your message..." maxlength="1000" required></textarea><br>
+            <textarea id="message" name="message" placeholder="Enter your message..." maxlength="1000"
+                required></textarea><br>
             <button type="submit">Send</button>
         </form>
     </div>
@@ -138,24 +151,37 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        var prevMsgTime = 0;
         $(document).ready(function () {
             // Function to send a new message via AJAX
             $('#message-form').on('submit', function (event) {
                 event.preventDefault();
                 const message = $('#message').val();
+                let currentMsgTime = Date.now();
+                matches = message.match(/\s/g); /* matchs all whitespace characters*/
+                if (!matches) {
+                    matches = []
+                };
+                if (((currentMsgTime - prevMsgTime > 5000) && (matches.length < message.length))) { /* if not under cooldown and is not just whitespace string*/
+                    prevMsgTime = currentMsgTime;
 
-                $.ajax({
-                    url: '/chat',  // Flask route to handle message submission
-                    type: 'POST',
-                    data: { message: message },
-                    success: function () {
-                        $('#message').val('');  // Clear the textarea after submission
-                        loadMessages();  // Reload messages
-                    },
-                    error: function () {
-                        alert('Message failed to send.');
-                    }
-                });
+                    $.ajax({
+                        url: '/chat',  // Flask route to handle message submission
+                        type: 'POST',
+                        data: { message: message },
+                        success: function () {
+                            $('#message').val('');  // Clear the textarea after submission
+                            loadMessages();  // Reload messages
+                        },
+                        error: function () {
+                            alert('Message failed to send.');
+                        }
+                    });
+                } else if (!(currentMsgTime - prevMsgTime > 5000)) { /* if under cooldown, alert*/
+                    alert("Slow down!")
+                } else if (!(matches.length < message.length)) { /* if whitespace string, alert*/
+                    alert("No empty messages.")
+                };
             });
 
             // Function to load all messages via AJAX
