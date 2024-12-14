@@ -27,8 +27,8 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     schedule_input = schedule_input.replace("\n", " ")
 
     dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
-    times_schedule = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*([A-Z]*\d*)\s*-\s*(TUT|LEC|LAB)\s*\((\w{0,6})\)"
-    times_custom = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*(Class/Tutorial|Club\sActivity/Event|Examination|Final\sExam|External\sEvent|Meeting/Discussion|Others|Presentation|Training/Conference)"
+    times_schedule = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*(\w*)\s*-\s*(TUT|LEC|LAB)\s*\((\w{0,6})\)"
+    times_custom =   r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*(Class/Tutorial|Club\sActivity/Event|Examination|Final\sExam|External\sEvent|Meeting/Discussion|Others|Presentation|Training/Conference)"
     # regex string to find in the input. 
 
     # months = string to match the dates
