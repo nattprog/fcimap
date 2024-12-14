@@ -80,10 +80,10 @@
             <datalist id="search_foo">
                 {% if session["search_suggestion"] %}
                     {% for i in session["search_suggestion"]["name"] %}
-                    <option value="{{i}}">
+                    <option value="{{i}}"></option>
                     {% endfor %}
                     {% for i in session["search_suggestion"]["aliases"] %}
-                    <option value="{{i}}">
+                    <option value="{{i}}"></option>
                     {% endfor %}
                 {% endif %}
             </datalist>

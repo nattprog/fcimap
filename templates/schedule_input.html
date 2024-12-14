@@ -29,7 +29,7 @@ rows="10" cols="25" maxlength="2000" style="resize: none;" required></textarea>
                 <datalist id="custom_schedule_search_room_foo">
                     {% if session['search_suggestion']%}
                         {% for i in session['search_suggestion']["name"] %}
-                        <option value="{{i}}">
+                        <option value="{{i}}"></option>
                         {% endfor %}
                     {% endif %}
                 </datalist>
@@ -37,17 +37,17 @@ rows="10" cols="25" maxlength="2000" style="resize: none;" required></textarea>
         <input class="textarea" type="datetime-local" id="custom_schedule_datetime" name="custom_schedule_datetime" min="{{current_time.strftime('%Y-%m-%dT%H:%M')}}" max="{{current_time_max.strftime('%Y-%m-%dT%H:%M')}}" value="{% if session['custom_schedule_datetime'] %}{{session['custom_schedule_datetime']}}{% endif %}" required><br/>
     <label for="custom_schedule_hours"><strong>Duration (hours):</strong></label>
     <select class="textarea" name="custom_schedule_hours" id="custom_schedule_hours" required>
-        <option value="1" {% if session['custom_schedule_hours'] == '1' %}selected{% endif %}>1 Hour</option>
-        <option value="2" {% if session['custom_schedule_hours'] == '2' %}selected{% endif %}>2 Hours</option>
-        <option value="3" {% if session['custom_schedule_hours'] == '3' %}selected{% endif %}>3 Hours</option>
-        <option value="4" {% if session['custom_schedule_hours'] == '4' %}selected{% endif %}>4 Hours</option>
-        <option value="5" {% if session['custom_schedule_hours'] == '5' %}selected{% endif %}>5 Hours</option>
+        <option value="1" selected="{% if session['custom_schedule_hours'] == '1' %}selected{% endif %}">1 Hour</option>
+        <option value="2" selected="{% if session['custom_schedule_hours'] == '2' %}selected{% endif %}">2 Hours</option>
+        <option value="3" selected="{% if session['custom_schedule_hours'] == '3' %}selected{% endif %}">3 Hours</option>
+        <option value="4" selected="{% if session['custom_schedule_hours'] == '4' %}selected{% endif %}">4 Hours</option>
+        <option value="5" selected="{% if session['custom_schedule_hours'] == '5' %}selected{% endif %}">5 Hours</option>
     </select><br/>
     <span><strong>Status:</strong></span><br/>
     <div class="textarea">
-    <input type="radio" id="empty" name="custom_room_status" value="-10" {% if session['custom_room_status'] == '-10' %}checked{% endif %} required>
+    <input type="radio" id="empty" name="custom_room_status" value="-10" checked="{% if session['custom_room_status'] == '-10' %}checked{% endif %}" required="required">
     <label for="empty">Empty</label><br/>
-    <input type="radio" id="occupied" name="custom_room_status" value="10" {% if session['custom_room_status'] == '10' %}checked{% endif %} required>
+    <input type="radio" id="occupied" name="custom_room_status" value="10" checked="{% if session['custom_room_status'] == '10' %}checked{% endif %}" required="required">
     <label for="occupied">Occupied</label>
     </div>
     <label for="custom_schedule_textarea"><strong>Description:</strong></label><br/>
