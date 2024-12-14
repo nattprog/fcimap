@@ -33,7 +33,7 @@
             margin-bottom: 5px;
             text-align: left;
         }
-        .login-container input[type="email"],
+        .login-container input[type="text"],
         .login-container input[type="password"] {
             width: 100%;
             padding: 10px;
@@ -43,7 +43,7 @@
             box-sizing: border-box;
             outline: none;
         }
-        .login-container input[type="email"]:focus,
+        .login-container input[type="text"]:focus,
         .login-container input[type="password"]:focus {
             border-color: #0050a2;
         }
@@ -81,8 +81,8 @@
             <p style="color:red;">{{ error }}</p>
         {% endif %}
         <form action="/login" method="POST">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+            <label for="emailusername">Email or Username:</label>
+            <input type="text" id="emailusername" name="emailusername" required>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>

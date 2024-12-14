@@ -564,18 +564,23 @@ def login():
         except:
             pass
         try:
-            email = request.form['email']
+            emailusername = request.form['emailusername']
             password = request.form['password']
 
-            user = User.query.filter_by(email=email).first()
+            userByEmail = User.query.filter_by(email=emailusername).first()
+            userByUsername = User.query.filter_by(username=emailusername).first()
 
             # Check if the user exists and verify the password
-            if user and check_password_hash(user.password, password):
-                session['user_id'] = user.id
+            if userByEmail and check_password_hash(userByEmail.password, password):
+                session['user_id'] = userByEmail.id
+                flash("Logged in successfully")
+                return redirect("/")
+            elif userByUsername and check_password_hash(userByUsername.password, password):
+                session['user_id'] = userByUsername.id
                 flash("Logged in successfully")
                 return redirect("/")
             else:
-                return render_template('login.html', error="Invalid email or password.")
+                return render_template('login.html', error="Invalid email/username or password.")
         except:
             pass
 
