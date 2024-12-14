@@ -501,7 +501,11 @@ def chat():
 #JSON format
 @app.route('/get_messages', methods=['GET'])
 def get_messages():
+    maxMessages = 50
     messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    if len(messages) > maxMessages:
+        messages = messages[-maxMessages:]
+
     messages_list = [
         {'user': {'username': escape(message.user.username)}, 'message': escape(message.message), 'timestamp': message.timestamp}
         for message in messages
