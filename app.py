@@ -554,12 +554,15 @@ def signup():
                 return render_template('signup.html', error="Passwords do not match.")
 
             # Check if the username or email already exists
-            existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+            # existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+            existing_user = User.query.filter((User.username == username)).first() or User.query.filter((User.email == email)).first() or User.query.filter((User.username == email)).first() or User.query.filter((User.email == username)).first()
+            print(existing_user)
             if existing_user:
-                if existing_user.username == username:
-                    return render_template('signup.html', error="Username already registered.", login_link=True)
-                elif existing_user.email == email:
-                    return render_template('signup.html', error="Email address already registered.", login_link=True)
+                # if existing_user.username == username:
+                #     return render_template('signup.html', error="Username already registered.", login_link=True)
+                # elif existing_user.email == email:
+                #     return render_template('signup.html', error="Email address already registered.", login_link=True)
+                return render_template('signup.html', error="Username/email already registered.", login_link=True)
 
             # Hash the password using pbkdf2:sha256
             hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
