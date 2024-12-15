@@ -10,9 +10,11 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css" />
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
+<link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css" />
 
 <meta name="viewport" content="width=device-width,
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -23,177 +25,209 @@
         max-height: 80vh;
         flex: 1;
     }
-    
 </style>
 <style>
     /* Popup container - can be anything you want */
     .popup {
-      position: relative;
-      display: inline-block;
-      cursor: pointer;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
-    
+
     /* The actual popup */
     .popup .popuptext {
-      visibility: hidden;
-      width: 180px;
-      background-color: white;
-      color: black;
-      border-radius: 6px;
-      padding: 5px;
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      cursor: default;
+        visibility: hidden;
+        width: 180px;
+        background-color: white;
+        color: black;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        cursor: default;
     }
-    
+
     /* Toggle this class - hide and show the popup */
     .popup .show {
-      visibility: visible;
-      -webkit-animation: fadeIn 0.5s;
-      animation: fadeIn 0.5s;
+        visibility: visible;
+        -webkit-animation: fadeIn 0.5s;
+        animation: fadeIn 0.5s;
     }
-    
+
     /* Add animation (fade in the popup) */
     @-webkit-keyframes fadeIn {
-      from {opacity: 0;} 
-      to {opacity: 1;}
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
     }
-    
+
     @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity:1 ;}
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
     }
 
     .AddInfo {
         cursor: pointer;
     }
-    </style>
+</style>
 {% endblock %}
 {% block content %}
+
 <body>
-<div class="RoomPageMainDiv">
-    <div class="RoomPageStatus">
-        <div>
-            <h3>Availability:</h3>
-            <a class="room_suggest_block justify_center" style="margin: 0;" onclick="infoFunction()">
-            {% if total_rooms_weightage_sum %}
-                {% if total_rooms_weightage_sum[room.room_name] <= -5 %}
-                <img class="justify_center" src="{{ url_for('static', filename='images/roomempty.png')}}" style="height: 1.5rem"><span> Empty</span>
-                {% elif total_rooms_weightage_sum[room.room_name] == 0 %}
-                <img class="justify_center" src="{{ url_for('static', filename='images/roominactive.png')}}" style="height: 1.5rem"><span> Inactive</span>
-                {% elif total_rooms_weightage_sum[room.room_name] >= 5 %}
-                <img class="justify_center" src="{{ url_for('static', filename='images/roomoccupied.png')}}" style="height: 1.5rem"><span> Occupied</span>
-                {% endif %}
-            {% else %}
-            <span> No data</span>
-            {% endif %}
-            </a>
-        </div><br/>
-        <div>
-            <h3>Report availability:</h3>
-            <form method="POST">
-                <div class="textarea">
-                <input type="radio" id="empty" name="room_status" value="-5" required>
-                <label for="empty">Empty</label><br/>
-                <input type="radio" id="occupied" name="room_status" value="+5" required>
-                <label for="occupied">Occupied</label></div>
-                <input type="submit" value="Submit" class="roompage_submit">
-            </form>
-        </div><br/>
-        <div>
-            <h3>Current class:</h3>
-            {% if class_in_session_list %}
-            <span class="scrollbox">
-            {% for class_in_session in class_in_session_list %}
-            {{class_in_session.class_subject_code}}  {{class_in_session.class_section}}  ({{class_in_session.schedule_description}})<br/>
-            {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} - {{class_in_session.datetime_end(strftime="%I:%M%p")}}<br/><br/>   
-            Schedule last updated: {{class_in_session.datetime_start(strftime="%b %d, %Y")}}
-            {% endfor %}
-            </span>
-            {% endif %}
-        </div><br/>
-        <div>
-            <h3>Current events:</h3>
-            {% if custom_in_session_list %}
-            <span class="scrollbox">
-            {% for custom_in_session in custom_in_session_list %}
-                <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_in_session.datetime_start(strftime="%b %d, %Y %I:%M%p")}} - 
-                {% if custom_in_session.datetime_start(strftime="%b %d") != custom_in_session.datetime_end(strftime="%b %d") %}{{custom_in_session.datetime_end(strftime="%b %d, %Y")}}{% endif %}
-                {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</span>
-                {% if custom_in_session.availability_weightage_value > 0 %}Occupied{% elif custom_in_session.availability_weightage_value <= 0 %}Empty{% endif %} | {{custom_in_session.schedule_description}}<br/><br/>
-                {% endfor %}
+    <div class="RoomPageMainDiv">
+        <div class="RoomPageStatus">
+            <div>
+                <h3>Availability:</h3>
+                <a class="room_suggest_block justify_center" style="margin: 0;" onclick="infoFunction()">
+                    {% if total_rooms_weightage_sum %}
+                    {% if total_rooms_weightage_sum[room.room_name] <= -5 %} <img class="justify_center"
+                        src="{{ url_for('static', filename='images/roomempty.png')}}" style="height: 1.5rem"><span>
+                            Empty</span>
+                        {% elif total_rooms_weightage_sum[room.room_name] == 0 %}
+                        <img class="justify_center" src="{{ url_for('static', filename='images/roominactive.png')}}"
+                            style="height: 1.5rem"><span> Inactive</span>
+                        {% elif total_rooms_weightage_sum[room.room_name] >= 5 %}
+                        <img class="justify_center" src="{{ url_for('static', filename='images/roomoccupied.png')}}"
+                            style="height: 1.5rem"><span> Occupied</span>
+                        {% endif %}
+                        {% else %}
+                        <span> No data</span>
+                        {% endif %}
+                </a>
+            </div><br />
+            <div>
+                <h3>Report availability:</h3>
+                <form method="POST">
+                    <div class="textarea">
+                        <input type="radio" id="empty" name="room_status" value="-5" required>
+                        <label for="empty">Empty</label><br />
+                        <input type="radio" id="occupied" name="room_status" value="+5" required>
+                        <label for="occupied">Occupied</label>
+                    </div>
+                    <input type="submit" value="Submit" class="roompage_submit">
+                </form>
+            </div><br />
+            <div>
+                <h3>Current class:</h3>
+                {% if class_in_session_list %}
+                <span class="scrollbox">
+                    {% for class_in_session in class_in_session_list %}
+                    {{class_in_session.class_subject_code}} {{class_in_session.class_section}}
+                    ({{class_in_session.schedule_description}})<br />
+                    {{class_in_session.datetime_start(strftime="%A, %I:%M%p")}} -
+                    {{class_in_session.datetime_end(strftime="%I:%M%p")}}<br /><br />
+                    Schedule last updated: {{class_in_session.datetime_start(strftime="%b %d, %Y")}}
+                    {% endfor %}
                 </span>
                 {% endif %}
-        </div>
-    </div>
-    <div class="room_info_map" style="flex:1;">
-        <div class="RoomPageInfo">
-            <div class="RoomName">
-            <h1>{{room.room_name}}</h1>
-            {% if room.room_name_aliases %}
-            <span><strong>Aliases:</strong></span><br/>
-            {% for i in room.room_name_aliases %}
-            {{ i.room_name_aliases }}<br/>
-            {% endfor %}
-            {% endif %}
+            </div><br />
+            <div>
+                <h3>Current events:</h3>
+                {% if custom_in_session_list %}
+                <span class="scrollbox">
+                    {% for custom_in_session in custom_in_session_list %}
+                    <span
+                        style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_in_session.datetime_start(strftime="%b
+                        %d, %Y %I:%M%p")}} -
+                        {% if custom_in_session.datetime_start(strftime="%b %d") !=
+                        custom_in_session.datetime_end(strftime="%b %d") %}{{custom_in_session.datetime_end(strftime="%b
+                        %d, %Y")}}{% endif %}
+                        {{custom_in_session.datetime_end(strftime="%I:%M%p")}}</span>
+                    {% if custom_in_session.availability_weightage_value > 0 %}Occupied{% elif
+                    custom_in_session.availability_weightage_value
+                    <= 0 %}Empty{% endif %} | {{custom_in_session.schedule_description}}<br /><br />
+                    {% endfor %}
+                </span>
+                {% endif %}
             </div>
-            <div class="RoomInfo">
-                <strong>Block:</strong> {{room.room_block}}<br/>
-                <strong>Floor:</strong> {% if room.room_floor == 0 %}Ground{% else %}{{room.room_floor}}{% endif %}<br/>
-                <strong>Room:</strong> {{room.room_number}}<br/><br/>
+        </div>
+        <div class="room_info_map" style="flex:1;">
+            <div class="RoomPageInfo">
+                <div class="RoomName">
+                    <h1>{{room.room_name}}</h1>
+                    {% if room.room_name_aliases %}
+                    <span><strong>Aliases:</strong></span><br />
+                    {% for i in room.room_name_aliases %}
+                    {{ i.room_name_aliases }}<br />
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="RoomInfo">
+                    <strong>Block:</strong> {{room.room_block}}<br />
+                    <strong>Floor:</strong> {% if room.room_floor == 0 %}Ground{% else %}{{room.room_floor}}{% endif
+                    %}<br />
+                    <strong>Room:</strong> {{room.room_number}}<br /><br />
+                </div>
+            </div>
+            <div class="folium-map2" id="map_fc842e841ad4e3d1b8937629f1f9ec04"></div>
+        </div>
+        <div class="RoomClassSchedule">
+            <div>
+                <h3>CLiC schedule:</h3>
+                {% if class_schedule_list %}
+                <section class="scrollbox">
+                    {% for schedule_single in class_schedule_list %}
+                    {% if loop.first or (schedule_single.datetime_start("%A") != loop.previtem.datetime_start("%A"))%}
+                    <span
+                        style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{schedule_single.datetime_start(strftime="%A")}}</span>
+                    {% endif %}
+                    {{ schedule_single.class_subject_code }} {{ schedule_single.class_section }}
+                    ({{schedule_single.schedule_description}}) {{schedule_single.datetime_start(strftime="%I:%M%p")}} -
+                    {{schedule_single.datetime_end(strftime="%I:%M%p")}}
+                    <br />
+                    {% endfor %}
+                </section>
+                {% endif %}
+            </div>
+            <div>
+                <br />
+                <h3>Upcoming events:</h3>
+                {% if custom_schedule_list %}
+                <section class="scrollbox">
+                    {% for custom_single in custom_schedule_list %}
+                    <span
+                        style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_single.datetime_start(strftime="%b
+                        %d, %Y | %I:%M%p")}} -
+                        {% if custom_single.datetime_start(strftime="%b %d") != custom_single.datetime_end(strftime="%b
+                        %d") %}{{custom_single.datetime_end(strftime="%b %d, %Y")}}{% endif %}
+                        {{custom_single.datetime_end(strftime="%I:%M%p")}}</span>
+                    <span>{% if custom_single.availability_weightage_value > 0 %}Occupied{% elif
+                        custom_single.availability_weightage_value <= 0 %}Empty{% endif %} |
+                            {{custom_single.schedule_description}}</span><br />
+                            {% endfor %}
+                            {% endif %}
+                </section>
             </div>
         </div>
-        <div class="folium-map2" id="map_fc842e841ad4e3d1b8937629f1f9ec04" ></div>
     </div>
-    <div class="RoomClassSchedule">
-        <div>
-            <h3>CLiC schedule:</h3>
-            {% if class_schedule_list %}
-            <section class="scrollbox">
-            {% for schedule_single in class_schedule_list %}
-            {% if loop.first  or (schedule_single.datetime_start("%A") != loop.previtem.datetime_start("%A"))%}
-            <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{schedule_single.datetime_start(strftime="%A")}}</span>
-            {% endif %}
-            {{ schedule_single.class_subject_code }} {{ schedule_single.class_section }} ({{schedule_single.schedule_description}}) {{schedule_single.datetime_start(strftime="%I:%M%p")}} - {{schedule_single.datetime_end(strftime="%I:%M%p")}}
-            <br/>
-            {% endfor %}
-            </section>
-            {% endif %}
-        </div>
-        <div>
-            <br/><h3>Upcoming events:</h3>
-            {% if custom_schedule_list %}
-            <section class="scrollbox">
-            {% for custom_single in custom_schedule_list %}
-            <span style="border-bottom: 1px black solid; padding-block: 5px; margin-bottom: 5px;">{{custom_single.datetime_start(strftime="%b %d, %Y | %I:%M%p")}} - 
-            {% if custom_single.datetime_start(strftime="%b %d") != custom_single.datetime_end(strftime="%b %d") %}{{custom_single.datetime_end(strftime="%b %d, %Y")}}{% endif %}
-            {{custom_single.datetime_end(strftime="%I:%M%p")}}</span>
-            <span>{% if custom_single.availability_weightage_value > 0 %}Occupied{% elif custom_single.availability_weightage_value <= 0 %}Empty{% endif %} | {{custom_single.schedule_description}}</span><br/>
-            {% endfor %}
-            {% endif %}
-            </section>
-        </div>
-    </div>
-</div>
 </body>
 
 <script>
     var bounds = [[2.929198, 101.641659], [2.928153, 101.640517]];
 
     var map_fc842e841ad4e3d1b8937629f1f9ec04 = L.map("map_fc842e841ad4e3d1b8937629f1f9ec04", {
-        center: [2.9287237444877112, 101.64111369303583],  
-        zoom: 19,                       
-        zoomControl: true,              
-        scrollWheelZoom: true,          
-        doubleClickZoom: true,          
-        boxZoom: true,                  
-        maxBounds: bounds,              
-        maxBoundsViscosity: 1.0         
+        center: [2.9287237444877112, 101.64111369303583],
+        zoom: 19,
+        zoomControl: true,
+        scrollWheelZoom: true,
+        doubleClickZoom: true,
+        boxZoom: true,
+        maxBounds: bounds,
+        maxBoundsViscosity: 1.0
     });
 
     var tile_layer_83dec95f1ac1e96879a56d6b9ff972a2 = L.tileLayer(
@@ -213,32 +247,32 @@
 
     tile_layer_83dec95f1ac1e96879a56d6b9ff972a2.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
 
-    var movela= 0.00004;
-    var movelo= 0.00012;
+    var movela = 0.00004;
+    var movelo = 0.00012;
 
     var enlargeLat = 0.00007;
     var enlargeLng = 0.00007;
 
-    var image_bounds = [[2.9283 - movela - enlargeLat, 101.6403 + movelo - enlargeLng],[2.9292 - movela, 101.6417 + movelo]];
+    var image_bounds = [[2.9283 - movela - enlargeLat, 101.6403 + movelo - enlargeLng], [2.9292 - movela, 101.6417 + movelo]];
 
     var room_name = "{{ room.room_name }}";
-    var floorNumber = "{{ room.room_floor }}"; 
+    var floorNumber = "{{ room.room_floor }}";
 
     var floorImage = "{{ url_for('static', filename='images/floor') }}" + floorNumber + ".png";
 
-    var iconButton = L.control({position: 'topright'});
-    iconButton.onAdd = function(map) {
+    var iconButton = L.control({ position: 'topright' });
+    iconButton.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom'); //I swear there's no other way to do this. Folium's stylesheet messes it up
         div.innerHTML = '<div class="popup" onclick="myFunction()" style="font-size:small;"><img src="/static/images/info.png" class="AddInfo" style="width:24px;height:24px;cursor:pointer;" title="Show Icon Descriptions"/><section class="popuptext" id="myPopup"><h5>Icon Descriptions</h5><ul><li><img src="/static/images/roomempty.png" width="24" height="24"> Empty Room</li><li><img src="/static/images/roominactive.png" width="24" height="24"> Inactive Room</li><li><img src="/static/images/roomoccupied.png" width="24" height="24"> Occupied Room</li></ul><a href="/info" style="background-color:#0050a2; color:white; width:100%; height:unset; line-height:normal; padding: 5px; margin:0; border-radius:5px;">More Details</a></section></div>';
-        div.onclick = function(){
+        div.onclick = function () {
             var popup = document.getElementById("myPopup");
             popup.classList.toggle("show");
-            
+
         };
         return div;
     };
     iconButton.addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
-    
+
     L.imageOverlay(floorImage, image_bounds, {
         opacity: 1.0,
     }).addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
@@ -263,32 +297,32 @@
         iconSize: [24, 24]
     })
 
-    $.getJSON("/get_markers/None/{{ room.room_name }}", function(markers) {
-    markers.forEach(function(marker) {
-        var icon;
-        if (marker.weightage < 0) {
-            icon = emptyicon;
-        } else if (marker.weightage === 0) {
-            icon = inactiveicon;
-        } else if (marker.weightage > 0) {
-            icon = occupiedicon;
-        } else {
-            icon = defaulticon;
-        }
+    $.getJSON("/get_markers/None/{{ room.room_name }}", function (markers) {
+        markers.forEach(function (marker) {
+            var icon;
+            if (marker.weightage < 0) {
+                icon = emptyicon;
+            } else if (marker.weightage === 0) {
+                icon = inactiveicon;
+            } else if (marker.weightage > 0) {
+                icon = occupiedicon;
+            } else {
+                icon = defaulticon;
+            }
 
-        L.marker([marker.lat, marker.lng], { icon: icon })
-            .bindPopup(marker.popup)
-            .addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
+            L.marker([marker.lat, marker.lng], { icon: icon })
+                .bindPopup(marker.popup)
+                .addTo(map_fc842e841ad4e3d1b8937629f1f9ec04);
 
             map_fc842e841ad4e3d1b8937629f1f9ec04.setView([marker.lat, marker.lng], 20);
-            
+
         });
     });
 
 </script>
 <script>
     function infoFunction() {
-    var popup = document.getElementById("myPopup");
+        var popup = document.getElementById("myPopup");
         popup.classList.toggle("show");
     }
 </script>
