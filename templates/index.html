@@ -20,12 +20,12 @@
 
 <meta name="viewport" content="width=device-width,
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <style>
-        .flexx {
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
+<style>
+    .flexx {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
 <style>
     #map_fc842e841ad4e3d1b8937629f1f9ec04 {
         min-height: 70vh;
@@ -110,15 +110,6 @@
 
         <div class="roomsuggestion">
             <h3>Suggested Rooms:</h3><br />
-            <h4>Fast forwarded: {{fastforward}} Minutes</h4>
-            <div class="flexx">
-                <span>
-                {% if fastforward > 0%}
-                <a href="?fastforward={{fastforward-15}}">-15 Minutes</a>
-                {% endif %}
-                </span>
-                <span><a href="?fastforward={{fastforward+15}}">+15 Minutes</a></span>
-            </div>
             <div
                 style="display: flex; flex-direction: column; max-height: 30vh; overflow-y: auto; overflow-x: hidden; font-size: 0.9rem;">
                 {% if total_rooms_weightage_sum %}
@@ -136,11 +127,20 @@
                         {% endfor %}
                         {% endif %}
             </div>
+            <h4>Fast forwarded: {{fastforward}} Minutes</h4>
+            <span style="font-size: 0.8rem;">(Does not affect map)</span>
+            <div class="flexx">
+                <span>
+                    {% if fastforward > 0%}
+                    <a href="?fastforward={{fastforward-15}}">-15 Minutes</a>
+                    {% endif %}
+                </span>
+                <span><a href="?fastforward={{fastforward+15}}">+15 Minutes</a></span>
+            </div>
             <br />
             <span style="text-align: left;"></span><strong>Disclaimer:</strong><br /><span
-                style="font-size: 0.8rem;">All rooms listed have had their CLiC schedules added less than 12 weeks ago
-                OR have had reservations less than a day ago.<br />We can not guarantee the availability of these rooms,
-                only provide an educated guess.</span>
+                style="font-size: 0.8rem;">All schedules added from CLiC have a permanence of 12 weeks, unless
+                updated.<br />Room availability shown intended merely to provide an educated guess.</span>
         </div>
     </div>
 </body>
