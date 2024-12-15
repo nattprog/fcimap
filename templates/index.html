@@ -20,6 +20,12 @@
 
 <meta name="viewport" content="width=device-width,
     initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+        .flexx {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
 <style>
     #map_fc842e841ad4e3d1b8937629f1f9ec04 {
         min-height: 70vh;
@@ -104,16 +110,26 @@
 
         <div class="roomsuggestion">
             <h3>Suggested Rooms:</h3><br />
+            <h4>Fast forwarded: {{fastforward}} Minutes</h4>
+            <div class="flexx">
+                <span>
+                {% if fastforward > 0%}
+                <a href="?fastforward={{fastforward-15}}">-15 Minutes</a>
+                {% endif %}
+                </span>
+                <span><a href="?fastforward={{fastforward+15}}">+15 Minutes</a></span>
+            </div>
             <div
                 style="display: flex; flex-direction: column; max-height: 30vh; overflow-y: auto; overflow-x: hidden; font-size: 0.9rem;">
                 {% if total_rooms_weightage_sum %}
                 {% for i in total_rooms_weightage_sum %}
                 {% if total_rooms_weightage_sum[i] <= 0 %} <a href="/roompage/{{i}}"
                     class="room_suggest_block justify_center">
-                    {% if total_rooms_weightage_sum[i] <= -5 %} 
-                        <img class="justify_center" src="{{ url_for('static', filename='images/roomempty.png')}}" style="height: 1.5rem">
+                    {% if total_rooms_weightage_sum[i] <= -5 %} <img class="justify_center"
+                        src="{{ url_for('static', filename='images/roomempty.png')}}" style="height: 1.5rem">
                         {% elif total_rooms_weightage_sum[i] == 0 %}
-                        <img class="justify_center" src="{{ url_for('static', filename='images/roominactive.png')}}" style="height: 1.5rem">
+                        <img class="justify_center" src="{{ url_for('static', filename='images/roominactive.png')}}"
+                            style="height: 1.5rem">
                         {% endif %}
                         <span class="justify_center" style="height: 2rem; text-align: center;">{{i}}</span></a>
                         {% endif %}

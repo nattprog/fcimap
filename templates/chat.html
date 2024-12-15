@@ -125,14 +125,14 @@
         <!-- Chat messages section -->
         <div class="messages-container" id="messages-container">
             <div class="messages" id="messages">
-                {% for message in messages %}
+                <!-- {% for message in messages %}
                 <div class="message">
                     <p><strong>{{ message.user.username }}:</strong>
                         {{ message.message }}
                         <small>({{ message.timestamp.astimezone(malaysiaTZ) }})</small>
                     </p>
                 </div>
-                {% endfor %}
+                {% endfor %} -->
             </div>
         </div>
 
@@ -154,63 +154,63 @@
         var prevMsgTime = 0;
         $(document).ready(
             function () {
-            // Function to send a new message via AJAX
-            $('#message-form').on('submit', function (event) {
-                event.preventDefault();
-                const message = $('#message').val();
-                let currentMsgTime = Date.now();
-                matches = message.match(/\s/g); /* matchs all whitespace characters*/
-                if (!matches) {
-                    matches = []
-                };
-                if (((currentMsgTime - prevMsgTime > 5000) && (matches.length < message.length))) { /* if not under cooldown and is not just whitespace string*/
-                    prevMsgTime = currentMsgTime;
+                // Function to send a new message via AJAX
+                $('#message-form').on('submit', function (event) {
+                    event.preventDefault();
+                    const message = $('#message').val();
+                    let currentMsgTime = Date.now();
+                    matches = message.match(/\s/g); /* matchs all whitespace characters*/
+                    if (!matches) {
+                        matches = []
+                    };
+                    if (((currentMsgTime - prevMsgTime > 5000) && (matches.length < message.length))) { /* if not under cooldown and is not just whitespace string*/
+                        prevMsgTime = currentMsgTime;
 
+                        $.ajax({
+                            url: '/chat',  // Flask route to handle message submission
+                            type: 'POST',
+                            data: { message: message },
+                            success: function () {
+                                $('#message').val('');  // Clear the textarea after submission
+                                loadMessages();  // Reload messages
+                            },
+                            error: function () {
+                                alert('Message failed to send.');
+                            }
+                        });
+                    } else if (!(currentMsgTime - prevMsgTime > 5000)) { /* if under cooldown, alert*/
+                        alert("Slow down!");
+                    } else if (!(matches.length < message.length)) { /* if whitespace string, alert*/
+                        alert("No empty messages.");
+                    };
+                });
+
+                // Function to load all messages via AJAX
+                function loadMessages() {
                     $.ajax({
-                        url: '/chat',  // Flask route to handle message submission
-                        type: 'POST',
-                        data: { message: message },
-                        success: function () {
-                            $('#message').val('');  // Clear the textarea after submission
-                            loadMessages();  // Reload messages
-                        },
-                        error: function () {
-                            alert('Message failed to send.');
-                        }
-                    });
-                } else if (!(currentMsgTime - prevMsgTime > 5000)) { /* if under cooldown, alert*/
-                    alert("Slow down!")     
-                } else if (!(matches.length < message.length)) { /* if whitespace string, alert*/
-                    alert("No empty messages.")
-                };
-            });
+                        url: '/get_messages',  // Flask route to get all messages
+                        type: 'GET',
+                        success: function (data) {
+                            $('#messages').html('');  // Clear current messages
 
-            // Function to load all messages via AJAX
-            function loadMessages() {
-                console.log("loadMessages ran")
-                $.ajax({
-                    url: '/get_messages',  // Flask route to get all messages
-                    type: 'GET',
-                    success: function (data) {
-                        $('#messages').html('');  // Clear current messages
-
-                        data.messages.forEach(function (msg) {
-                            $('#messages').append(`
+                            data.messages.forEach(function (msg) {
+                                $('#messages').append(`
                                 <div class="message">
                                     <p><strong>${msg.user.username}:</strong> ${msg.message} <small>(${msg.timestamp})</small></p>
                                 </div>
                             `);
-                        });
-                    },
-                    error: function () {
-                        alert('Failed to load messages.');
-                    }
-                });
-            }
+                            });
+                        },
+                        error: function () {
+                            alert('Failed to load messages.');
+                        }
+                    });
+                }
 
-            // Call loadMessages periodically to keep messages updated
-            setInterval(loadMessages, 10000);  // Poll every 3 seconds
-        });
+                // Call loadMessages periodically to keep messages updated
+                loadMessages()
+                setInterval(loadMessages, 10000);  // Poll every 3 seconds
+            });
     </script>
 </body>
 {% endblock %}

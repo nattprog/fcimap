@@ -4,7 +4,8 @@ import datetime, pytz, re
 from werkzeug.security import generate_password_hash, check_password_hash
 from markupsafe import escape
 from flask_migrate import Migrate
-from profanityfilter import ProfanityFilter
+# from profanityfilter import ProfanityFilter
+from better_profanity import profanity
 
 # Flask and sqlalchemy config
 app = Flask(__name__)
@@ -150,8 +151,8 @@ def user_input_new_custom(): # the only reason this is up here is to clear up th
         session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = custom_schedule_search_room, custom_schedule_datetime, custom_schedule_hours, custom_room_status, custom_schedule_textarea # retains values from failed booking
         success_fail_flash(False)
 
-def return_dict_all_rooms_weightage(fci_room_name=None):
-    current_time_single = current_time()
+def return_dict_all_rooms_weightage(fci_room_name=None, fastforward=0):
+    current_time_single = current_time() + datetime.timedelta(minutes=fastforward)
     total_rooms_weightage_sum = {}
     if fci_room_name: # if room_name argument is given, search according to only that room name
         query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = fci_room_name)).scalars()
@@ -232,7 +233,7 @@ class fci_room(db.Model):
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=lambda: datetime.datetime.now(pytz.timezone('Asia/Kuala_Lumpur')))
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.datetime.now().astimezone(malaysiaTZ))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     
     # Relationship to get the username
@@ -336,6 +337,7 @@ def get_markers(floor, room_name="None"):
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
+    fastforward = 0
     global total_rooms_weightage_sum
     delete_old_schedule()
     if request.method == "POST":
@@ -344,9 +346,14 @@ def home(floor):
             return redirect(f"/search/{search}")
         except:
             pass
+    if "fastforward" in request.args:
+        fastforward = int(request.args["fastforward"])
+        if fastforward < 0:
+            fastforward = 0
+
     search_suggestion_maker()
-    total_rooms_weightage_sum = return_dict_all_rooms_weightage()
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor, total_rooms_weightage_sum = total_rooms_weightage_sum)
+    total_rooms_weightage_sum = return_dict_all_rooms_weightage(fastforward=fastforward)
+    return render_template("index.html", ActivePage="index", ActiveFloor = floor, total_rooms_weightage_sum = total_rooms_weightage_sum, fastforward = fastforward)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
@@ -494,15 +501,15 @@ def chat():
             pass
     
     # Fetch all chat messages with associated user details
-    maxMessages = 50
-    results = db.session.execute(db.select(ChatMessage).order_by(ChatMessage.timestamp.desc()).limit(maxMessages)).scalars()  # ChatMessage.query.order_by(ChatMessage.timestamp).all()
-    messages = []
-    for res in results:
-        res.message = ProfanityFilter().censor(escape(res.message))
-        messages.insert(0, res)
+    # maxMessages = 50
+    # results = db.session.execute(db.select(ChatMessage).order_by(ChatMessage.timestamp.desc()).limit(maxMessages)).scalars()  # ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    # messages = []
+    # for res in results:
+    #     res.message = profanity.censor(escape(res.message))
+    #     messages.insert(0, res) # puts oldest message at the top
     
     # Pass Malaysia time zone to the template
-    return render_template('chat.html', messages=messages, ActivePage="chat", malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur'))
+    return render_template('chat.html', ActivePage="chat", malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur')) #, messages=messages
 
 #JSON format
 @app.route('/get_messages', methods=['GET'])
@@ -511,7 +518,8 @@ def get_messages():
     results = db.session.execute(db.select(ChatMessage).order_by(ChatMessage.timestamp.desc()).limit(maxMessages)).scalars()
     messages = []
     for res in results:
-        res.message = ProfanityFilter().censor(escape(res.message))
+        res.message = profanity.censor(escape(res.message))
+        res.timestamp = res.timestamp.astimezone(malaysiaTZ).strftime("%a, %d %b %Y, %I:%M %p")
         messages.insert(0, res)
 
     messages_list = [
