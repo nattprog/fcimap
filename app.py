@@ -4,6 +4,7 @@ import datetime, pytz, re
 from werkzeug.security import generate_password_hash, check_password_hash
 from markupsafe import escape
 from flask_migrate import Migrate
+from profanityfilter import ProfanityFilter
 
 # Flask and sqlalchemy config
 app = Flask(__name__)
@@ -493,7 +494,12 @@ def chat():
             pass
     
     # Fetch all chat messages with associated user details
-    messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    maxMessages = 50
+    results = db.session.execute(db.select(ChatMessage).order_by(ChatMessage.timestamp.desc()).limit(maxMessages)).scalars()  # ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    messages = []
+    for res in results:
+        res.message = ProfanityFilter().censor(escape(res.message))
+        messages.insert(0, res)
     
     # Pass Malaysia time zone to the template
     return render_template('chat.html', messages=messages, ActivePage="chat", malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur'))
@@ -502,12 +508,14 @@ def chat():
 @app.route('/get_messages', methods=['GET'])
 def get_messages():
     maxMessages = 50
-    messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
-    if len(messages) > maxMessages:
-        messages = messages[-maxMessages:]
+    results = db.session.execute(db.select(ChatMessage).order_by(ChatMessage.timestamp.desc()).limit(maxMessages)).scalars()
+    messages = []
+    for res in results:
+        res.message = ProfanityFilter().censor(escape(res.message))
+        messages.insert(0, res)
 
     messages_list = [
-        {'user': {'username': escape(message.user.username)}, 'message': escape(message.message), 'timestamp': message.timestamp}
+        {'user': {'username': escape(message.user.username)}, 'message': message.message, 'timestamp': message.timestamp}
         for message in messages
     ]
     return jsonify({'messages': messages_list})
@@ -675,4 +683,4 @@ def delete_account():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run()
+    app.run(debug=True)

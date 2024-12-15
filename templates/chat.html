@@ -152,7 +152,8 @@
 
     <script>
         var prevMsgTime = 0;
-        $(document).ready(function () {
+        $(document).ready(
+            function () {
             // Function to send a new message via AJAX
             $('#message-form').on('submit', function (event) {
                 event.preventDefault();
@@ -178,7 +179,7 @@
                         }
                     });
                 } else if (!(currentMsgTime - prevMsgTime > 5000)) { /* if under cooldown, alert*/
-                    alert("Slow down!")
+                    alert("Slow down!")     
                 } else if (!(matches.length < message.length)) { /* if whitespace string, alert*/
                     alert("No empty messages.")
                 };
@@ -186,6 +187,7 @@
 
             // Function to load all messages via AJAX
             function loadMessages() {
+                console.log("loadMessages ran")
                 $.ajax({
                     url: '/get_messages',  // Flask route to get all messages
                     type: 'GET',
@@ -207,7 +209,7 @@
             }
 
             // Call loadMessages periodically to keep messages updated
-            setInterval(loadMessages, 3000);  // Poll every 3 seconds
+            setInterval(loadMessages, 10000);  // Poll every 3 seconds
         });
     </script>
 </body>
