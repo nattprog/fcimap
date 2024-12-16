@@ -2,5 +2,6 @@
 __pycache__
 .DS_Store
 database.db
+.vscode
 \excelsheetsForDatabase
 \static\clic_add_schedule_tutorial

@@ -4,6 +4,8 @@ import datetime, pytz, re
 from werkzeug.security import generate_password_hash, check_password_hash
 from markupsafe import escape
 from flask_migrate import Migrate
+# from profanityfilter import ProfanityFilter
+from better_profanity import profanity
 
 # Flask and sqlalchemy config
 app = Flask(__name__)
@@ -27,8 +29,8 @@ def user_input_new_delete_old_schedule_decoder(schedule_input):
     schedule_input = schedule_input.replace("\n", " ")
 
     dates = r"(January\s*\d{1,2},\s*\d{4})|(February\s*\d{1,2},\s*\d{4})|(March\s*\d{1,2},\s*\d{4})|(April\s*\d{1,2},\s*\d{4})|(May\s*\d{1,2},\s*\d{4})|(June\s*\d{1,2},\s*\d{4})|(July\s*\d{1,2},\s*\d{4})|(August\s*\d{1,2},\s*\d{4})|(September\s*\d{1,2},\s*\d{4})|(October\s*\d{1,2},\s*\d{4})|(November\s*\d{1,2},\s*\d{4})|(December\s*\d{1,2},\s*\d{4})"
-    times_schedule = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*([A-Z]*\d*)\s*-\s*(TUT|LEC|LAB)\s*\((\w{0,6})\)"
-    times_custom = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*(Class/Tutorial|Club\sActivity/Event|Examination|Final\sExam|External\sEvent|Meeting/Discussion|Others|Presentation|Training/Conference)"
+    times_schedule = r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*(\w*)\s*-\s*(TUT|LEC|LAB)\s*\((\w{0,6})\)"
+    times_custom =   r"(\d{1,2}:\d{2}[AaPp][Mm])\s*-\s*(\d{1,2}:\d{2}[AaPp][Mm])\s*([A-Z]{4}\d{4})\s*:\s*(Class/Tutorial|Club\sActivity/Event|Examination|Final\sExam|External\sEvent|Meeting/Discussion|Others|Presentation|Training/Conference)"
     # regex string to find in the input. 
 
     # months = string to match the dates
@@ -149,8 +151,8 @@ def user_input_new_custom(): # the only reason this is up here is to clear up th
         session["custom_schedule_search_room"], session["custom_schedule_datetime"], session["custom_schedule_hours"], session["custom_room_status"], session["custom_schedule_textarea"] = custom_schedule_search_room, custom_schedule_datetime, custom_schedule_hours, custom_room_status, custom_schedule_textarea # retains values from failed booking
         success_fail_flash(False)
 
-def return_dict_all_rooms_weightage(fci_room_name=None):
-    current_time_single = current_time()
+def return_dict_all_rooms_weightage(fci_room_name=None, fastforward=0):
+    current_time_single = current_time() + datetime.timedelta(minutes=fastforward)
     total_rooms_weightage_sum = {}
     if fci_room_name: # if room_name argument is given, search according to only that room name
         query = db.session.execute(db.select(room_availability_schedule).filter_by(fci_room_name = fci_room_name)).scalars()
@@ -231,7 +233,7 @@ class fci_room(db.Model):
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=lambda: datetime.datetime.now(pytz.timezone('Asia/Kuala_Lumpur')))
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.datetime.now().astimezone(malaysiaTZ))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     
     # Relationship to get the username
@@ -335,6 +337,7 @@ def get_markers(floor, room_name="None"):
 
 @app.route("/map/<floor>/", methods=["GET", "POST"])
 def home(floor):
+    fastforward = 0
     global total_rooms_weightage_sum
     delete_old_schedule()
     if request.method == "POST":
@@ -343,9 +346,14 @@ def home(floor):
             return redirect(f"/search/{search}")
         except:
             pass
+    if "fastforward" in request.args:
+        fastforward = int(request.args["fastforward"])
+        if fastforward < 0:
+            fastforward = 0
+
     search_suggestion_maker()
-    total_rooms_weightage_sum = return_dict_all_rooms_weightage()
-    return render_template("index.html", ActivePage="index", ActiveFloor = floor, total_rooms_weightage_sum = total_rooms_weightage_sum)
+    total_rooms_weightage_sum = return_dict_all_rooms_weightage(fastforward=fastforward)
+    return render_template("index.html", ActivePage="index", ActiveFloor = floor, total_rooms_weightage_sum = total_rooms_weightage_sum, fastforward = fastforward)
 
 @app.route("/roompage/<room_name>", methods=["GET", "POST"])
 def room_page(room_name):
@@ -493,17 +501,29 @@ def chat():
             pass
     
     # Fetch all chat messages with associated user details
-    messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    # maxMessages = 50
+    # results = db.session.execute(db.select(ChatMessage).order_by(ChatMessage.timestamp.desc()).limit(maxMessages)).scalars()  # ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    # messages = []
+    # for res in results:
+    #     res.message = profanity.censor(escape(res.message))
+    #     messages.insert(0, res) # puts oldest message at the top
     
     # Pass Malaysia time zone to the template
-    return render_template('chat.html', messages=messages, ActivePage="chat", malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur'))
+    return render_template('chat.html', ActivePage="chat", malaysiaTZ=pytz.timezone('Asia/Kuala_Lumpur')) #, messages=messages
 
 #JSON format
 @app.route('/get_messages', methods=['GET'])
 def get_messages():
-    messages = ChatMessage.query.order_by(ChatMessage.timestamp).all()
+    maxMessages = 50
+    results = db.session.execute(db.select(ChatMessage).order_by(ChatMessage.timestamp.desc()).limit(maxMessages)).scalars()
+    messages = []
+    for res in results:
+        res.message = profanity.censor(escape(res.message))
+        res.timestamp = res.timestamp.astimezone(malaysiaTZ).strftime("%a, %d %b %Y, %I:%M %p")
+        messages.insert(0, res)
+
     messages_list = [
-        {'user': {'username': escape(message.user.username)}, 'message': escape(message.message), 'timestamp': message.timestamp}
+        {'user': {'username': escape(message.user.username)}, 'message': message.message, 'timestamp': message.timestamp}
         for message in messages
     ]
     return jsonify({'messages': messages_list})
@@ -525,18 +545,24 @@ def signup():
             username = request.form['username']
             email = request.form['email']
             password = request.form['password']
+            confirmpassword = request.form['confirmpassword']
 
             # Password validation
-            if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-                return render_template('signup.html', error="Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.")
+            if len(password) < 8: #or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password)
+                return render_template('signup.html', error="Password must be at least 8 characters long.") #  contain an uppercase letter, a lowercase letter, a number, and a special character.
+            elif password != confirmpassword:
+                return render_template('signup.html', error="Passwords do not match.")
 
             # Check if the username or email already exists
-            existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+            # existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+            existing_user = User.query.filter((User.username == username)).first() or User.query.filter((User.email == email)).first() or User.query.filter((User.username == email)).first() or User.query.filter((User.email == username)).first()
+            print(existing_user)
             if existing_user:
-                if existing_user.username == username:
-                    return render_template('signup.html', error="Username already registered.", login_link=True)
-                elif existing_user.email == email:
-                    return render_template('signup.html', error="Email address already registered.", login_link=True)
+                # if existing_user.username == username:
+                #     return render_template('signup.html', error="Username already registered.", login_link=True)
+                # elif existing_user.email == email:
+                #     return render_template('signup.html', error="Email address already registered.", login_link=True)
+                return render_template('signup.html', error="Username/email already registered.", login_link=True)
 
             # Hash the password using pbkdf2:sha256
             hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
@@ -561,18 +587,23 @@ def login():
         except:
             pass
         try:
-            email = request.form['email']
+            emailusername = request.form['emailusername']
             password = request.form['password']
 
-            user = User.query.filter_by(email=email).first()
+            userByEmail = User.query.filter_by(email=emailusername).first()
+            userByUsername = User.query.filter_by(username=emailusername).first()
 
             # Check if the user exists and verify the password
-            if user and check_password_hash(user.password, password):
-                session['user_id'] = user.id
+            if userByEmail and check_password_hash(userByEmail.password, password):
+                session['user_id'] = userByEmail.id
+                flash("Logged in successfully")
+                return redirect("/")
+            elif userByUsername and check_password_hash(userByUsername.password, password):
+                session['user_id'] = userByUsername.id
                 flash("Logged in successfully")
                 return redirect("/")
             else:
-                return render_template('login.html', error="Invalid email or password.")
+                return render_template('login.html', error="Invalid email/username or password.")
         except:
             pass
 
